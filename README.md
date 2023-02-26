@@ -11,6 +11,7 @@ Add your own name (do not add the names for others!) to the section below.
 | Profile Picture | Name | Email |
 |---|---|---|
 | ![](https://secure.gravatar.com/avatar/e647bc2e81b4372b6961e560b57e9dc0?s=800&d=identicon&length=4&size=50&color=DDD&background=777&font-size=0.325) | Victor Purice | V.Purice@student.tudelft.nl |
+| ![](https://en.gravatar.com/userimage/232239984/5255f903eedb65cf390cabdc7aa9bb99.png?name=aioannou&length=4&size=50&color=DDD&background=777&font-size=0.325) | Antreas Ioannou | A.IOANNOU@student.tudelft.nl |
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Your Name Here | Y.NameHere@student.tudelft.nl |
 
 <!-- Instructions (remove once assignment has been completed -->
