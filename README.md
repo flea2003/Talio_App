@@ -12,7 +12,7 @@ Add your own name (do not add the names for others!) to the section below.
 |---|---|---|
 | ![](https://secure.gravatar.com/avatar/e647bc2e81b4372b6961e560b57e9dc0?s=800&d=identicon&length=4&size=50&color=DDD&background=777&font-size=0.325) | Victor Purice | V.Purice@student.tudelft.nl |
 | ![](https://en.gravatar.com/userimage/232239984/5255f903eedb65cf390cabdc7aa9bb99.png?name=aioannou&length=4&size=50&color=DDD&background=777&font-size=0.325) | Antreas Ioannou | A.IOANNOU@student.tudelft.nl |
-| ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Your Name Here | Y.NameHere@student.tudelft.nl |
+| ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Eirini Zambarta | E.Zambarta@student.tudelft.nl |
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Rafael Alani | r.a.alani@student.tudelft.nl |
 | ![](https://en.gravatar.com/userimage/232273474/fe5b0514bf18d86e84bc7e745da0dc3d.png?name=anastasia&length=4&size=50&color=DDD&background=777&font-size=0.325) | Anastasia Rokoma | a.rokoma@student.tudelft.nl |
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Aryan Daga | A.Daga@student.tudelft.nl |
