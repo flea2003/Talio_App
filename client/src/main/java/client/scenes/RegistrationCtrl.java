@@ -64,6 +64,7 @@ public class RegistrationCtrl {
             }
             else {
                 // here we send the value to the database
+                mainCtrl.switchDashboard(value);
             }
         }else if(event.getSource() == buttonSignUp){
             value = extractValue(signUp);
@@ -72,6 +73,7 @@ public class RegistrationCtrl {
             }
             else{
                 // here we send the value to the database
+                mainCtrl.switchDashboard(value);
             }
         }else{
 

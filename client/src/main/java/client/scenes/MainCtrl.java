@@ -33,8 +33,12 @@ public class MainCtrl {
     private RegistrationCtrl regCtrl;
     private Scene registration;
 
+    private Scene dashboard;
+
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-                           Pair<AddQuoteCtrl, Parent> add, Pair<RegistrationCtrl, Parent>registration) {
+                           Pair<AddQuoteCtrl, Parent> add,
+                           Pair<RegistrationCtrl, Parent>registration,
+                           Pair<DashboardCtrl, Parent>dashboard) {
         this.primaryStage = primaryStage;
         this.overviewCtrl = overview.getKey();
         this.overview = new Scene(overview.getValue());
@@ -44,13 +48,21 @@ public class MainCtrl {
 
         this.registration = new Scene(registration.getValue());
 
-        showOverview();
+        this.dashboard = new Scene(dashboard.getValue());
+
+        showRegistration();
         primaryStage.show();
+
     }
 
-    public void showOverview() {
+    public void showRegistration() {
         primaryStage.setTitle("Welcome");
         primaryStage.setScene(registration);
+    }
+    public void showOverview() {
+        primaryStage.setTitle("Quotes: Overview");
+        primaryStage.setScene(overview);
+        overviewCtrl.refresh();
     }
 
     public void showAdd() {
@@ -63,5 +75,10 @@ public class MainCtrl {
         primaryStage.setTitle("Registration");
         primaryStage.setScene(registration);
         registration.setOnKeyPressed(e -> regCtrl.keyPressed(e));
+    }
+
+    public void switchDashboard(String user){
+        primaryStage.setTitle("Dashboard");
+        primaryStage.setScene(dashboard);
     }
 }

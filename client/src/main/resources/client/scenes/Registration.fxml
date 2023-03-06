@@ -8,14 +8,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.RegistrationCtrl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.RegistrationCtrl">
     <center>
-        <AnchorPane fx:id="pane" prefHeight="327.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <AnchorPane fx:id="pane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="327.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <children>
-                <TextField fx:id="logIn" alignment="CENTER" layoutX="46.0" layoutY="81.0" onKeyPressed="#emptyTextField" />
-                <TextField fx:id="signUp" alignment="CENTER" layoutX="377.0" layoutY="94.0" onKeyPressed="#emptyTextField" />
-                <Button fx:id="buttonLogIn" alignment="CENTER" contentDisplay="CENTER" layoutX="121.0" layoutY="145.0" mnemonicParsing="false" onAction="#processClick" text="Login" />
-                <Button fx:id="buttonSignUp" alignment="CENTER" layoutX="426.0" layoutY="145.0" mnemonicParsing="false" onAction="#processClick" text="Sign Up" />
+                <TextField fx:id="logIn" alignment="CENTER" layoutX="69.0" layoutY="94.0" onKeyPressed="#emptyTextField" AnchorPane.leftAnchor="80.0" />
+                <TextField fx:id="signUp" alignment="CENTER" layoutX="377.0" layoutY="94.0" onKeyPressed="#emptyTextField" AnchorPane.rightAnchor="80.0" />
+                <Button fx:id="buttonLogIn" alignment="CENTER" contentDisplay="CENTER" layoutX="132.0" layoutY="145.0" mnemonicParsing="false" onAction="#processClick" text="Login" AnchorPane.leftAnchor="125.0" />
+                <Button fx:id="buttonSignUp" alignment="CENTER" layoutX="416.0" layoutY="145.0" mnemonicParsing="false" onAction="#processClick" text="Sign Up" AnchorPane.rightAnchor="125.0" />
                 <Text fx:id="error" fill="RED" layoutX="249.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" />
             </children>
         </AnchorPane>

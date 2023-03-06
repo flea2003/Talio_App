@@ -20,13 +20,10 @@ import static com.google.inject.Guice.createInjector;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import client.scenes.RegistrationCtrl;
+import client.scenes.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Injector;
 
-import client.scenes.AddQuoteCtrl;
-import client.scenes.MainCtrl;
-import client.scenes.QuoteOverviewCtrl;
 import commons.Person;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -46,9 +43,10 @@ public class Main extends Application {
         var overview = FXML.load(QuoteOverviewCtrl.class, "client", "scenes", "QuoteOverview.fxml");
         var add = FXML.load(AddQuoteCtrl.class, "client", "scenes", "AddQuote.fxml");
         var registration = FXML.load(RegistrationCtrl.class, "client", "scenes", "Registration.fxml");
+        var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize(primaryStage, overview, add, registration);
+        mainCtrl.initialize(primaryStage, overview, add, registration, dashboard);
     }
 
 }
