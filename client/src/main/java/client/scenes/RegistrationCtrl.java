@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import javafx.scene.control.TextField;
@@ -10,7 +11,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class RegistrationCtrl {
 
@@ -57,10 +57,12 @@ public class RegistrationCtrl {
     public void processClick(javafx.event.ActionEvent event){
         String value = new String("");
         setError("");
+        System.out.println(buttonLogIn);
+        System.out.println(event.getSource());
         if(event.getSource() == buttonLogIn) {
             value = extractValue(logIn);
-            if(value.equals("")){
-                setError("User Name cannot be empty. Please try again!");
+            if(value.equals(" ") || value.equals("")){
+                setError("User Name cannot be empty. Please try again1!");
             }
             else {
                 // here we send the value to the database
@@ -68,8 +70,8 @@ public class RegistrationCtrl {
             }
         }else if(event.getSource() == buttonSignUp){
             value = extractValue(signUp);
-            if(value.equals("")){
-                setError("User Name cannot be empty. Please try again!");
+            if(value.equals(" ") || value.equals("")){
+                setError("User Name cannot be empty. Please try again2!");
             }
             else{
                 // here we send the value to the database
@@ -84,12 +86,16 @@ public class RegistrationCtrl {
     }
 
     public void keyPressed(KeyEvent e) {
+        System.out.println("KEK");
         switch (e.getCode()) {
             case ENTER:
-                System.out.println("LMAO");
-                break;
-            case ESCAPE:
-                System.out.println("LMAO");
+                String logInText = extractValue(logIn);
+                String signUpText = extractValue(signUp);
+                if(logInText.length() >= 1){
+                    buttonLogIn.fire();
+                }else if(signUpText.length() >= 1) {
+                    buttonSignUp.fire();
+                }
                 break;
             default:
                 break;

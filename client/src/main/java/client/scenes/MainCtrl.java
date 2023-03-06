@@ -44,21 +44,19 @@ public class MainCtrl {
         this.overview = new Scene(overview.getValue());
 
         this.addCtrl = add.getKey();
+        this.regCtrl = registration.getKey();
         this.add = new Scene(add.getValue());
 
         this.registration = new Scene(registration.getValue());
 
         this.dashboard = new Scene(dashboard.getValue());
 
-        showRegistration();
+        switchRegistration();
         primaryStage.show();
 
     }
 
-    public void showRegistration() {
-        primaryStage.setTitle("Welcome");
-        primaryStage.setScene(registration);
-    }
+
     public void showOverview() {
         primaryStage.setTitle("Quotes: Overview");
         primaryStage.setScene(overview);
