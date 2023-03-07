@@ -31,7 +31,7 @@ public class BoardTest {
     public void notEqualsHashCode() {
         var list=new HashMap<Long, commons.List>();
         var list2=new HashMap<Long, commons.List>();
-        list2.put(1L,new commons.List("a"));
+        list2.put(1L,new commons.List());
         var a = new Board(1, list,"a" );
         var b = new Board(1,list,"b" );
         var c = new Board(1, list2,"a" );
