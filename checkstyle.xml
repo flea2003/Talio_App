@@ -24,7 +24,7 @@
         <module name="MethodLength">
             <property name="severity" value="info"/>
             <property name="tokens" value="METHOD_DEF, CTOR_DEF, COMPACT_CTOR_DEF"/>
-            <property name="max" value="50"/>
+            <property name="max" value="60"/>
         </module>
 
         <module name="ParameterNumber">
