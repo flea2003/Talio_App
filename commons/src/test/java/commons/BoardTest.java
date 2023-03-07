@@ -12,7 +12,7 @@ public class BoardTest {
 
     @Test
     public void checkConstructor() {
-        var list=new HashMap<Long, commons.List>();
+        var list=new HashMap<Long, List>();
         var p = new Board(1, list,"a" );
         assertEquals("a", p.name);
         assertEquals(new HashMap<Long,List>(), p.lists);
@@ -20,7 +20,7 @@ public class BoardTest {
 
     @Test
     public void equalsHashCode() {
-        var list=new HashMap<Long, commons.List>();
+        var list=new HashMap<Long, List>();
         var a = new Board(1, list,"a" );
         var b = new Board(1,list,"a" );
         assertEquals(a, b);
@@ -29,8 +29,8 @@ public class BoardTest {
 
     @Test
     public void notEqualsHashCode() {
-        var list=new HashMap<Long, commons.List>();
-        var list2=new HashMap<Long, commons.List>();
+        var list=new HashMap<Long, List>();
+        var list2=new HashMap<Long, List>();
         list2.put(1L,new commons.List("a"));
         var a = new Board(1, list,"a" );
         var b = new Board(1,list,"b" );
@@ -43,7 +43,7 @@ public class BoardTest {
 
     @Test
     public void hasToString() {
-        var list=new HashMap<Long, commons.List>();
+        var list=new HashMap<Long, List>();
         var actual = new Board(1,list,"a" ).toString();
         assertTrue(actual.contains(Board.class.getSimpleName()));
         assertTrue(actual.contains("\n"));
