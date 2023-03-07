@@ -46,22 +46,23 @@ public class RegistrationCtrl {
     @FXML
     public void emptyTextField(javafx.scene.input.KeyEvent event){
         if(event.getSource() == signUp){
-            logIn.setText(" ");
+            logIn.setText("");
         }
         else{
-            signUp.setText(" ");
+            signUp.setText("");
         }
     }
 
     @FXML
     public void processClick(javafx.event.ActionEvent event){
+        System.out.println(event);
         String value = new String("");
         setError("");
         System.out.println(buttonLogIn);
         System.out.println(event.getSource());
         if(event.getSource() == buttonLogIn) {
             value = extractValue(logIn);
-            if(value.equals(" ") || value.equals("")){
+            if(value.equals("")){
                 setError("User Name cannot be empty. Please try again1!");
             }
             else {
@@ -70,7 +71,7 @@ public class RegistrationCtrl {
             }
         }else if(event.getSource() == buttonSignUp){
             value = extractValue(signUp);
-            if(value.equals(" ") || value.equals("")){
+            if(value.equals("")){
                 setError("User Name cannot be empty. Please try again2!");
             }
             else{
@@ -86,7 +87,6 @@ public class RegistrationCtrl {
     }
 
     public void keyPressed(KeyEvent e) {
-        System.out.println("KEK");
         switch (e.getCode()) {
             case ENTER:
                 String logInText = extractValue(logIn);
