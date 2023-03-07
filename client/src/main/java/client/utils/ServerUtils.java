@@ -21,8 +21,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import commons.Card;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Quote;
@@ -58,5 +62,33 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
+    }
+
+    public List<commons.List> getLists(){
+        List<commons.List>list = new ArrayList<>();
+        Map<Long, Card> cards = new HashMap<>();
+        cards.put(2L, new Card(2, "Card2"));
+        cards.put(3L, new Card(3, "Card3"));
+        cards.put(4L, new Card(4, "Card4"));
+        Map<Long, Card> cards2 = new HashMap<>();
+        cards.put(1L, new Card(1, "LMAO"));
+        cards.put(2L, new Card(2, "LOL"));
+        cards.put(3L, new Card(3, "ROFL"));
+        cards.put(4L, new Card(4, "Card4"));
+        cards.put(5L, new Card(2, "LOL"));
+        cards.put(6L, new Card(3, "ROFL"));
+        cards.put(7L, new Card(4, "Card4"));
+        cards.put(8L, new Card(2, "LOL"));
+        cards.put(9L, new Card(3, "ROFL"));
+        cards.put(10L, new Card(4, "Card4"));
+        list.add(new commons.List(1, cards2, "Victor"));
+        list.add(new commons.List(1, cards, "Rafael"));
+        list.add(new commons.List(1, cards, "Antreas"));
+        list.add(new commons.List(1, cards, "Victor"));
+        list.add(new commons.List(1, cards2, "Rafael"));
+        list.add(new commons.List(1, cards, "Antreas"));
+        list.add(new commons.List(1, cards2, "Victor"));
+        list.add(new commons.List(1, cards, "Rafael"));
+        return list;
     }
 }
