@@ -95,6 +95,8 @@ public class RegistrationCtrl {
                     buttonLogIn.fire();
                 }else if(signUpText.length() >= 1) {
                     buttonSignUp.fire();
+                }else{
+                    setError("User Name cannot be empty. Please try again2!");
                 }
                 break;
             default:
