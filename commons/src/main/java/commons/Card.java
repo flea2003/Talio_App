@@ -2,36 +2,32 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Map;
-
 @Entity
-public class List {
+public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    public Map<Long, Card> cards;
-
-    public String name;
-
+    public String description;
 
     @SuppressWarnings("unused")
-    private List() {
+    private Card() {
         // for object mapper
     }
 
-    public List(long id, Map<Long, Card> cards, String name) {
+    public Card(long id, String description) {
         this.id = id;
-        this.name = name;
-        this.cards = cards;
+        this.description=description;
     }
 
     @Override
