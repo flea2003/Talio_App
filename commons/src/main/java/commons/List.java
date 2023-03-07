@@ -24,7 +24,7 @@ public class List {
 
 
     @SuppressWarnings("unused")
-    private List() {
+    public List() {
         // for object mapper
     }
 
