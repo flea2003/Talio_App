@@ -68,7 +68,7 @@
       </HBox>
    </bottom>
    <center>
-      <ScrollPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="TOP_CENTER">
+      <ScrollPane fx:id="pane" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="TOP_CENTER">
          <content>
             <HBox fx:id="hboxList">
 

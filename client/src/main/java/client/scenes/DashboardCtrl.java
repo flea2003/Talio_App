@@ -8,13 +8,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 
 import java.net.URL;
@@ -33,6 +33,9 @@ public class DashboardCtrl implements Initializable {
     private HBox hboxList;
 
     private ObservableList<List> data;
+
+    @FXML
+    private ScrollPane pane;
 
     @Inject
     public DashboardCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -57,6 +60,7 @@ public class DashboardCtrl implements Initializable {
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
+            label.setFont(Font.font(20));
             Button addTaskButton = new Button("+");
             ListView<String>listView = new ListView<>();
             vBox.getChildren().add(label);
@@ -70,9 +74,14 @@ public class DashboardCtrl implements Initializable {
             Screen screen = Screen.getPrimary();
             Rectangle2D bounds = screen.getVisualBounds();
             double screenHeight = bounds.getHeight();
-            listView.setPrefHeight(Math.min(screenHeight - 200, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
-//            hboxList.getChildren().add(new Button("+"));
+            double screenWidth= bounds.getWidth();
+            VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
+            vBox.setMaxWidth(260);
+            listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
         }
+        hboxList.getChildren().add(new Button("Create List"));
+        hboxList.setPadding(new Insets(30, 30, 30, 30));
+        hboxList.setSpacing(30);
     }
 
     private void setFactory(ListView list){

@@ -92,7 +92,7 @@ public class ServerUtils {
         cards4.add(new Card(4, "Caqwdqrd4"));
         cards4.add(new Card(3, "Caqwdqdrd3"));
         cards4.add(new Card(4, "Caqwdqrd4"));
-        list.add(new commons.List(1, cards, "Viefewewverv"));
+        list.add(new commons.List(1, cards, "ViefewewvervViefewewvervViefewewvervViefewewvervViefewewvervViefewewverv"));
         list.add(new commons.List(1, cards3, "Rafael"));
         list.add(new commons.List(1, cards4, "Antreas"));
         list.add(new commons.List(1, cards3, "Victor"));
