@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -56,7 +55,14 @@ public class DashboardCtrl implements Initializable {
     }
 
     public void refresh() {
-        var list = server.getLists();
+        addLists(server.getLists());
+//        addPanels(server.getPanels());
+        hboxList.getChildren().add(new Button("Create List"));
+        hboxList.setPadding(new Insets(30, 30, 30, 30));
+        hboxList.setSpacing(30);
+    }
+
+    private void addLists(java.util.List<List>list){
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
@@ -76,13 +82,11 @@ public class DashboardCtrl implements Initializable {
             double screenHeight = bounds.getHeight();
             double screenWidth= bounds.getWidth();
             VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
-            vBox.setMaxWidth(260);
+            vBox.setMaxWidth(250);
             listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
         }
-        hboxList.getChildren().add(new Button("Create List"));
-        hboxList.setPadding(new Insets(30, 30, 30, 30));
-        hboxList.setSpacing(30);
     }
+
 
     private void setFactory(ListView list){
         list.setCellFactory(q -> new ListCell<String>() {
