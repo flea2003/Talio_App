@@ -2,6 +2,7 @@ package commons;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,15 +13,15 @@ public class BoardTest {
 
     @Test
     public void checkConstructor() {
-        var list=new HashMap<Long, commons.List>();
+        var list=new ArrayList<commons.List>();
         var p = new Board(1, list,"a" );
         assertEquals("a", p.name);
-        assertEquals(new HashMap<Long,List>(), p.lists);
+        assertEquals(new ArrayList<commons.List>(), p.lists);
     }
 
     @Test
     public void equalsHashCode() {
-        var list=new HashMap<Long, commons.List>();
+        var list=new ArrayList<commons.List>();
         var a = new Board(1, list,"a" );
         var b = new Board(1,list,"a" );
         assertEquals(a, b);
@@ -29,9 +30,9 @@ public class BoardTest {
 
     @Test
     public void notEqualsHashCode() {
-        var list=new HashMap<Long, commons.List>();
-        var list2=new HashMap<Long, commons.List>();
-        list2.put(1L,new commons.List());
+        var list=new ArrayList<commons.List>();
+        var list2=new ArrayList<commons.List>();
+        list2.add(new commons.List());
         var a = new Board(1, list,"a" );
         var b = new Board(1,list,"b" );
         var c = new Board(1, list2,"a" );
@@ -43,7 +44,7 @@ public class BoardTest {
 
     @Test
     public void hasToString() {
-        var list=new HashMap<Long, commons.List>();
+        var list=new ArrayList<commons.List>();
         var actual = new Board(1,list,"a" ).toString();
         assertTrue(actual.contains(Board.class.getSimpleName()));
         assertTrue(actual.contains("\n"));
