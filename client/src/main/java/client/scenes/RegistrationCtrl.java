@@ -36,6 +36,7 @@ public class RegistrationCtrl {
     public RegistrationCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+
     }
 
 

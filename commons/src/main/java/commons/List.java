@@ -1,14 +1,12 @@
 package commons;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
-import javax.persistence.*;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Map;
+import javax.persistence.*;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class List {
@@ -18,7 +16,7 @@ public class List {
     public long id;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    public Map<Long, Card> cards;
+    public java.util.List<Card> cards;
 
     public String name;
 
@@ -28,7 +26,7 @@ public class List {
         // for object mapper
     }
 
-    public List(long id, Map<Long, Card> cards, String name) {
+    public List(long id, java.util.List<Card> cards, String name) {
         this.id = id;
         this.name = name;
         this.cards = cards;

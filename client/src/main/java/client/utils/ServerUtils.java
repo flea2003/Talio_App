@@ -15,20 +15,21 @@
  */
 package client.utils;
 
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import commons.Card;
+import commons.Quote;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
+import org.glassfish.jersey.client.ClientConfig;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.glassfish.jersey.client.ClientConfig;
-
-import commons.Quote;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.GenericType;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
 
@@ -58,5 +59,47 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
+    }
+
+    public List<commons.List> getLists(){
+        List<commons.List>list = new ArrayList<>();
+        List<Card> cards = new ArrayList<>();
+        cards.add(new Card(2, "Card2"));
+        cards.add(new Card(3, "Card3"));
+        cards.add(new Card(4, "Card4"));
+        List<Card> cards2 = new ArrayList<>();
+        cards2.add(new Card(1, "LMAO"));
+        cards2.add(new Card(2, "LwefwefwefwefweffwfwefwefwefwefwefwefwefwefwefwefwefwfweOL"));
+        cards2.add(new Card(3, "ROFL"));
+        cards2.add(new Card(4, "Card4"));
+        cards2.add(new Card(2, "LOL"));
+        cards2.add(new Card(3, "ROFL"));
+        cards2.add(new Card(4, "Card4"));
+        cards2.add(new Card(2, "LOL"));
+        cards2.add(new Card(3, "ROFL"));
+        cards2.add(new Card(4, "Card4"));
+        List<Card> cards3 = new ArrayList<>();
+        cards3.add(new Card(2, "Cqwdard2"));
+        cards3.add(new Card(3, "Caqwdqdrd3"));
+        cards3.add(new Card(4, "Caqwdqrd4"));
+        cards3.add(new Card(3, "Caqwdqdrd3"));
+        cards3.add(new Card(4, "Caqwdqrd4"));
+        cards3.add(new Card(3, "Caqwdqdrd3"));
+        cards3.add(new Card(4, "Caqwdqrd4"));
+        List<Card> cards4 = new ArrayList<>();
+        cards4.add(new Card(2, "Cqwdard2"));
+        cards4.add(new Card(3, "Caqwdqdrd3"));
+        cards4.add(new Card(4, "Caqwdqrd4"));
+        cards4.add(new Card(3, "Caqwdqdrd3"));
+        cards4.add(new Card(4, "Caqwdqrd4"));
+        list.add(new commons.List(1, cards, "ViefewewvervViefewewvervViefewewvervViefewewvervViefewewvervViefewewverv"));
+        list.add(new commons.List(1, cards3, "Rafael"));
+        list.add(new commons.List(1, cards4, "Antreas"));
+        list.add(new commons.List(1, cards3, "Victor"));
+        list.add(new commons.List(1, cards2, "Rafael"));
+        list.add(new commons.List(1, cards, "Antreas"));
+        list.add(new commons.List(1, cards2, "Victor"));
+        list.add(new commons.List(1, cards4, "Rafael"));
+        return list;
     }
 }
