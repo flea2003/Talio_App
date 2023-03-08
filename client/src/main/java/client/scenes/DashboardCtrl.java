@@ -68,15 +68,25 @@ public class DashboardCtrl implements Initializable {
             Label label = new Label(listCurr.name);
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("+");
+
             ListView<String>listView = new ListView<>();
+            
+            // Call the method that sets the cell factory review.
+            setFactory(listView);
+            
+            //Create a card
             vBox.getChildren().add(label);
             vBox.getChildren().add(listView);
             vBox.getChildren().add(addTaskButton);
-            setFactory(listView);
+            
+            
+            // Set the card in our lists
             java.util.List<Card> cardlist = listCurr.cards;
             var descriptions = cardlist.stream().map(x -> x.description).collect(Collectors.toList());
             listView.setItems(FXCollections.observableList(descriptions));
             hboxList.getChildren().add(vBox);
+            
+            // Make the card have a specified height and width
             Screen screen = Screen.getPrimary();
             Rectangle2D bounds = screen.getVisualBounds();
             double screenHeight = bounds.getHeight();
@@ -84,8 +94,10 @@ public class DashboardCtrl implements Initializable {
             VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
             vBox.setMaxWidth(250);
             listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
+        
         }
     }
+    
 
 
     private void setFactory(ListView list){
