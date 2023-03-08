@@ -23,8 +23,7 @@ public class Card {
     @JoinColumn(name="list_id")
     public List list;
 
-    public Card(long id, String description,String name, List list) {
-        this.id = id;
+    public Card( String description,String name, List list) {
         this.description=description;
         this.name=name;
         this.list=list;
