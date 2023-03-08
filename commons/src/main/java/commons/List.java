@@ -18,7 +18,7 @@ public class List {
     public long id;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    public Map<Long, Card> cards;
+    public java.util.List<Card> cards;
 
     public String name;
 
@@ -28,7 +28,7 @@ public class List {
         // for object mapper
     }
 
-    public List(long id, Map<Long, Card> cards, String name) {
+    public List(long id, java.util.List<Card> cards, String name) {
         this.id = id;
         this.name = name;
         this.cards = cards;
