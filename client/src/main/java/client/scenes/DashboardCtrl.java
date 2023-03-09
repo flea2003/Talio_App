@@ -18,6 +18,8 @@ import javafx.stage.Screen;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 public class DashboardCtrl implements Initializable {
@@ -44,10 +46,16 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        refresh();
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                refresh();
+            }
+        }, 0, 1000);
 //        colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
 //        colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
 //        colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));
+
     }
 
     public void logOut(){
