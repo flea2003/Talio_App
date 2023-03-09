@@ -29,4 +29,11 @@ public class DashboardCtrl implements Initializable {
     public void logOut(){
         mainCtrl.switchRegistration();
     }
+
+    /**
+     * switches the scene to the create a board
+     */
+    public void createBoard() {
+        mainCtrl.switchCreateBoard();
+    }
 }
