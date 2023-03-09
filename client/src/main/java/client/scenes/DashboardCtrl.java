@@ -54,6 +54,7 @@ public class DashboardCtrl implements Initializable {
         mainCtrl.switchRegistration();
     }
 
+
     public void refresh() {
         addLists(server.getLists());
 //        addPanels(server.getPanels());
@@ -68,7 +69,9 @@ public class DashboardCtrl implements Initializable {
             Label label = new Label(listCurr.name);
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("+");
-
+            addTaskButton.setOnAction(e -> {
+                mainCtrl.switchTaskCreation();
+            });
             ListView<String>listView = new ListView<>();
             
             // Call the method that sets the cell factory review.
