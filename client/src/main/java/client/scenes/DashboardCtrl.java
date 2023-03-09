@@ -73,28 +73,28 @@ public class DashboardCtrl implements Initializable {
 
     private void addLists(java.util.List<List>list){
         for(List listCurr : list){
+            System.out.println(listCurr);
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("+");
 
-            ListView<String>listView = new ListView<>();
-            
+            ListView<Card>listView = new ListView<>();
+
             // Call the method that sets the cell factory review.
             setFactory(listView);
-            
+
             //Create a card
             vBox.getChildren().add(label);
             vBox.getChildren().add(listView);
             vBox.getChildren().add(addTaskButton);
-            
-            
+
+
             // Set the card in our lists
             java.util.List<Card> cardlist = listCurr.cards;
-            var descriptions = cardlist.stream().map(x -> x.description).collect(Collectors.toList());
-            listView.setItems(FXCollections.observableList(descriptions));
+            listView.setItems(FXCollections.observableList(cardlist));
             hboxList.getChildren().add(vBox);
-            
+
             // Make the card have a specified height and width
             Screen screen = Screen.getPrimary();
             Rectangle2D bounds = screen.getVisualBounds();
@@ -103,19 +103,23 @@ public class DashboardCtrl implements Initializable {
             VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
             vBox.setMaxWidth(250);
             listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
-        
+
         }
     }
     
 
 
     private void setFactory(ListView list){
-        list.setCellFactory(q -> new ListCell<String>() {
+        list.setCellFactory(q -> new ListCell<Card>() {
             @Override
-            protected void updateItem(String q, boolean bool) {
+            protected void updateItem(Card q, boolean bool) {
                 super.updateItem(q, bool);
-
-                setText(q);
+                if(bool) {
+                    setText("");
+                }
+                else{
+                    setText(q.description);
+                }
                 double size = 100; // Adjust this value to change the size of the cells
                 setMinHeight(size);
                 setMaxHeight(size);
