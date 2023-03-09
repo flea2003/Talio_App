@@ -8,6 +8,7 @@
         <module name="UnusedImports" >
            <property name="severity" value="info"/>
         </module>
+
         <module name="MissingJavadocMethod">
             <property name="severity" value="info"/>
             <property name="scope" value="public"/>

@@ -2,10 +2,7 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -20,15 +17,20 @@ public class Card {
 
     public String description;
 
-    @SuppressWarnings("unused")
-    private Card() {
-        // for object mapper
+    public String name;
+
+    @ManyToOne
+    @JoinColumn(name="list_id")
+    public List list;
+
+    public Card( String description,String name, List list) {
+        this.description=description;
+        this.name=name;
+        this.list=list;
     }
 
-    public Card(long id, String description) {
-        this.id = id;
-        this.description=description;
-    }
+    @SuppressWarnings("unused")
+    public Card() {}
 
     @Override
     public boolean equals(Object obj) {
@@ -43,5 +45,9 @@ public class Card {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
