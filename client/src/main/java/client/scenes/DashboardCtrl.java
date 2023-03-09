@@ -46,12 +46,13 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                refresh();
-            }
-        }, 0, 1000);
+//        new Timer().scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                refresh();
+//            }
+//        }, 0, 1000);
+        refresh();
 //        colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
 //        colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
 //        colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));

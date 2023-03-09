@@ -189,43 +189,21 @@ public class ServerUtils {
 
 //    public List<commons.List> getLists(){
 //        List<commons.List>list = new ArrayList<>();
-//        List<Card> cards = new ArrayList<>();
-//        cards.add(new Card(2, "Card2"));
-//        cards.add(new Card(3, "Card3"));
-//        cards.add(new Card(4, "Card4"));
-//        List<Card> cards2 = new ArrayList<>();
-//        cards2.add(new Card(1, "LMAO"));
-//        cards2.add(new Card(2, "LwefwefwefwefweffwfwefwefwefwefwefwefwefwefwefwefwefwfweOL"));
-//        cards2.add(new Card(3, "ROFL"));
-//        cards2.add(new Card(4, "Card4"));
-//        cards2.add(new Card(2, "LOL"));
-//        cards2.add(new Card(3, "ROFL"));
-//        cards2.add(new Card(4, "Card4"));
-//        cards2.add(new Card(2, "LOL"));
-//        cards2.add(new Card(3, "ROFL"));
-//        cards2.add(new Card(4, "Card4"));
-//        List<Card> cards3 = new ArrayList<>();
-//        cards3.add(new Card(2, "Cqwdard2"));
-//        cards3.add(new Card(3, "Caqwdqdrd3"));
-//        cards3.add(new Card(4, "Caqwdqrd4"));
-//        cards3.add(new Card(3, "Caqwdqdrd3"));
-//        cards3.add(new Card(4, "Caqwdqrd4"));
-//        cards3.add(new Card(3, "Caqwdqdrd3"));
-//        cards3.add(new Card(4, "Caqwdqrd4"));
-//        List<Card> cards4 = new ArrayList<>();
-//        cards4.add(new Card(2, "Cqwdard2"));
-//        cards4.add(new Card(3, "Caqwdqdrd3"));
-//        cards4.add(new Card(4, "Caqwdqrd4"));
-//        cards4.add(new Card(3, "Caqwdqdrd3"));
-//        cards4.add(new Card(4, "Caqwdqrd4"));
-//        list.add(new commons.List(1, cards, "ViefewewvervViefewewvervViefewewvervViefewewvervViefewewvervViefewewverv"));
-//        list.add(new commons.List(1, cards3, "Rafael"));
-//        list.add(new commons.List(1, cards4, "Antreas"));
-//        list.add(new commons.List(1, cards3, "Victor"));
-//        list.add(new commons.List(1, cards2, "Rafael"));
-//        list.add(new commons.List(1, cards, "Antreas"));
-//        list.add(new commons.List(1, cards2, "Victor"));
-//        list.add(new commons.List(1, cards4, "Rafael"));
+//
+//        ArrayList<Card> cards = new ArrayList<>();
+//        cards.add(new Card("hi", "Card2", null));
+//        cards.add(new Card("bi", "Card3", null));
+//        cards.add(new Card("ai", "Card4", null));
+//
+//        ArrayList<Card> cards2 = new ArrayList<>();
+//        cards2.add(new Card("test", "LMAO", null));
+//        cards2.add(new Card("wext", "ROFL", null));
+//        cards2.add(new Card("rest", "Card4", null));
+//
+//        list.add(new commons.List(1, cards, "Test", null));
+//        list.add(new commons.List(2, cards2, "Testing", null));
+//
 //        return list;
+//
 //    }
 }
