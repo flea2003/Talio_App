@@ -36,6 +36,7 @@ public class RegistrationCtrl {
     public RegistrationCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+
     }
 
     @FXML
@@ -64,17 +65,14 @@ public class RegistrationCtrl {
                 // here we send the value to the database
                 mainCtrl.switchDashboard(value);
             }
-        }else if(event.getSource() == buttonSignUp){
+        }else if(event.getSource() == buttonSignUp) {
             value = extractValue(signUp);
-            if(value.equals("")){
+            if (value.equals("")) {
                 setError("User Name cannot be empty. Please try again2!");
-            }
-            else{
+            } else {
                 // here we send the value to the database
                 mainCtrl.switchDashboard(value);
             }
-        }else{
-
         }
         System.out.println(value);
         signUp.setText("");
