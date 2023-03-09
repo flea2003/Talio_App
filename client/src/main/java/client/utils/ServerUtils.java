@@ -97,14 +97,14 @@ public class ServerUtils {
                 .delete(new GenericType<Card>() {});
     }
 
-    public List<commons.List> getLists(){
-        String endpoint = String.format("api/lists");
-        return  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(new GenericType<List<commons.List>>() {});
-    }
+//    public List<commons.List> getLists(){
+//        String endpoint = String.format("api/lists");
+//        return  ClientBuilder.newClient(new ClientConfig())
+//                .target(SERVER).path(endpoint)
+//                .request(APPLICATION_JSON)
+//                .accept(APPLICATION_JSON)
+//                .get(new GenericType<List<commons.List>>() {});
+//    }
 
     public commons.List getList(long id){
         String endpoint = String.format("api/lists/%2d", id);
@@ -187,23 +187,23 @@ public class ServerUtils {
                 .delete(new GenericType<commons.Board>() {});
     }
 
-//    public List<commons.List> getLists(){
-//        List<commons.List>list = new ArrayList<>();
-//
-//        ArrayList<Card> cards = new ArrayList<>();
-//        cards.add(new Card("hi", "Card2", null));
-//        cards.add(new Card("bi", "Card3", null));
-//        cards.add(new Card("ai", "Card4", null));
-//
-//        ArrayList<Card> cards2 = new ArrayList<>();
-//        cards2.add(new Card("test", "LMAO", null));
-//        cards2.add(new Card("wext", "ROFL", null));
-//        cards2.add(new Card("rest", "Card4", null));
-//
-//        list.add(new commons.List(1, cards, "Test", null));
-//        list.add(new commons.List(2, cards2, "Testing", null));
-//
-//        return list;
-//
-//    }
+    public List<commons.List> getLists(){
+        List<commons.List>list = new ArrayList<>();
+
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.add(new Card("hi", "Card2", null));
+        cards.add(new Card("bi", "Card3", null));
+        cards.add(new Card("ai", "Card4", null));
+
+        ArrayList<Card> cards2 = new ArrayList<>();
+        cards2.add(new Card("test", "LMAO", null));
+        cards2.add(new Card("wext", "ROFL", null));
+        cards2.add(new Card("rest", "Card4", null));
+
+        list.add(new commons.List(1, cards, "Test", null));
+        list.add(new commons.List(2, cards2, "Testing", null));
+
+        return list;
+
+    }
 }
