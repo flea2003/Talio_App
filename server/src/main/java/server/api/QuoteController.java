@@ -76,4 +76,5 @@ public class QuoteController {
         var idx = random.nextInt((int) repo.count());
         return ResponseEntity.ok(quotes.get(idx));
     }
+
 }

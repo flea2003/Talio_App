@@ -49,19 +49,20 @@ public class ListController {
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
+        commons.List list=repo.getById(id);
         repo.delete(Objects.requireNonNull(getById(id).getBody()));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/changeName")
-    public ResponseEntity<Void> changeName(@RequestParam("id") long id,@RequestBody String name){
+    public ResponseEntity<commons.List> changeName(@RequestParam("id") long id, @RequestBody String name){
 
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
-
+        commons.List list=repo.getById(id);
         repo.getById(id).setName(name);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("rnd")

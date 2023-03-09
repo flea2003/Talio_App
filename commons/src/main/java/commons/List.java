@@ -17,10 +17,6 @@ public class List {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
 
-    public java.util.List<Card>  getCards() {
-        return cards;
-    }
-
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name="card_id")
     public java.util.List<Card> cards;
@@ -31,6 +27,9 @@ public class List {
     @JoinColumn(name="board_id")
     public Board board;
 
+    public java.util.List<Card>  getCards() {
+        return cards;
+    }
 
     @SuppressWarnings("unused")
     public List() {
