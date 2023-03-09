@@ -20,6 +20,8 @@ public class Card {
 
     public String description;
 
+
+
     @SuppressWarnings("unused")
     private Card() {
         // for object mapper

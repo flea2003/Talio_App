@@ -60,7 +60,7 @@ public class RegistrationCtrl {
         if(event.getSource() == buttonLogIn) {
             value = extractValue(logIn);
             if(value.equals("")){
-                setError("User Name cannot be empty. Please try again1!");
+                setError("User Name cannot be empty. Please try again!");
             }
             else {
                 // here we send the value to the database
@@ -69,7 +69,7 @@ public class RegistrationCtrl {
         }else if(event.getSource() == buttonSignUp) {
             value = extractValue(signUp);
             if (value.equals("")) {
-                setError("User Name cannot be empty. Please try again2!");
+                setError("User Name cannot be empty. Please try again!");
             } else {
                 // here we send the value to the database
                 mainCtrl.switchDashboard(value);

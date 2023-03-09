@@ -67,6 +67,31 @@ public class DashboardCtrl implements Initializable {
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
+            label.setOnMouseClicked(e ->{
+                if (e.getClickCount() == 2) {
+
+                    System.out.println("Label was double-clicked!");
+                    TextField textField = new TextField(label.getText());
+
+                    int labelIndex = vBox.getChildren().indexOf(label);
+                    vBox.getChildren().remove(labelIndex);
+                    vBox.getChildren().add(labelIndex, textField);
+
+                    textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                        if (!newValue) {
+                            // Update the label with the text from the TextField when it loses focus
+                            String newText = textField.getText();
+                            listCurr.name= newText;
+                            label.setText(listCurr.name);
+                            vBox.getChildren().remove(textField);
+                            vBox.getChildren().add(labelIndex, label);
+                        }
+                    });
+                }
+            });
+
+
+
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("+");
             addTaskButton.setOnAction(e -> {

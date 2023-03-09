@@ -58,7 +58,7 @@ public class MainCtrl {
         this.dashboard = new Scene(dashboard.getValue());
         this.taskCreation = new Scene(taskCreation.getValue());
         this.taskCreationCtrl = taskCreation.getKey();
-        switchTaskCreation();
+        switchRegistration();
         primaryStage.show();
 
     }
