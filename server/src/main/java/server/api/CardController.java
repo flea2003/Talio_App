@@ -27,14 +27,14 @@ public class CardController {
         return repo.findAll();
     }
 
-    @GetMapping("/card/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Card> getById (@PathVariable long id){
         if(id < 0 || !repo.existsById(id))
             return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(repo.findById(id).get());
     }
 
-    @DeleteMapping("/card/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Card> delete(@PathVariable long id){
         if(id < 0 || !repo.existsById(id))
             return ResponseEntity.badRequest().build();
@@ -44,7 +44,7 @@ public class CardController {
         return ResponseEntity.ok(card);
     }
 
-    @PostMapping("/card")
+    @PostMapping(path = { "", "/" })
     public ResponseEntity<Card> add(@RequestBody Card card){
         if (card == null || isNullOrEmpty(card.name) )
            return ResponseEntity.badRequest().build();

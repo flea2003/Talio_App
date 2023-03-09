@@ -54,8 +54,8 @@ public class ListController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/changeName")
-    public ResponseEntity<commons.List> changeName(@RequestParam("id") long id, @RequestBody String name){
+    @PostMapping("/changeName/{id}")
+    public ResponseEntity<commons.List> changeName(@PathVariable("id") long id, @RequestBody String name){
 
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();

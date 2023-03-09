@@ -50,8 +50,8 @@ public class BoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/changeName")
-    public ResponseEntity<Board> changeName(@RequestParam("id") long id,@RequestBody String name){
+    @PostMapping("/changeName/{id}")
+    public ResponseEntity<Board> changeName(@PathVariable("id") long id,@RequestBody String name){
 
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
