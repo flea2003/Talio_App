@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 @Entity
 public class Board {
@@ -17,20 +17,25 @@ public class Board {
     public long id;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    public Map<Long, List> lists;
+    @JoinColumn(name="list_id")
+    public java.util.List<List> lists;
 
     public String name;
 
 
     @SuppressWarnings("unused")
-    public Board() {}
+    public Board(int id, ArrayList<Board> boards, String a) {}
 
-    public Board(long id, Map<Long, List> lists, String name) {
+    public Board(long id, ArrayList<List> lists, String name) {
         this.id = id;
         this.lists = lists;
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
+    public Board() {
+
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -45,5 +50,13 @@ public class Board {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public void setLists(java.util.List<List> lists) {
+        this.lists = lists;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
