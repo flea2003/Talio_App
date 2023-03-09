@@ -31,27 +31,34 @@ public class MainCtrl {
     private Scene add;
 
     private RegistrationCtrl regCtrl;
+
+    private TaskCreationCtrl taskCreationCtrl;
     private Scene registration;
 
     private Scene dashboard;
 
+    private Scene taskCreation;
+
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
                            Pair<AddQuoteCtrl, Parent> add,
                            Pair<RegistrationCtrl, Parent>registration,
-                           Pair<DashboardCtrl, Parent>dashboard) {
+                           Pair<DashboardCtrl, Parent>dashboard,
+                           Pair<TaskCreationCtrl, Parent>taskCreation) {
         this.primaryStage = primaryStage;
         this.overviewCtrl = overview.getKey();
         this.overview = new Scene(overview.getValue());
 
         this.addCtrl = add.getKey();
         this.regCtrl = registration.getKey();
+
         this.add = new Scene(add.getValue());
 
         this.registration = new Scene(registration.getValue());
 
         this.dashboard = new Scene(dashboard.getValue());
-
-        switchRegistration();
+        this.taskCreation = new Scene(taskCreation.getValue());
+        this.taskCreationCtrl = taskCreation.getKey();
+        switchTaskCreation();
         primaryStage.show();
 
     }
@@ -74,6 +81,13 @@ public class MainCtrl {
         primaryStage.setScene(registration);
         registration.setOnKeyPressed(e -> regCtrl.keyPressed(e));
     }
+
+    public void switchTaskCreation(){
+        primaryStage.setTitle("Task Creation");
+        primaryStage.setScene(taskCreation);
+        taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
+    }
+
 
     public void switchDashboard(String user){
         primaryStage.setTitle("Dashboard");
