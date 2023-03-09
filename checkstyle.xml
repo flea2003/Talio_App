@@ -5,7 +5,9 @@
 
 <module name = "Checker">
     <module name="TreeWalker">
-        <module name="UnusedImports" />
+        <module name="UnusedImports" >
+            <property name="severity" value="info"/>
+        </module>
 
         <module name="MissingJavadocMethod">
             <property name="severity" value="info"/>
