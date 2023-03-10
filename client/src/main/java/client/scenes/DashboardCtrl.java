@@ -65,7 +65,6 @@ public class DashboardCtrl implements Initializable {
 
     public void refresh() {
         addLists(server.getLists());
-//        addPanels(server.getPanels());
         hboxList.getChildren().add(new Button("Create List"));
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
