@@ -22,11 +22,12 @@ public class TaskViewCtrl {
     private Scene scene;
 
     @FXML
-    private TextField taskName;
+    private Text taskName;
 
     @FXML
-    private TextField taskDescription;
+    private Text taskDescription;
 
+    private Card currCard;
     @FXML
     private Button editTask;
 
@@ -44,13 +45,13 @@ public class TaskViewCtrl {
     @FXML
     public void editCard() {
         editTask.setOnKeyPressed(e1 -> {
-            taskName.setEditable(true);
-            taskDescription.setEditable(true);
+//            taskName.setEditable(true);
+//            taskDescription.setEditable(true);
             done.setOnKeyPressed(e2 -> {
                 server.updateCard(setCard(card));
             });
-            taskName.setEditable(false);
-            taskDescription.setEditable(false);
+//            taskName.setEditable(false);
+//            taskDescription.setEditable(false);
         });
     }
 
@@ -58,5 +59,22 @@ public class TaskViewCtrl {
         card.setName(taskName.getText());
         card.setDescription(taskDescription.getText());
         return card;
+    }
+
+    public void renderInfo(Card card){
+        currCard = card;
+        System.out.println(card.name);
+        System.out.println(card.description);
+        taskName.setText(card.name);
+        taskDescription.setText(card.description);
+        return;
+    }
+
+    public void setDone(){
+        mainCtrl.switchDashboard("User");
+    }
+
+    public void goEdit(){
+        mainCtrl.switchEdit(currCard);
     }
 }

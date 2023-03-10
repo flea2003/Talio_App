@@ -7,11 +7,13 @@ import commons.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -146,6 +148,9 @@ public class DashboardCtrl implements Initializable {
                 }
                 else{
                     setText(q.description);
+                    setOnMouseClicked(event -> {
+                        mainCtrl.switchTaskView(q);
+                    });
                 }
                 double size = 100; // Adjust this value to change the size of the cells
                 setMinHeight(size);
@@ -162,5 +167,6 @@ public class DashboardCtrl implements Initializable {
         mainCtrl.switchCreateBoard();
         System.out.println("new Board");
     }
+
 
 }
