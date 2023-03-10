@@ -70,8 +70,7 @@ public class MainCtrl {
 
         this.taskCreation = new Scene(taskCreation.getValue());
         this.taskCreationCtrl = taskCreation.getKey();
-        switchTaskCreation();
-
+        switchRegistration();
         primaryStage.show();
 
     }
