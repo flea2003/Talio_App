@@ -6,6 +6,7 @@ import commons.Card;
 import commons.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -151,6 +152,11 @@ public class DashboardCtrl implements Initializable {
                 setPrefWidth(size);
             }
         });
+    }
+
+    public void createBoard(ActionEvent actionEvent) {
+        mainCtrl.switchCreateBoard();
+        System.out.println("new Board");
     }
 
 }
