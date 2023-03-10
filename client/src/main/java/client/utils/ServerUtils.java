@@ -15,6 +15,7 @@
  */
 package client.utils;
 
+import commons.Board;
 import commons.Card;
 import commons.Quote;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -189,7 +190,6 @@ public class ServerUtils {
 
     public List<commons.List> getLists(){
         List<commons.List>list = new ArrayList<>();
-
         ArrayList<Card> cards = new ArrayList<>();
         cards.add(new Card("hi", "Card2", null));
         cards.add(new Card("bi", "Card3", null));
@@ -202,7 +202,6 @@ public class ServerUtils {
 
         list.add(new commons.List(1, cards, "Test", null));
         list.add(new commons.List(2, cards2, "Testing", null));
-
         return list;
 
     }
