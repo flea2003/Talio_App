@@ -33,7 +33,12 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
 
-    private static final String SERVER = "http://localhost:8080/";
+    private static String SERVER ="http://localhost:8080/";
+
+    public static void setSERVER(String server){
+        SERVER=server;
+        System.out.println(SERVER);
+    }
 
     public void getQuotesTheHardWay() throws IOException {
         var url = new URL("http://localhost:8080/api/quotes");
@@ -188,22 +193,11 @@ public class ServerUtils {
     }
 
     public List<commons.List> getLists(){
-        List<commons.List>list = new ArrayList<>();
-
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.add(new Card("hi", "Card2", null));
-        cards.add(new Card("bi", "Card3", null));
-        cards.add(new Card("ai", "Card4", null));
-
-        ArrayList<Card> cards2 = new ArrayList<>();
-        cards2.add(new Card("test", "LMAO", null));
-        cards2.add(new Card("wext", "ROFL", null));
-        cards2.add(new Card("rest", "Card4", null));
-
-        list.add(new commons.List(1, cards, "Test", null));
-        list.add(new commons.List(2, cards2, "Testing", null));
-
-        return list;
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/lists") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .get(new GenericType<List<commons.List>>() {});
 
     }
 }

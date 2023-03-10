@@ -39,9 +39,12 @@ public class MainCtrl {
 
     private Scene taskCreation;
 
+    private Scene server;
+
+    private  ServerConnectCtrl serverCtrl;
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
                            Pair<AddQuoteCtrl, Parent> add,
-                           Pair<RegistrationCtrl, Parent>registration,
+                           Pair<ServerConnectCtrl, Parent> serverConnect, Pair<RegistrationCtrl, Parent>registration,
                            Pair<DashboardCtrl, Parent>dashboard,
                            Pair<TaskCreationCtrl, Parent>taskCreation) {
         this.primaryStage = primaryStage;
@@ -58,7 +61,11 @@ public class MainCtrl {
         this.dashboard = new Scene(dashboard.getValue());
         this.taskCreation = new Scene(taskCreation.getValue());
         this.taskCreationCtrl = taskCreation.getKey();
-        switchTaskCreation();
+
+        this.server=new Scene(serverConnect.getValue());
+        this.serverCtrl= serverConnect.getKey();
+
+        switchServer();
         primaryStage.show();
 
     }
@@ -93,4 +100,10 @@ public class MainCtrl {
         primaryStage.setTitle("Dashboard");
         primaryStage.setScene(dashboard);
     }
+
+    public void switchServer(){
+        primaryStage.setTitle("Choose a server");
+        primaryStage.setScene(server);
+    }
+
 }
