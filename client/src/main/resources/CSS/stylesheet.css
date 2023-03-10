@@ -1,0 +1,8 @@
+#edit-button {
+    -fx-border-style: none;
+    -fx-background-color: #d3d3d3;
+    -fx-cursor: hand;
+    -fx-underline: false;
+    -fx-padding: 0;
+    -fx-margin: 0;
+}

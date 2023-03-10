@@ -36,8 +36,8 @@ public class RegistrationCtrl {
     public RegistrationCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-    }
 
+    }
 
     @FXML
     public void emptyTextField(javafx.scene.input.KeyEvent event){
@@ -59,23 +59,20 @@ public class RegistrationCtrl {
         if(event.getSource() == buttonLogIn) {
             value = extractValue(logIn);
             if(value.equals("")){
-                setError("User Name cannot be empty. Please try again1!");
+                setError("User Name cannot be empty. Please try again!");
             }
             else {
                 // here we send the value to the database
                 mainCtrl.switchDashboard(value);
             }
-        }else if(event.getSource() == buttonSignUp){
+        }else if(event.getSource() == buttonSignUp) {
             value = extractValue(signUp);
-            if(value.equals("")){
-                setError("User Name cannot be empty. Please try again2!");
-            }
-            else{
+            if (value.equals("")) {
+                setError("User Name cannot be empty. Please try again!");
+            } else {
                 // here we send the value to the database
                 mainCtrl.switchDashboard(value);
             }
-        }else{
-
         }
         System.out.println(value);
         signUp.setText("");
@@ -92,7 +89,7 @@ public class RegistrationCtrl {
                 }else if(signUpText.length() >= 1) {
                     buttonSignUp.fire();
                 }else{
-                    setError("User Name cannot be empty. Please try again2!");
+                    setError("User Name cannot be empty. Please try again!");
                 }
                 break;
             default:
