@@ -77,6 +77,9 @@ public class DashboardCtrl implements Initializable {
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
+            HBox hboxButtons = new HBox();
+            Button delete = new Button("Delete List");
+            // Here is code for List Name edition
             label.setOnMouseClicked(e ->{
                 if (e.getClickCount() == 2) {
 
@@ -99,15 +102,22 @@ public class DashboardCtrl implements Initializable {
                     });
                 }
             });
-
-
-
+            // Add Card Button
             label.setFont(Font.font(20));
-            Button addTaskButton = new Button("+");
+            Button addTaskButton = new Button("Add Task");
             addTaskButton.setOnAction(e -> {
                 mainCtrl.switchTaskCreation();
             });
             ListView<String>listView = new ListView<>();
+
+            // Delete List Button
+            delete.setOnAction(e -> {
+                vBox.getChildren().clear();
+                // add something to delete the list form tables
+            });
+
+
+
             
             // Call the method that sets the cell factory review.
             setFactory(listView);
@@ -115,7 +125,9 @@ public class DashboardCtrl implements Initializable {
             //Create a card
             vBox.getChildren().add(label);
             vBox.getChildren().add(listView);
-            vBox.getChildren().add(addTaskButton);
+            vBox.getChildren().add(hboxButtons);
+            hboxButtons.getChildren().add(addTaskButton);
+            hboxButtons.getChildren().add(delete);
             
             
             // Set the card in our lists
