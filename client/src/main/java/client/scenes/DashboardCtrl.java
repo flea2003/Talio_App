@@ -63,6 +63,13 @@ public class DashboardCtrl implements Initializable {
         mainCtrl.switchRegistration();
     }
 
+    /**
+     * switches the scene to the create a board
+     */
+    public void createBoard() {
+        mainCtrl.switchCreateBoard();
+    }
+
     public void refresh() {
         addLists(server.getLists());
 //        addPanels(server.getPanels());
@@ -106,8 +113,6 @@ public class DashboardCtrl implements Initializable {
         
         }
     }
-    
-
 
     private void setFactory(ListView list){
         list.setCellFactory(q -> new ListCell<String>() {
