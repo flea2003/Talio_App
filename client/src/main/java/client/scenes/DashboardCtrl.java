@@ -204,8 +204,7 @@ public class DashboardCtrl implements Initializable {
 
     public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
         java.util.List<Card> cardlist = list.cards;
-        var descriptions = cardlist.stream().map(x -> x.description).collect(Collectors.toList());
-        listView.setItems(FXCollections.observableList(descriptions));
+        listView.setItems(FXCollections.observableList(cardlist));
         hboxList.getChildren().add(vBox);
 
         // Make the card have a specified height and width
