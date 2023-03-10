@@ -117,8 +117,7 @@ public class DashboardCtrl implements Initializable {
             addTaskButton.setOnAction(e -> {
                 mainCtrl.switchTaskCreation();
             });
-
-            ListView<String>listView = new ListView<>();
+            ListView<Card>listView = new ListView<>();
             // Call the method that sets the cell factory review.
             setFactory(listView);
 
@@ -140,12 +139,19 @@ public class DashboardCtrl implements Initializable {
     }
 
     private void setFactory(ListView list){
-        list.setCellFactory(q -> new ListCell<String>() {
+        list.setCellFactory(q -> new ListCell<Card>() {
             @Override
-            protected void updateItem(String q, boolean bool) {
+            protected void updateItem(Card q, boolean bool) {
                 super.updateItem(q, bool);
-
-                setText(q);
+                if(bool) {
+                    setText("");
+                }
+                else{
+                    setText(q.description);
+                    setOnMouseClicked(event -> {
+                        mainCtrl.switchTaskView(q);
+                    });
+                }
                 double size = 100; // Adjust this value to change the size of the cells
                 setMinHeight(size);
                 setMaxHeight(size);
@@ -153,6 +159,7 @@ public class DashboardCtrl implements Initializable {
                 setMinWidth(size);
                 setMaxWidth(size);
                 setPrefWidth(size);
+
             }
         });
     }
@@ -212,3 +219,4 @@ public class DashboardCtrl implements Initializable {
     }
 
 }
+

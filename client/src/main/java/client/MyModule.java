@@ -29,6 +29,8 @@ public class MyModule implements Module {
         binder.bind(QuoteOverviewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(RegistrationCtrl.class).in(Scopes.SINGLETON);
         binder.bind(DashboardCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(TaskViewCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(TaskEditCtrl.class).in(Scopes.SINGLETON);
 
     }
 }
