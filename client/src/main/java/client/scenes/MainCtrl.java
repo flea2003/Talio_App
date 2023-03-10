@@ -35,15 +35,21 @@ public class MainCtrl {
     private TaskCreationCtrl taskCreationCtrl;
     private Scene registration;
 
+
+    private CreateBoardCtrl boardCtrl;
+    private Scene board;
+
     private Scene dashboard;
 
     private Scene taskCreation;
 
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
                            Pair<AddQuoteCtrl, Parent> add,
-                           Pair<RegistrationCtrl, Parent>registration,
-                           Pair<DashboardCtrl, Parent>dashboard,
+                           Pair<RegistrationCtrl, Parent> registration,
+                           Pair<DashboardCtrl, Parent> dashboard,
+                           Pair<CreateBoardCtrl, Parent> board,
                            Pair<TaskCreationCtrl, Parent>taskCreation) {
+
         this.primaryStage = primaryStage;
         this.overviewCtrl = overview.getKey();
         this.overview = new Scene(overview.getValue());
@@ -56,6 +62,12 @@ public class MainCtrl {
         this.registration = new Scene(registration.getValue());
 
         this.dashboard = new Scene(dashboard.getValue());
+
+        this.board = new Scene(board.getValue());
+        this.boardCtrl = board.getKey();
+
+        switchRegistration();
+
         this.taskCreation = new Scene(taskCreation.getValue());
         this.taskCreationCtrl = taskCreation.getKey();
         switchRegistration();
@@ -81,16 +93,28 @@ public class MainCtrl {
         primaryStage.setScene(registration);
         registration.setOnKeyPressed(e -> regCtrl.keyPressed(e));
     }
-
+    
     public void switchTaskCreation(){
         primaryStage.setTitle("Task Creation");
         primaryStage.setScene(taskCreation);
         taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
     }
 
-
+    /**
+     * switches the scene to the dashboard
+     * @param user
+     */
     public void switchDashboard(String user){
         primaryStage.setTitle("Dashboard");
         primaryStage.setScene(dashboard);
+    }
+
+    /**
+     * switches the scene to the create a board
+     */
+    public void switchCreateBoard() {
+        primaryStage.setTitle("Create a Board");
+        primaryStage.setScene(board);
+        board.setOnKeyPressed(e -> boardCtrl.keyPressed(e));
     }
 }

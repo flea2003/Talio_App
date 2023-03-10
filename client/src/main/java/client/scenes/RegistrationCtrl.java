@@ -39,7 +39,6 @@ public class RegistrationCtrl {
 
     }
 
-
     @FXML
     public void emptyTextField(javafx.scene.input.KeyEvent event){
         if(event.getSource() == signUp){
@@ -90,7 +89,7 @@ public class RegistrationCtrl {
                 }else if(signUpText.length() >= 1) {
                     buttonSignUp.fire();
                 }else{
-                    setError("User Name cannot be empty. Please try again2!");
+                    setError("User Name cannot be empty. Please try again!");
                 }
                 break;
             default:
