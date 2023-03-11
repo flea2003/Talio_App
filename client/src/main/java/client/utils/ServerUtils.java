@@ -15,19 +15,22 @@
  */
 package client.utils;
 
+import client.scenes.MainCtrl;
+import client.scenes.ServerConnectCtrl;
 import com.google.inject.Provides;
 import commons.Board;
 import commons.Card;
 import commons.Quote;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import org.glassfish.jersey.client.ClientConfig;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -201,12 +204,11 @@ public class ServerUtils {
     }
 
     public List<commons.List> getLists(){
-        System.out.println(SERVER);
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(SERVER).path("api/lists") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<List<commons.List>>() {});
-
+                .get(new GenericType<List<commons.List>>() {
+                });
     }
 }

@@ -27,6 +27,10 @@ public class ServerConnectCtrl {
     @FXML
     private Text message;
 
+    public Text getMessage() {
+        return message;
+    }
+
     @Inject
     public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
@@ -38,9 +42,14 @@ public class ServerConnectCtrl {
             String server=serverAddress.getText();
             message.setText("Searching for Server...");
             if(serverExists(server)){
-                message.setText("Connecting to the Server...");
-                this.server.setSERVER(serverAddress.getText());
-                return true;
+                if(serverExists(server+"api/boards")) {
+                    message.setText("Connecting to the Server...");
+                    this.server.setSERVER(serverAddress.getText());
+                    return true;
+                }
+                else{
+                    message.setText("This server does not correspond to this app");
+                }
             }else{
                 message.setText("Server not found");
             }
