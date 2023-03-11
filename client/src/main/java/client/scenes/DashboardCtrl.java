@@ -6,12 +6,16 @@ import commons.Card;
 import commons.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
@@ -27,7 +31,6 @@ public class DashboardCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     @FXML
     private Button logOut;
-
     private String currentBoard;
 
     @FXML
@@ -63,9 +66,18 @@ public class DashboardCtrl implements Initializable {
         mainCtrl.switchRegistration();
     }
 
+
     public void refresh() {
         addLists(server.getLists());
-        hboxList.getChildren().add(new Button("Create List"));
+//        addPanels(server.getPanels());
+        Button addListButton = new Button("Create List");
+        VBox vboxEnd = new VBox();
+        vboxEnd.getChildren().add(addListButton);
+        hboxList.getChildren().add(vboxEnd);
+        addListButton.setOnAction(e -> {
+            createList(vboxEnd);
+        });
+
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
     }
@@ -74,47 +86,73 @@ public class DashboardCtrl implements Initializable {
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
-            label.setFont(Font.font(20));
-            Button addTaskButton = new Button("+");
+            HBox hboxButtons = new HBox();
+            Button delete = new Button("Delete List");
 
-            ListView<String>listView = new ListView<>();
-            
+            // Here is code for List Name edition
+            label.setOnMouseClicked(e ->{
+                if (e.getClickCount() == 2) {
+
+                    System.out.println("Label was double-clicked!");
+                    TextField textField = new TextField(label.getText());
+
+                    int labelIndex = vBox.getChildren().indexOf(label);
+                    vBox.getChildren().remove(labelIndex);
+                    vBox.getChildren().add(labelIndex, textField);
+
+                    textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                        if (!newValue) {
+                            // Update the label with the text from the TextField when it loses focus
+                            String newText = textField.getText();
+                            listCurr.name= newText;
+                            label.setText(listCurr.name);
+                            vBox.getChildren().remove(textField);
+                            vBox.getChildren().add(labelIndex, label);
+                        }
+                    });
+                }
+            });
+            // Add Card Button
+            label.setFont(Font.font(20));
+            Button addTaskButton = new Button("Add Task");
+            addTaskButton.setOnAction(e -> {
+                mainCtrl.switchTaskCreation();
+            });
+            ListView<Card>listView = new ListView<>();
             // Call the method that sets the cell factory review.
             setFactory(listView);
-            
-            //Create a card
+
+            // Delete List Button
+            delete.setOnAction(e -> {
+                vBox.getChildren().clear();
+                // add something to delete the list form tables
+            });
+
+            //Create a list
             vBox.getChildren().add(label);
             vBox.getChildren().add(listView);
-            vBox.getChildren().add(addTaskButton);
-            
-            
-            // Set the card in our lists
-            java.util.List<Card> cardlist = listCurr.cards;
-            var descriptions = cardlist.stream().map(x -> x.description).collect(Collectors.toList());
-            listView.setItems(FXCollections.observableList(descriptions));
-            hboxList.getChildren().add(vBox);
-            
-            // Make the card have a specified height and width
-            Screen screen = Screen.getPrimary();
-            Rectangle2D bounds = screen.getVisualBounds();
-            double screenHeight = bounds.getHeight();
-            double screenWidth= bounds.getWidth();
-            VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
-            vBox.setMaxWidth(250);
-            listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
-        
+            vBox.getChildren().add(hboxButtons);
+            hboxButtons.getChildren().add(addTaskButton);
+            hboxButtons.getChildren().add(delete);
+
+            addCards(listCurr, vBox, listView);
         }
     }
-    
-
 
     private void setFactory(ListView list){
-        list.setCellFactory(q -> new ListCell<String>() {
+        list.setCellFactory(q -> new ListCell<Card>() {
             @Override
-            protected void updateItem(String q, boolean bool) {
+            protected void updateItem(Card q, boolean bool) {
                 super.updateItem(q, bool);
-
-                setText(q);
+                if(bool) {
+                    setText("");
+                }
+                else{
+                    setText(q.description);
+                    setOnMouseClicked(event -> {
+                        mainCtrl.switchTaskView(q);
+                    });
+                }
                 double size = 100; // Adjust this value to change the size of the cells
                 setMinHeight(size);
                 setMaxHeight(size);
@@ -122,8 +160,63 @@ public class DashboardCtrl implements Initializable {
                 setMinWidth(size);
                 setMaxWidth(size);
                 setPrefWidth(size);
+
             }
         });
     }
 
+    public void createBoard(ActionEvent actionEvent) {
+        mainCtrl.switchCreateBoard();
+        System.out.println("new Board");
+    }
+
+    public void createList(VBox vboxEnd){
+        if(vboxEnd.getChildren().size()>1){
+            ObservableList<Node> children = vboxEnd.getChildren();
+            int numChildren = children.size();
+            children.remove(numChildren - 1);
+            children.remove(numChildren - 2);
+        }
+        TextField textField = new TextField("Enter List Name");
+        Region spacer = new Region();
+        spacer.setPrefHeight(10);
+        vboxEnd.getChildren().add(spacer);
+        vboxEnd.getChildren().add(textField);
+
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                String newText = textField.getText();
+                //send the text to the database
+                vboxEnd.getChildren().remove(textField);
+                vboxEnd.getChildren().remove(spacer);
+            }
+        });
+
+        textField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                String newText = textField.getText();
+                //send the text to the database
+                vboxEnd.getChildren().remove(textField);
+                vboxEnd.getChildren().remove(spacer);
+            }
+        });
+    }
+
+
+    public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
+        java.util.List<Card> cardlist = list.cards;
+        listView.setItems(FXCollections.observableList(cardlist));
+        hboxList.getChildren().add(vBox);
+
+        // Make the card have a specified height and width
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        double screenHeight = bounds.getHeight();
+        double screenWidth= bounds.getWidth();
+        VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
+        vBox.setMaxWidth(250);
+        listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
+    }
+
 }
+

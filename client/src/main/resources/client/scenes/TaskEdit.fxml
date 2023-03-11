@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.TaskView">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.TaskEditCtrl">
    <children>
       <Button layoutX="16.0" layoutY="322.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" style="-fx-border-style: none; -fx-background-color: #d3d3d3; -fx-cursor: pointer; -fx-underline: false; -fx-padding: 0; -fx-margin: 0;" stylesheets="@../../CSS/stylesheet.css" text="Edit" />
       <Text layoutX="26.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="122.13672256469727">
@@ -19,9 +19,9 @@
       <Button id="edit-button" layoutX="519.0" layoutY="322.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" stylesheets="@../../CSS/stylesheet.css" text="Delete" />
       <Pane layoutX="16.0" layoutY="108.0" prefHeight="194.0" prefWidth="567.0" style="-fx-background-color: #d3d3d3; -fx-padding: 10px; -fx-border-radius: 10px;">
          <children>
-            <TextArea prefHeight="194.0" prefWidth="567.0" />
+            <TextArea fx:id="description" prefHeight="194.0" prefWidth="567.0" />
          </children>
       </Pane>
-      <TextArea layoutX="16.0" layoutY="24.0" prefHeight="40.0" prefWidth="567.0" />
+      <TextArea fx:id="name" layoutX="16.0" layoutY="24.0" prefHeight="40.0" prefWidth="567.0" />
    </children>
 </AnchorPane>

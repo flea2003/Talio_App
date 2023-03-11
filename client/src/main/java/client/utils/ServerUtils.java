@@ -15,6 +15,7 @@
  */
 package client.utils;
 
+import commons.Board;
 import commons.Card;
 import commons.Quote;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -199,10 +200,12 @@ public class ServerUtils {
     }
 
     public List<commons.List> getLists(){
+
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(SERVER).path("api/lists") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .get(new GenericType<List<commons.List>>() {});
+
     }
 }

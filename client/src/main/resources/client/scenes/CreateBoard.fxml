@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CreateBoardCtrl">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="600.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Create a Board" textAlignment="CENTER" wrappingWidth="598.936767578125">
+               <font>
+                  <Font size="27.0" />
+               </font>
+               <HBox.margin>
+                  <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+               </HBox.margin>
+            </Text>
+         </children>
+      </HBox>
+      <HBox layoutX="260.0" layoutY="174.0" prefHeight="36.0" prefWidth="138.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Board Name" textAlignment="CENTER" wrappingWidth="107.83441162109375">
+               <HBox.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+      <Button layoutX="277.0" layoutY="313.0" mnemonicParsing="false" onAction="#goBack" prefHeight="36.0" prefWidth="106.0" text="Cancel" />
+      <Button fx:id="buttonCreate" layoutX="277.0" layoutY="250.0" mnemonicParsing="false" onAction="#processClick" prefHeight="36.0" prefWidth="106.0" text="Create" />
+      <TextField fx:id="create" layoutX="277.0" layoutY="215.0" prefHeight="25.0" prefWidth="106.0" />
+      <HBox layoutX="1.0" layoutY="371.0" prefHeight="48.0" prefWidth="659.0">
+         <children>
+            <Text fx:id="error" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="627.1999690532684">
+               <HBox.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </HBox.margin>
+            </Text>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

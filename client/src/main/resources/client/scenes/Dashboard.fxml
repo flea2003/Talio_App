@@ -56,7 +56,7 @@
                   <Font name="Serif Bold Italic" size="12.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" style="-fx-background-color: #00000000;" text="Create Board">
+            <Button mnemonicParsing="false" onAction="#createBoard" style="-fx-background-color: #00000000;" text="Create Board">
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>

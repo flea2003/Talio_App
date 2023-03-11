@@ -42,9 +42,16 @@ public class Main extends Application {
         var serverConnect=FXML.load(ServerConnectCtrl.class,"client","scenes","ServerConnect.fxml");
         var registration = FXML.load(RegistrationCtrl.class, "client", "scenes", "Registration.fxml");
         var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
+        var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
         var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
+        var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+        var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
+
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize(primaryStage, overview, add, serverConnect, registration, dashboard, taskCreation);
+
+        mainCtrl.initialize(primaryStage, overview, add, serverConnect, registration,
+                dashboard, board, taskCreation, taskView, taskEdit);
+
     }
 
 }
