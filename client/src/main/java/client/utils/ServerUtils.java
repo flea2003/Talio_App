@@ -15,6 +15,7 @@
  */
 package client.utils;
 
+import com.google.inject.Provides;
 import commons.Board;
 import commons.Card;
 import commons.Quote;
@@ -35,14 +36,14 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
 
-    private static String SERVER ="http://localhost:8080/";
+    private String SERVER;
 
-//    @Inject
-//    public ServerUtils(String server){
-//        SERVER=server;
-//    }
+    @Inject
+    public ServerUtils(String server){
+        SERVER=server;
+    }
 
-    public static void setSERVER(String server){
+    public void setSERVER(String server){
         SERVER=server;
         System.out.println(SERVER);
     }
@@ -200,7 +201,7 @@ public class ServerUtils {
     }
 
     public List<commons.List> getLists(){
-
+        System.out.println(SERVER);
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(SERVER).path("api/lists") //
                 .request(APPLICATION_JSON) //

@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import client.utils.ServerUtils;
 import commons.Card;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -45,7 +46,7 @@ public class MainCtrl {
     private  ServerConnectCtrl serverCtrl;
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
                            Pair<AddQuoteCtrl, Parent> add,
-                           Pair<ServerConnectCtrl, Parent> serverConnect,
+                           Scene server, ServerConnectCtrl serverConnectCtrl,
                            Pair<RegistrationCtrl, Parent> registration,
                            Pair<DashboardCtrl, Parent> dashboard,
                            Pair<CreateBoardCtrl, Parent> board,
@@ -77,14 +78,11 @@ public class MainCtrl {
         this.taskCreation = new Scene(taskCreation.getValue());
         this.taskCreationCtrl = taskCreation.getKey();
 
-        this.server=new Scene(serverConnect.getValue());
-        this.serverCtrl= serverConnect.getKey();
+        this.server=server;
+        this.serverCtrl= serverCtrl;
 
-        switchServer();
-        primaryStage.show();
-
+        switchDashboard("");
     }
-
 
     public void showOverview() {
         primaryStage.setTitle("Quotes: Overview");

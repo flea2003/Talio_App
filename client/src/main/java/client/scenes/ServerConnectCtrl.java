@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import com.google.inject.Provides;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.net.*;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 
 public class ServerConnectCtrl {
@@ -31,18 +33,19 @@ public class ServerConnectCtrl {
         this.mainCtrl = mainCtrl;
     }
 
-    public void connectToTheServer(javafx.event.ActionEvent event){
+    public boolean connectToTheServer(javafx.event.ActionEvent event) throws IOException {
         if(event.getSource() == connectButton) {
             String server=serverAddress.getText();
             message.setText("Searching for Server...");
             if(serverExists(server)){
                 message.setText("Connecting to the Server...");
-                ServerUtils.setSERVER(serverAddress.getText());
-                mainCtrl.switchDashboard("");
+                this.server.setSERVER(serverAddress.getText());
+                return true;
             }else{
                 message.setText("Server not found");
             }
         }
+        return false;
     }
 
     public boolean serverExists(String server){
