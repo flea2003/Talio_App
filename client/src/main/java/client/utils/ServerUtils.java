@@ -22,6 +22,7 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import org.glassfish.jersey.client.ClientConfig;
 
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,6 +35,11 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 public class ServerUtils {
 
     private static String SERVER ="http://localhost:8080/";
+
+//    @Inject
+//    public ServerUtils(String server){
+//        SERVER=server;
+//    }
 
     public static void setSERVER(String server){
         SERVER=server;
@@ -198,6 +204,5 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .get(new GenericType<List<commons.List>>() {});
-
     }
 }
