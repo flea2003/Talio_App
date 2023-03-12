@@ -3,9 +3,12 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Provides;
 import javafx.fxml.FXML;
+import javafx.fxml.LoadException;
 import javafx.scene.text.Text;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.*;
 
 import javax.inject.Inject;
@@ -37,19 +40,14 @@ public class ServerConnectCtrl {
         this.mainCtrl = mainCtrl;
     }
 
-    public boolean connectToTheServer(javafx.event.ActionEvent event) throws IOException {
+    public boolean connectToTheServer(javafx.event.ActionEvent event) {
         if(event.getSource() == connectButton) {
             String server=serverAddress.getText();
             message.setText("Searching for Server...");
             if(serverExists(server)){
-                if(serverExists(server+"api/boards")) {
-                    message.setText("Connecting to the Server...");
-                    this.server.setSERVER(serverAddress.getText());
-                    return true;
-                }
-                else{
-                    message.setText("This server does not correspond to this app");
-                }
+                message.setText("Connecting to the Server...");
+                this.server.setSERVER(serverAddress.getText());
+                return true;
             }else{
                 message.setText("Server not found");
             }
@@ -60,9 +58,25 @@ public class ServerConnectCtrl {
     public boolean serverExists(String server){
         try{
             HttpURLConnection con = (HttpURLConnection) new URL(server).openConnection();
+            con.setRequestMethod("GET");
             int responseCode = con.getResponseCode();
+
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                return true;
+
+                BufferedReader reader=new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String response="";
+                String nextline=reader.readLine();
+
+                while(nextline!=null){
+                    response+=nextline;
+                    nextline=reader.readLine();
+                }
+
+                reader.close();
+
+                if(response.contains("Talio app")){
+                    return true;
+                }
             }
         } catch (IOException e) {
             return false;
