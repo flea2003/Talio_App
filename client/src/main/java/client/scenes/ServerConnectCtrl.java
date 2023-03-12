@@ -44,12 +44,10 @@ public class ServerConnectCtrl {
         if(event.getSource() == connectButton) {
             String server=serverAddress.getText();
             message.setText("Searching for Server...");
-            if(serverExists(server)){
+            if(serverExists(server)) {
                 message.setText("Connecting to the Server...");
                 this.server.setSERVER(serverAddress.getText());
                 return true;
-            }else{
-                message.setText("Server not found");
             }
         }
         return false;
@@ -76,9 +74,14 @@ public class ServerConnectCtrl {
 
                 if(response.contains("Talio app")){
                     return true;
+                }else{
+                    message.setText("This server does not belong to a Talio app");
                 }
+            }else{
+                message.setText("Server not found");
             }
         } catch (IOException e) {
+            message.setText("Server not found");
             return false;
         }
         return false;
