@@ -55,6 +55,11 @@ public class ServerConnectCtrl {
 
     public boolean serverExists(String server){
         try{
+            if(server.charAt(server.length()-1)!=58){
+               server+=":";
+            }
+            server+="8080";
+
             HttpURLConnection con = (HttpURLConnection) new URL(server).openConnection();
             con.setRequestMethod("GET");
             int responseCode = con.getResponseCode();
