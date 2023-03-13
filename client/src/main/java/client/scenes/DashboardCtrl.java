@@ -77,6 +77,7 @@ public class DashboardCtrl implements Initializable {
         addListButton.setOnAction(e -> {
             createList(vboxEnd);
         });
+
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
     }

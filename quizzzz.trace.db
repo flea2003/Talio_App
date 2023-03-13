@@ -1231,3 +1231,6 @@ select * from user_username [42102-200]
 2023-03-08 16:49:29 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP ALL TABLES[*]"; expected "OBJECTS"; SQL statement:
 drop all tables [42001-200]
+2023-03-11 16:29:07 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM CARD LIST CARD[*]"; SQL statement:
+SELECT * FROM CARD LIST CARD [42000-200]

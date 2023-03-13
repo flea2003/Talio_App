@@ -15,17 +15,22 @@
  */
 package client.utils;
 
+import client.scenes.MainCtrl;
+import client.scenes.ServerConnectCtrl;
+import com.google.inject.Provides;
 import commons.Board;
 import commons.Card;
 import commons.Quote;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import org.glassfish.jersey.client.ClientConfig;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.inject.Inject;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +39,17 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
 
-    private static final String SERVER = "http://localhost:8080/";
+    private String SERVER;
+
+    @Inject
+    public ServerUtils(String server){
+        SERVER=server;
+    }
+
+    public void setSERVER(String server){
+        SERVER=server;
+        System.out.println(SERVER);
+    }
 
     public void getQuotesTheHardWay() throws IOException {
         var url = new URL("http://localhost:8080/api/quotes");
@@ -187,7 +202,6 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .delete(new GenericType<commons.Board>() {});
     }
-
     public List<commons.List> getLists(){
         List<commons.List>list = new ArrayList<>();
         ArrayList<Card> cards = new ArrayList<>();
