@@ -81,6 +81,7 @@ public class DashboardCtrl implements Initializable {
 
     private void addLists(java.util.List<List>list){
         for(List listCurr : list){
+            System.out.println(listCurr.cards.size());
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
             HBox hboxButtons = new HBox();
@@ -113,7 +114,7 @@ public class DashboardCtrl implements Initializable {
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
             addTaskButton.setOnAction(e -> {
-                mainCtrl.switchTaskCreation();
+                mainCtrl.switchTaskCreation(listCurr);
             });
             ListView<Card>listView = new ListView<>();
             // Call the method that sets the cell factory review.

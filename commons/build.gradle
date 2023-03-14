@@ -2,4 +2,6 @@
 
 dependencies {
 	implementation group: 'jakarta.persistence', name: 'jakarta.persistence-api', version: '2.2.3'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.5'
+
 }

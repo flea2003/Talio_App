@@ -1,5 +1,8 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -15,9 +18,8 @@ public class List {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
-
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="card_id")
+    @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
+    @JsonManagedReference
     public java.util.List<Card> cards;
 
     public String name;

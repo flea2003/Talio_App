@@ -17,7 +17,7 @@ public class Board {
     public long id;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="list_id")
+    @JoinColumn(name="board_id")
     public java.util.List<List> lists;
 
     public String name;
