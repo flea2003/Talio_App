@@ -56,17 +56,7 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        new Timer().scheduleAtFixedRate(new TimerTask() {
-//            @Override
-//            public void run() {
-//                refresh();
-//            }
-//        }, 0, 1000);
         refresh();
-//        colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
-//        colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
-//        colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));
-
     }
 
     public void logOut(){
@@ -75,8 +65,8 @@ public class DashboardCtrl implements Initializable {
 
 
     public void refresh() {
+        hboxList.getChildren().clear();
         addLists(server.getLists());
-//        addPanels(server.getPanels());
         Button addListButton = new Button("Create List");
         VBox vboxEnd = new VBox();
         vboxEnd.getChildren().add(addListButton);
@@ -231,5 +221,9 @@ public class DashboardCtrl implements Initializable {
         main.start(new Stage());
     }
 
+    @FXML
+    public void refreshDashboard(){
+        mainCtrl.switchDashboard("");
+    }
 }
 
