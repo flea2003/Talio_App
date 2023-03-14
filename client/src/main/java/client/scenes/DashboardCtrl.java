@@ -168,21 +168,18 @@ public class DashboardCtrl implements Initializable {
                     }
 //
                     draggedCard = this;
+
                     Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                    //we dont really need to use clipboard as our stuff are objects
-//                    ClipboardContent content = new ClipboardContent();
-//                    content.putString(getItem());
-//                    content.put(Card, this);
+                    ClipboardContent content = new ClipboardContent();
 
-                    dragboard.setDragView( new Image()
-
-                    );
-//                    dragboard.setContent(content);
+                    content.putString(getItem().name);
+                    dragboard.setContent(content);
 
                     event.consume();
                 });
 
                 setOnDragOver(event -> {
+                    System.out.println("testing dummer");
                     if (event.getGestureSource() != thisCell
 //                            && event.getDragboard().hasString()
                     ) {
@@ -206,9 +203,9 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragDropped(event -> {
-                    if (getItem() == null) {
-                        return;
-                    }
+//                    if (getItem() == null) {
+//                        return;
+//                    }
 
 //                    Dragboard db = event.getDragboard();
 
@@ -219,11 +216,13 @@ public class DashboardCtrl implements Initializable {
                         int dropIndex = this.getIndex();
 
                         if (dropIndex >= 0 && dropIndex != sourceIndex) {
-//                            Object item = sourceItems.remove(sourceIndex);
+                            sourceItems.remove(sourceIndex);
+                            this.getListView().getItems().add(dropIndex, draggedCard.getItem());
                             System.out.println("fucking works");
+
                         }
 //                            this.getListView().getItems().add(dropIndex, draggedCard.getItem());
-
+//                        draggedCard = null;
                     }
                     event.setDropCompleted(true);
 
