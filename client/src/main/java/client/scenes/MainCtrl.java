@@ -84,6 +84,10 @@ public class MainCtrl {
         switchDashboard("");
     }
 
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
     public void showOverview() {
         primaryStage.setTitle("Quotes: Overview");
         primaryStage.setScene(overview);
