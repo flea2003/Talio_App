@@ -32,6 +32,7 @@ public class MainCtrl {
     private RegistrationCtrl regCtrl;
     private TaskViewCtrl taskViewCtrl;
     private TaskCreationCtrl taskCreationCtrl;
+    private DashboardCtrl dashboardCtrl;
     private Scene registration;
     private CreateBoardCtrl boardCtrl;
     private Scene board;
@@ -64,6 +65,8 @@ public class MainCtrl {
         this.add = new Scene(add.getValue());
 
         this.registration = new Scene(registration.getValue());
+
+        this.dashboardCtrl = dashboard.getKey();
         this.dashboard = new Scene(dashboard.getValue());
 
         this.board = new Scene(board.getValue());
@@ -117,7 +120,9 @@ public class MainCtrl {
      * @param user
      */
     public void switchDashboard(String user){
+        System.out.println("SWITCH TO DASHBOARD");
         primaryStage.setTitle("Dashboard");
+        dashboardCtrl.refresh();
         primaryStage.setScene(dashboard);
     }
 
@@ -148,5 +153,6 @@ public class MainCtrl {
         System.out.println(q);
         taskEditCtrl.renderInfo(q);
     }
+
 
 }
