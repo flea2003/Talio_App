@@ -48,7 +48,7 @@
    <bottom>
       <HBox BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" style="-fx-background-color: #00000000;" text="Connect">
+            <Button fx:id="disconnectButton" mnemonicParsing="false" onAction="#serverDisconnect" style="-fx-background-color: #00000000;" text="Disconnect">
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>

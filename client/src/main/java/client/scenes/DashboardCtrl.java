@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Card;
@@ -19,6 +20,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,6 +29,8 @@ import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 public class DashboardCtrl implements Initializable {
+
+    private Main main;
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     @FXML
@@ -41,8 +45,11 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private ScrollPane pane;
 
+    @FXML
+    private Button disconnectButton;
     @Inject
-    public DashboardCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
+        this.main=main;
         this.mainCtrl = mainCtrl;
         this.server = server;
     }
@@ -216,6 +223,12 @@ public class DashboardCtrl implements Initializable {
         VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
         vBox.setMaxWidth(250);
         listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
+    }
+
+    @FXML
+    public void serverDisconnect(){
+        mainCtrl.getPrimaryStage().close();
+        main.start(new Stage());
     }
 
 }
