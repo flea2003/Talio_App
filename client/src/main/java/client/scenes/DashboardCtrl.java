@@ -183,7 +183,7 @@ public class DashboardCtrl implements Initializable {
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
                 String newText = textField.getText();
-                //send the text to the database
+                server.addList(new List(newText));//send the text to the database
                 vboxEnd.getChildren().remove(textField);
                 vboxEnd.getChildren().remove(spacer);
             }

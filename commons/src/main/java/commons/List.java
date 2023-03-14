@@ -35,6 +35,10 @@ public class List {
         // for object mapper
     }
 
+    public List(String name){
+        this.name=name;
+    }
+
     public List(long id, ArrayList<Card>  cards, String name, Board board) {
         this.id = id;
         this.name = name;

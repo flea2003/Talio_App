@@ -43,10 +43,15 @@ public class ServerConnectCtrl {
     public boolean connectToTheServer(javafx.event.ActionEvent event) {
         if(event.getSource() == connectButton) {
             String server=serverAddress.getText();
+            if(server.charAt(server.length()-1)!=58){
+                server+=":";
+            }
+            server+="8080";
+
             message.setText("Searching for Server...");
             if(serverExists(server)) {
                 message.setText("Connecting to the Server...");
-                this.server.setSERVER(serverAddress.getText());
+                this.server.setSERVER(server);
                 return true;
             }
         }
@@ -55,11 +60,6 @@ public class ServerConnectCtrl {
 
     public boolean serverExists(String server){
         try{
-            if(server.charAt(server.length()-1)!=58){
-               server+=":";
-            }
-            server+="8080";
-
             HttpURLConnection con = (HttpURLConnection) new URL(server).openConnection();
             con.setRequestMethod("GET");
             int responseCode = con.getResponseCode();
