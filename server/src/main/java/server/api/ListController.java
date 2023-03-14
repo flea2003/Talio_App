@@ -26,17 +26,17 @@ public class ListController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<commons.List> getById(@PathVariable("id") long id) {
+    public commons.List getById(@PathVariable("id") long id) {
         if (id < 0 || !repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return null;
         }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return repo.findById(id).get();
     }
 
     @PostMapping(path = { "", "/" })
     public ResponseEntity<commons.List> add(@RequestBody commons.List list) {
 
-        if (list.name == null) {
+        if (list.name == null|| list.name.strip().length()==0) {
             return ResponseEntity.badRequest().build();
         }
         commons.List saved = repo.save(list);
@@ -50,18 +50,19 @@ public class ListController {
             return ResponseEntity.badRequest().build();
         }
         commons.List list=repo.getById(id);
-        repo.delete(Objects.requireNonNull(getById(id).getBody()));
+        repo.delete(Objects.requireNonNull(getById(id)));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/changeName/{id}")
     public ResponseEntity<commons.List> changeName(@PathVariable("id") long id, @RequestBody String name){
 
-        if (id < 0 || !repo.existsById(id)) {
+        if (id < 0 || !repo.existsById(id) || name == null || name.trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         commons.List list=repo.getById(id);
         repo.getById(id).setName(name);
+        repo.save(list);
         return ResponseEntity.ok(list);
     }
 

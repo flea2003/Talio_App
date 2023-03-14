@@ -140,14 +140,24 @@ public class ServerUtils {
                 .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
     }
 
-    public commons.List updateList(commons.List list){
-        String endpoint = String.format("api/lists/changeName/%2d", list.id);
+    public commons.List updateList(commons.List list,String name){
+        String endpoint = String.format("/api/lists/changeName/%d", list.id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
+                .post(Entity.entity(name, APPLICATION_JSON), commons.List.class);
     }
+
+    public commons.List getListById(long id){
+        String endpoint = String.format("/api/lists/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(commons.List.class);
+    }
+
 
     public commons.List deleteList(long id){
         String endpoint = String.format("api/lists/delete/%2d", id);

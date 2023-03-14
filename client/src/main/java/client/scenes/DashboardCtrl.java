@@ -8,6 +8,7 @@ import commons.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -15,6 +16,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -24,15 +26,14 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.stream.Collectors;
 
 public class DashboardCtrl implements Initializable {
 
     private Main main;
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
+    private commons.List list;
     @FXML
     private Button logOut;
     private String currentBoard;
@@ -48,10 +49,11 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private Button disconnectButton;
     @Inject
-    public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
+    public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl,commons.List list) {
         this.main=main;
         this.mainCtrl = mainCtrl;
         this.server = server;
+        this.list=list;
     }
 
     @Override
@@ -83,32 +85,26 @@ public class DashboardCtrl implements Initializable {
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
+
+            label.setUserData(listCurr.getID()); // set the list id as the label's UserData
+
             HBox hboxButtons = new HBox();
             Button delete = new Button("Delete List");
+            Button edit=new Button("Edit List");
 
-            // Here is code for List Name edition
+            //edit list using double-click
             label.setOnMouseClicked(e ->{
                 if (e.getClickCount() == 2) {
-
                     System.out.println("Label was double-clicked!");
-                    TextField textField = new TextField(label.getText());
-
-                    int labelIndex = vBox.getChildren().indexOf(label);
-                    vBox.getChildren().remove(labelIndex);
-                    vBox.getChildren().add(labelIndex, textField);
-
-                    textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                        if (!newValue) {
-                            // Update the label with the text from the TextField when it loses focus
-                            String newText = textField.getText();
-                            listCurr.name= newText;
-                            label.setText(listCurr.name);
-                            vBox.getChildren().remove(textField);
-                            vBox.getChildren().add(labelIndex, label);
-                        }
-                    });
+                    editList(vBox,label,listCurr);
                 }
             });
+
+            //edit list using edit button
+            edit.setOnAction(e->{
+                editList(vBox,label,listCurr);
+            });
+
             // Add Card Button
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
@@ -121,8 +117,7 @@ public class DashboardCtrl implements Initializable {
 
             // Delete List Button
             delete.setOnAction(e -> {
-                vBox.getChildren().clear();
-                // add something to delete the list form tables
+                server.deleteList((Long) label.getUserData());
             });
 
             //Create a list
@@ -131,10 +126,28 @@ public class DashboardCtrl implements Initializable {
             vBox.getChildren().add(hboxButtons);
             hboxButtons.getChildren().add(addTaskButton);
             hboxButtons.getChildren().add(delete);
+            hboxButtons.getChildren().add(edit);
 
             addCards(listCurr, vBox, listView);
         }
     }
+
+    private void editList(VBox vBox, Label label, List listCurr) {
+        TextField textField = new TextField(label.getText());
+
+        int labelIndex = vBox.getChildren().indexOf(label);
+        vBox.getChildren().remove(labelIndex);
+        vBox.getChildren().add(labelIndex, textField);
+
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                //update the database with the changes
+                server.updateList(server.getListById((Long) label.getUserData()),textField.getText());
+            }
+        });
+    }
+
+
 
     private void setFactory(ListView list){
         list.setCellFactory(q -> new ListCell<Card>() {
@@ -181,20 +194,25 @@ public class DashboardCtrl implements Initializable {
         vboxEnd.getChildren().add(textField);
 
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                String newText = textField.getText();
-                server.addList(new List(newText));//send the text to the database
-                vboxEnd.getChildren().remove(textField);
-                vboxEnd.getChildren().remove(spacer);
+            if (newValue) {
+                textField.setText("");
+            }else{
+                if(textField.getText().strip().length()!=0) {
+                    String newText = textField.getText();
+
+                    server.addList(new List(newText));//send the text to the database
+
+                    vboxEnd.getChildren().remove(textField);
+                    vboxEnd.getChildren().remove(spacer);
+                }
             }
         });
 
         textField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                String newText = textField.getText();
-                //send the text to the database
-                vboxEnd.getChildren().remove(textField);
-                vboxEnd.getChildren().remove(spacer);
+                    String newText = textField.getText();
+                    vboxEnd.getChildren().remove(textField);
+                    vboxEnd.getChildren().remove(spacer);
             }
         });
     }
