@@ -13,7 +13,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -36,10 +40,12 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private HBox hboxList;
 
-    private ObservableList<List> data;
+    private List data;
 
     @FXML
     private ScrollPane pane;
+
+    private ListCell<Card> draggedCard;
 
     @Inject
     public DashboardCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -55,6 +61,8 @@ public class DashboardCtrl implements Initializable {
 //                refresh();
 //            }
 //        }, 0, 1000);
+
+//        data = server.getLists();
         refresh();
 //        colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
 //        colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
@@ -68,6 +76,7 @@ public class DashboardCtrl implements Initializable {
 
 
     public void refresh() {
+        //changed so I can implement drag and drop
         addLists(server.getLists());
 //        addPanels(server.getPanels());
         Button addListButton = new Button("Create List");
@@ -140,18 +149,89 @@ public class DashboardCtrl implements Initializable {
 
     private void setFactory(ListView list){
         list.setCellFactory(q -> new ListCell<Card>() {
+            ListCell thisCell = this;
             @Override
-            protected void updateItem(Card q, boolean bool) {
-                super.updateItem(q, bool);
-                if(bool) {
+            protected void updateItem(Card q, boolean empty) {
+                super.updateItem(q, empty);
+                if (empty) {
                     setText("");
-                }
-                else{
+                } else {
                     setText(q.description);
                     setOnMouseClicked(event -> {
                         mainCtrl.switchTaskView(q);
                     });
                 }
+                setOnDragDetected(event -> {
+                    System.out.println("It only reaches here on start");
+                    if (getItem() == null) {
+                        return;
+                    }
+//
+                    draggedCard = this;
+                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                    //we dont really need to use clipboard as our stuff are objects
+//                    ClipboardContent content = new ClipboardContent();
+//                    content.putString(getItem());
+//                    content.put(Card, this);
+
+                    dragboard.setDragView( new Image()
+
+                    );
+//                    dragboard.setContent(content);
+
+                    event.consume();
+                });
+
+                setOnDragOver(event -> {
+                    if (event.getGestureSource() != thisCell
+//                            && event.getDragboard().hasString()
+                    ) {
+                        event.acceptTransferModes(TransferMode.MOVE);
+                    }
+
+                    event.consume();
+                });
+
+                setOnDragEntered(event -> {
+                    System.out.println("testing dummy");
+                    if (event.getGestureSource() != thisCell) {
+                        setOpacity(0.3);
+                    }
+                });
+
+                setOnDragExited(event -> {
+                    if (event.getGestureSource() != thisCell) {
+                        setOpacity(1);
+                    }
+                });
+
+                setOnDragDropped(event -> {
+                    if (getItem() == null) {
+                        return;
+                    }
+
+//                    Dragboard db = event.getDragboard();
+
+                    if (draggedCard != null) {
+                        var sourceListView = draggedCard.getListView();
+                        var sourceItems = sourceListView.getItems();
+                        int sourceIndex = draggedCard.getIndex();
+                        int dropIndex = this.getIndex();
+
+                        if (dropIndex >= 0 && dropIndex != sourceIndex) {
+//                            Object item = sourceItems.remove(sourceIndex);
+                            System.out.println("fucking works");
+                        }
+//                            this.getListView().getItems().add(dropIndex, draggedCard.getItem());
+
+                    }
+                    event.setDropCompleted(true);
+
+                    event.consume();
+                });
+
+//                setOnDragDone(DragEvent::consume);
+
                 double size = 100; // Adjust this value to change the size of the cells
                 setMinHeight(size);
                 setMaxHeight(size);
@@ -159,10 +239,17 @@ public class DashboardCtrl implements Initializable {
                 setMinWidth(size);
                 setMaxWidth(size);
                 setPrefWidth(size);
-
             }
-        });
+            });
     }
+
+//private void updateList
+//    private class CardCell extends ListCell<Card> {
+//        private Card card;
+//        public CardCell (Card card){
+//            card =
+//        }
+//    }
 
     public void createBoard(ActionEvent actionEvent) {
         mainCtrl.switchCreateBoard();

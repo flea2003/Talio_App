@@ -191,6 +191,9 @@ public class ServerUtils {
     public List<commons.List> getLists(){
         List<commons.List>list = new ArrayList<>();
         ArrayList<Card> cards = new ArrayList<>();
+        String test = "hello";
+        test += " world";
+        System.out.println(test);
         cards.add(new Card("Uno Dos", "Card2", null));
         cards.add(new Card("HAHAHHA", "Card3", null));
         cards.add(new Card("Ole", "Card4", null));
