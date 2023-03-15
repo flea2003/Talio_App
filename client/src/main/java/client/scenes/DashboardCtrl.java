@@ -79,6 +79,7 @@ public class DashboardCtrl implements Initializable {
 
     private void addLists(java.util.List<List>list){
         for(List listCurr : list){
+            System.out.println(listCurr.cards.size());
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
 
@@ -105,7 +106,7 @@ public class DashboardCtrl implements Initializable {
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
             addTaskButton.setOnAction(e -> {
-                mainCtrl.switchTaskCreation();
+                mainCtrl.switchTaskCreation(listCurr);
             });
             ListView<Card>listView = new ListView<>();
             // Call the method that sets the cell factory review.
@@ -139,7 +140,7 @@ public class DashboardCtrl implements Initializable {
             if (!newValue) {
                 String txt=textField.getText();
                 //update the database with the changes
-                server.updateList(server.getListById((Long) label.getUserData()),txt);
+                server.updateListName(server.getListById((Long) label.getUserData()),txt);
             }
         });
     }

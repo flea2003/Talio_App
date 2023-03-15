@@ -78,11 +78,10 @@ public class ServerUtils {
     }
 
     public Card addCard(Card card){
-        String endpoint = String.format("api/cards/%2d", card.id);
+        String endpoint = String.format("api/cards", card.id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
+                .request(APPLICATION_JSON).accept(APPLICATION_JSON)
                 .post(Entity.entity(card, APPLICATION_JSON), Card.class);
     }
 
@@ -106,11 +105,12 @@ public class ServerUtils {
 
     public List<commons.List> getLists(){
         String endpoint = String.format("api/lists");
-        return  ClientBuilder.newClient(new ClientConfig())
+        List<commons.List>res =  ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.List>>() {});
+        return res;
     }
 
     public commons.List getList(long id){
@@ -131,8 +131,17 @@ public class ServerUtils {
                 .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
     }
 
-    public commons.List updateList(commons.List list,String name){
-        String endpoint = String.format("/api/lists/changeName/%d", list.id);
+    public commons.List updateList(commons.List list){
+        String endpoint = String.format("api/lists/update");
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
+    }
+
+    public commons.List updateListName(commons.List list,String name){
+        String endpoint = String.format("api/lists/changeName/%d", list.id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
