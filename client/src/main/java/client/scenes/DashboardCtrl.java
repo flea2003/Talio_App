@@ -122,7 +122,7 @@ public class DashboardCtrl implements Initializable {
                     });
                 }
             });
-            
+
             // Add Card Button
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
