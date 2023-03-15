@@ -127,24 +127,6 @@ public class DashboardCtrl implements Initializable {
                 mainCtrl.switchTaskCreation();
             });
             ListView<Card>listView = new ListView<>();
-            listView.setOnDragDropped(event -> {
-
-
-                if (draggedCard != null) {
-                    var sourceListView = draggedCard.getListView();
-                    var sourceItems = sourceListView.getItems();
-                    int sourceIndex = draggedCard.getIndex();
-
-                    Card removed = sourceItems.remove(sourceIndex);
-                    listView.getItems().add(removed);
-
-
-//                        }
-                }
-                event.setDropCompleted(true);
-
-                event.consume();
-            });
             // Call the method that sets the cell factory review.
             setFactory(listView);
 
@@ -167,7 +149,6 @@ public class DashboardCtrl implements Initializable {
 
     private void setFactory(ListView list){
         list.setCellFactory(q -> new ListCell<Card>() {
-            ListCell thisCell = this;
             @Override
             protected void updateItem(Card q, boolean empty) {
                 super.updateItem(q, empty);
@@ -180,11 +161,10 @@ public class DashboardCtrl implements Initializable {
                     });
                 }
                 setOnDragDetected(event -> {
-                    System.out.println("It only reaches here on start");
                     if (getItem() == null) {
                         return;
                     }
-//
+
                     draggedCard = this;
 
                     Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
@@ -197,10 +177,7 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragOver(event -> {
-//                    System.out.println("testing dummer");
-                    if (event.getGestureSource() != thisCell
-//                            && event.getDragboard().hasString()
-                    ) {
+                    if (event.getGestureSource() != this) {
                         event.acceptTransferModes(TransferMode.MOVE);
                     }
 
@@ -208,38 +185,32 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragEntered(event -> {
-                    System.out.println("testing dummy");
-                    if (event.getGestureSource() != thisCell) {
+                    if (event.getGestureSource() != this) {
                         setOpacity(0.3);
                     }
                 });
 
                 setOnDragExited(event -> {
-                    if (event.getGestureSource() != thisCell) {
+                    if (event.getGestureSource() != this) {
                         setOpacity(1);
                     }
                 });
 
                 setOnDragDropped(event -> {
-
-
                     if (draggedCard != null) {
                         var sourceListView = draggedCard.getListView();
                         var sourceItems = sourceListView.getItems();
                         int sourceIndex = draggedCard.getIndex();
                         int dropIndex = this.getIndex();
 
-//                        if ( dropIndex != sourceIndex) {
-                            Card removed = sourceItems.remove(sourceIndex);
-                            if(this.getListView() == null)
-                                this.getListView().getItems().add(removed);
-                            else this.getListView().getItems().add(dropIndex, removed);
-                            System.out.println("fucking works");
+                        Card removed = sourceItems.remove(sourceIndex);
 
-//                        }
+                        if(this.getListView() == null)
+                            this.getListView().getItems().add(removed);
+                        else this.getListView().getItems().add(dropIndex, removed);
                     }
-                    event.setDropCompleted(true);
 
+                    event.setDropCompleted(true);
                     event.consume();
                 });
 
@@ -254,7 +225,6 @@ public class DashboardCtrl implements Initializable {
             });
     }
 
-//private void updateList
 //    private class CardCell extends ListCell<Card> {
 //        private Card card;
 //        public CardCell (Card card){
