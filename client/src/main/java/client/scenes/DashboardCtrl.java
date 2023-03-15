@@ -24,6 +24,8 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DashboardCtrl implements Initializable {
 
@@ -54,7 +56,11 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        refresh();
+
+        server.refreshLists("/topic/lists", List.class, l->{
+            System.out.println("LOL");
+            refreshDashboard();
+        });
     }
 
     public void logOut(){
@@ -213,6 +219,9 @@ public class DashboardCtrl implements Initializable {
                     vboxEnd.getChildren().remove(spacer);
             }
         });
+
+//        String text = textField.getText();
+//        server.send("/app/lists",new List(text));
     }
 
 

@@ -5,6 +5,8 @@ import java.util.*;
 import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import server.database.ListRepository;
@@ -36,11 +38,13 @@ public class ListController {
     }
 
     @PostMapping(path = { "", "/" })
+    @SendTo("../../topic/lists")
     public ResponseEntity<commons.List> add(@RequestBody commons.List list) {
 
         if (list.name == null|| list.name.strip().length()==0) {
             return ResponseEntity.badRequest().build();
         }
+        System.out.println("CHECK");
         commons.List saved = repo.save(list);
         return ResponseEntity.ok(saved);
     }
@@ -80,5 +84,13 @@ public class ListController {
         var quotes = repo.findAll();
         var idx = random.nextInt((int) repo.count());
         return ResponseEntity.ok(quotes.get(idx));
+    }
+
+    @MessageMapping("/lists")
+    @SendTo("/topic/lists")
+    public commons.List addList(commons.List list){
+        System.out.println("hello");
+        add(list);
+        return list;
     }
 }
