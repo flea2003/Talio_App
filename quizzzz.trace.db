@@ -1416,3 +1416,6 @@ drop * [42001-200]
 2023-03-14 16:59:16 jdbc[14]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "LIST" not found; SQL statement:
 select list0_.id as id1_2_, list0_.board_id as board_id3_2_, list0_.name as name2_2_ from list list0_ [42102-200]
+2023-03-14 19:19:56 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM BOARD CARD LIST[*]"; SQL statement:
+SELECT * FROM BOARD CARD LIST [42000-200]

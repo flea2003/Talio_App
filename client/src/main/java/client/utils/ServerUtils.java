@@ -17,6 +17,7 @@ package client.utils;
 
 import client.scenes.MainCtrl;
 import client.scenes.ServerConnectCtrl;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.inject.Provides;
 import commons.Board;
 import commons.Card;
@@ -49,16 +50,6 @@ public class ServerUtils {
     public void setSERVER(String server){
         SERVER=server;
         System.out.println(SERVER);
-    }
-
-    public void getQuotesTheHardWay() throws IOException {
-        var url = new URL("http://localhost:8080/api/quotes");
-        var is = url.openConnection().getInputStream();
-        var br = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-        }
     }
 
     public List<Quote> getQuotes() {

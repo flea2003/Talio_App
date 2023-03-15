@@ -8,7 +8,6 @@ import commons.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -16,7 +15,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -33,7 +31,6 @@ public class DashboardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
 
-    private commons.List list;
     @FXML
     private Button logOut;
     private String currentBoard;
@@ -49,11 +46,10 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private Button disconnectButton;
     @Inject
-    public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl,commons.List list) {
+    public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main=main;
         this.mainCtrl = mainCtrl;
         this.server = server;
-        this.list=list;
     }
 
     @Override
@@ -96,13 +92,13 @@ public class DashboardCtrl implements Initializable {
             label.setOnMouseClicked(e ->{
                 if (e.getClickCount() == 2) {
                     System.out.println("Label was double-clicked!");
-                    editList(vBox,label,listCurr);
+                    editList(vBox,label);
                 }
             });
 
             //edit list using edit button
             edit.setOnAction(e->{
-                editList(vBox,label,listCurr);
+                editList(vBox,label);
             });
 
             // Add Card Button
@@ -132,7 +128,7 @@ public class DashboardCtrl implements Initializable {
         }
     }
 
-    private void editList(VBox vBox, Label label, List listCurr) {
+    private void editList(VBox vBox, Label label) {
         TextField textField = new TextField(label.getText());
 
         int labelIndex = vBox.getChildren().indexOf(label);
@@ -141,8 +137,9 @@ public class DashboardCtrl implements Initializable {
 
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
+                String txt=textField.getText();
                 //update the database with the changes
-                server.updateList(server.getListById((Long) label.getUserData()),textField.getText());
+                server.updateList(server.getListById((Long) label.getUserData()),txt);
             }
         });
     }
