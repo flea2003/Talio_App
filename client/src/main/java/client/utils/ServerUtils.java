@@ -87,11 +87,10 @@ public class ServerUtils {
     }
 
     public Card addCard(Card card){
-        String endpoint = String.format("api/cards/%2d", card.id);
+        String endpoint = String.format("api/cards", card.id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
+                .request(APPLICATION_JSON).accept(APPLICATION_JSON)
                 .post(Entity.entity(card, APPLICATION_JSON), Card.class);
     }
 
@@ -113,14 +112,15 @@ public class ServerUtils {
                 .delete(new GenericType<Card>() {});
     }
 
-//    public List<commons.List> getLists(){
-//        String endpoint = String.format("api/lists");
-//        return  ClientBuilder.newClient(new ClientConfig())
-//                .target(SERVER).path(endpoint)
-//                .request(APPLICATION_JSON)
-//                .accept(APPLICATION_JSON)
-//                .get(new GenericType<List<commons.List>>() {});
-//    }
+    public List<commons.List> getLists(){
+        String endpoint = String.format("api/lists");
+        List<commons.List>res =  ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<commons.List>>() {});
+        return res;
+    }
 
     public commons.List getList(long id){
         String endpoint = String.format("api/lists/%2d", id);
@@ -141,7 +141,16 @@ public class ServerUtils {
     }
 
     public commons.List updateList(commons.List list){
-        String endpoint = String.format("api/lists/changeName/%2d", list.id);
+        String endpoint = String.format("api/lists/update");
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
+    }
+
+    public commons.List updateListName(commons.List list){
+        String endpoint = String.format("api/lists/changeName/%d", list.id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -202,21 +211,21 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .delete(new GenericType<commons.Board>() {});
     }
-    public List<commons.List> getLists(){
-        List<commons.List>list = new ArrayList<>();
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.add(new Card("Uno Dos", "Card2", null));
-        cards.add(new Card("HAHAHHA", "Card3", null));
-        cards.add(new Card("Ole", "Card4", null));
-
-        ArrayList<Card> cards2 = new ArrayList<>();
-        cards2.add(new Card("test", "LMAO", null));
-        cards2.add(new Card("wext", "ROFL", null));
-        cards2.add(new Card("rest", "Card4", null));
-
-        list.add(new commons.List(1, cards, "Test", null));
-        list.add(new commons.List(2, cards2, "Testing", null));
-        return list;
-
-    }
+//    public List<commons.List> getLists(){
+//        List<commons.List>list = new ArrayList<>();
+//        ArrayList<Card> cards = new ArrayList<>();
+//        cards.add(new Card("Uno Dos", "Card2", null));
+//        cards.add(new Card("HAHAHHA", "Card3", null));
+//        cards.add(new Card("Ole", "Card4", null));
+//
+//        ArrayList<Card> cards2 = new ArrayList<>();
+//        cards2.add(new Card("test", "LMAO", null));
+//        cards2.add(new Card("wext", "ROFL", null));
+//        cards2.add(new Card("rest", "Card4", null));
+//
+//        list.add(new commons.List(1, cards, "Test", null));
+//        list.add(new commons.List(2, cards2, "Testing", null));
+//        return list;
+//
+//    }
 }

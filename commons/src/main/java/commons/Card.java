@@ -4,6 +4,9 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -20,8 +23,9 @@ public class Card {
     public String name;
 
     @ManyToOne
-    @JoinColumn(name="list_id")
-    public List list;
+    @JoinColumn(name = "list_id")
+    @JsonBackReference
+    private List list;
 
     public Card( String description,String name, List list) {
         this.description=description;

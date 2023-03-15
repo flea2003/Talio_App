@@ -22,6 +22,7 @@ public class ListController {
 
     @GetMapping(path = { "", "/" })
     public List<commons.List> getAll() {
+        System.out.println("HELLO WORLD");
         return repo.findAll();
     }
 
@@ -64,6 +65,13 @@ public class ListController {
         repo.getById(id).setName(name);
         return ResponseEntity.ok(list);
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<commons.List> changeName(@RequestBody commons.List list){
+        repo.save(list);
+        return ResponseEntity.ok(list);
+    }
+
 
     @GetMapping("rnd")
     public ResponseEntity<commons.List> getRandom() {

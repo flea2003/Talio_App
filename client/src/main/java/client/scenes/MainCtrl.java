@@ -17,6 +17,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Card;
+import commons.List;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -109,9 +110,11 @@ public class MainCtrl {
         registration.setOnKeyPressed(e -> regCtrl.keyPressed(e));
     }
     
-    public void switchTaskCreation(){
+    public void switchTaskCreation(List listCurr){
+        System.out.println(listCurr);
         primaryStage.setTitle("Task Creation");
         primaryStage.setScene(taskCreation);
+        taskCreationCtrl.setListCurr(listCurr);
         taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
     }
 
