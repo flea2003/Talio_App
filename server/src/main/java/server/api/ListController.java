@@ -2,6 +2,7 @@ package server.api;
 
 import java.util.*;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +27,11 @@ public class ListController {
     }
 
     @GetMapping("/{id}")
-    public commons.List getById(@PathVariable("id") long id) {
+    public ResponseEntity<commons.List> getById(@PathVariable("id") long id) {
         if (id < 0 || !repo.existsById(id)) {
-            return null;
+            return ResponseEntity.badRequest().build();
         }
-        return repo.findById(id).get();
+        return ResponseEntity.ok(repo.findById(id).get());
     }
 
     @PostMapping(path = { "", "/" })
@@ -50,7 +51,7 @@ public class ListController {
             return ResponseEntity.badRequest().build();
         }
         commons.List list=repo.getById(id);
-        repo.delete(Objects.requireNonNull(getById(id)));
+        repo.delete(Objects.requireNonNull(getById(id).getBody()));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
