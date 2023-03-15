@@ -5,6 +5,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Card;
 import commons.List;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -57,27 +58,46 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        server.refreshLists("/topic/lists", List.class, l->{
-            System.out.println("LOL");
-            refreshDashboard();
-        });
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    try{
+                        fetchUpdatesDashboard();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }, 0L, 500L);
+
+//        server.refreshLists("/topic/lists", List.class, l->{
+//            System.out.println("LOL");
+//            refreshDashboard();
+//        });
     }
 
     public void logOut(){
         mainCtrl.switchRegistration();
     }
 
-
     public void refresh() {
-        hboxList.getChildren().clear();
-        addLists(server.getLists());
-        Button addListButton = new Button("Create List");
-        VBox vboxEnd = new VBox();
-        vboxEnd.getChildren().add(addListButton);
-        hboxList.getChildren().add(vboxEnd);
-        addListButton.setOnAction(e -> {
-            createList(vboxEnd);
-        });
+        if(hboxList.getChildren().size() >= 1) {
+            for (int i = hboxList.getChildren().size() - 2; i >= 0; i--) {
+                hboxList.getChildren().remove(i);
+
+            }
+            addLists(server.getLists());
+        }
+        else{
+            Button addListButton = new Button("Create List");
+            VBox vboxEnd = new VBox();
+            vboxEnd.getChildren().add(addListButton);
+            hboxList.getChildren().add(vboxEnd);
+            addListButton.setOnAction(e -> {
+                createList(vboxEnd);
+            });
+        }
 
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
@@ -228,7 +248,8 @@ public class DashboardCtrl implements Initializable {
     public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
         java.util.List<Card> cardlist = list.cards;
         listView.setItems(FXCollections.observableList(cardlist));
-        hboxList.getChildren().add(vBox);
+        int index = hboxList.getChildren().size() - 1;
+        hboxList.getChildren().add(index, vBox);
 
         // Make the card have a specified height and width
         Screen screen = Screen.getPrimary();
@@ -250,5 +271,11 @@ public class DashboardCtrl implements Initializable {
     public void refreshDashboard(){
         mainCtrl.switchDashboard("");
     }
+
+    @FXML
+    public void fetchUpdatesDashboard(){
+        mainCtrl.fetchUpdatesDashboard("");
+    }
+
 }
 

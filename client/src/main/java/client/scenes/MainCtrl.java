@@ -129,6 +129,10 @@ public class MainCtrl {
         primaryStage.setScene(dashboard);
     }
 
+    public void fetchUpdatesDashboard(String user){
+        dashboardCtrl.refresh();
+    }
+
     public void switchServer(){
         primaryStage.setTitle("Choose a server");
         primaryStage.setScene(server);
