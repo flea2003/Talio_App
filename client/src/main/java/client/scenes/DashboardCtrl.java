@@ -47,6 +47,8 @@ public class DashboardCtrl implements Initializable {
 
     private ListCell<Card> draggedCard;
 
+    private VBox draggedVbox;
+
     @Inject
     public DashboardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -120,6 +122,7 @@ public class DashboardCtrl implements Initializable {
                     });
                 }
             });
+            
             // Add Card Button
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
@@ -192,7 +195,16 @@ public class DashboardCtrl implements Initializable {
                     event.consume();
                 });
 
+                setOnMouseDragged(event -> {
+
+                });
+
                 setOnDragOver(event -> {
+
+//                    double mouseX = event.getX();
+//                    double mouseY = event.getY();
+//                    System.out.println("X: " + mouseX + " Y: " + mouseY);
+
                     if (event.getGestureSource() != this) {
                         event.acceptTransferModes(TransferMode.MOVE);
                     }
