@@ -127,6 +127,22 @@ public class DashboardCtrl implements Initializable {
                 mainCtrl.switchTaskCreation();
             });
             ListView<Card>listView = new ListView<>();
+            listView.setOnDragOver(event -> {
+                event.acceptTransferModes(TransferMode.MOVE);
+            });
+            listView.setOnDragDropped(event -> {
+                if (draggedCard != null) {
+                    var sourceListView = draggedCard.getListView();
+                    var sourceItems = sourceListView.getItems();
+                    int sourceIndex = draggedCard.getIndex();
+
+                    Card removed = sourceItems.remove(sourceIndex);
+                    listView.getItems().add(removed);
+                }
+
+                event.setDropCompleted(true);
+                event.consume();
+            });
             // Call the method that sets the cell factory review.
             setFactory(listView);
 
@@ -204,10 +220,7 @@ public class DashboardCtrl implements Initializable {
                         int dropIndex = this.getIndex();
 
                         Card removed = sourceItems.remove(sourceIndex);
-
-                        if(this.getListView() == null)
-                            this.getListView().getItems().add(removed);
-                        else this.getListView().getItems().add(dropIndex, removed);
+                        this.getListView().getItems().add(dropIndex, removed);
                     }
 
                     event.setDropCompleted(true);
