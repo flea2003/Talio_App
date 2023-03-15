@@ -2,11 +2,14 @@ package server.api;
 
 import java.util.*;
 
+import commons.Quote;
 import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.core.AbstractDestinationResolvingMessagingTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import server.database.ListRepository;
@@ -14,18 +17,18 @@ import server.database.ListRepository;
 @RestController
 @RequestMapping("/api/lists")
 public class ListController {
-
+    private final SimpMessagingTemplate messagingTemplate;
     private final Random random;
     private final ListRepository repo;
 
-    public ListController(Random random, ListRepository repo) {
+    public ListController(Random random, ListRepository repo, SimpMessagingTemplate messagingTemplate) {
         this.random = random;
         this.repo = repo;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping(path = { "", "/" })
     public List<commons.List> getAll() {
-        System.out.println("HELLO WORLD");
         return repo.findAll();
     }
 
@@ -38,15 +41,21 @@ public class ListController {
     }
 
     @PostMapping(path = { "", "/" })
-    @SendTo("../../topic/lists")
+    @SendTo("/topic/updates")
     public ResponseEntity<commons.List> add(@RequestBody commons.List list) {
-
         if (list.name == null|| list.name.strip().length()==0) {
             return ResponseEntity.badRequest().build();
         }
-        System.out.println("CHECK");
         commons.List saved = repo.save(list);
-        return ResponseEntity.ok(saved);
+        messagingTemplate.convertAndSend("/topic/updates", saved);
+        return ResponseEntity.ok(list);
+    }
+
+    @MessageMapping("/addlist")
+    @SendTo("/topic/updates")
+    public commons.List addNewList(commons.List q){
+        add(q);
+        return q;
     }
 
     @DeleteMapping("/delete/{id}")

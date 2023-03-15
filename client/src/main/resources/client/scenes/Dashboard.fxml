@@ -22,7 +22,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Text>
-            <Button mnemonicParsing="false" onAction="#refreshDashboard" text="Refresh">
+            <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshDashboard" text="Refresh">
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>

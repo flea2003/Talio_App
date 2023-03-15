@@ -240,7 +240,7 @@ public class ServerUtils {
 //
 //    }
 
-    private StompSession session=connect("ws://localhost:8080/websocket");
+    private StompSession session = connect("ws://localhost:8080/websocket");
 
     private StompSession connect(String url){
         var client=new StandardWebSocketClient();
@@ -271,6 +271,6 @@ public class ServerUtils {
     }
 
     public void send(String destination,Object o){
-        session.send(destination,o);
+        session.send(destination, o);
     }
 }

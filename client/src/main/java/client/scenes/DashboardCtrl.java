@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -47,6 +48,8 @@ public class DashboardCtrl implements Initializable {
     private ScrollPane pane;
 
     @FXML
+    private Button refreshButton;
+    @FXML
     private Button disconnectButton;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
@@ -58,23 +61,28 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    try{
-                        fetchUpdatesDashboard();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                });
-            }
-        }, 0L, 500L);
-
-//        server.refreshLists("/topic/lists", List.class, l->{
-//            System.out.println("LOL");
+//        new Timer().scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                Platform.runLater(() -> {
+//                    try{
+//                        fetchUpdatesDashboard();
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                });
+//            }
+//        }, 0L, 500L);
+        server.refreshLists("/topic/updates", List.class, l -> {
+            Platform.runLater(() -> {
+                try{
+                    fetchUpdatesDashboard();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            });
 //            refreshDashboard();
-//        });
+        });
     }
 
     public void logOut(){
@@ -105,7 +113,6 @@ public class DashboardCtrl implements Initializable {
 
     private void addLists(java.util.List<List>list){
         for(List listCurr : list){
-            System.out.println(listCurr.cards.size());
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
 
@@ -223,8 +230,10 @@ public class DashboardCtrl implements Initializable {
             }else{
                 if(textField.getText().strip().length()!=0) {
                     String newText = textField.getText();
-
+//
                     server.addList(new List(newText));//send the text to the database
+//
+//                    server.send("/app/addlist", new List(newText));
 
                     vboxEnd.getChildren().remove(textField);
                     vboxEnd.getChildren().remove(spacer);
@@ -269,6 +278,7 @@ public class DashboardCtrl implements Initializable {
 
     @FXML
     public void refreshDashboard(){
+        System.out.println("VREAU REFRESH");
         mainCtrl.switchDashboard("");
     }
 

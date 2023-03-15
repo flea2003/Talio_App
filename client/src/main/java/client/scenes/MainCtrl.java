@@ -85,6 +85,7 @@ public class MainCtrl {
         this.server=server;
         this.serverCtrl= serverCtrl;
 
+        fetchUpdatesDashboard("");
         switchDashboard("");
     }
 
