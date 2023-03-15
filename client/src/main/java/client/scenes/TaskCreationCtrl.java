@@ -63,7 +63,7 @@ public class TaskCreationCtrl {
         }
         Card card = new Card(valueDes, valueName, listCurr);
         listCurr.cards.add(card);
-        server.addCard(card);
+//        server.addCard(card);
         server.updateList(listCurr);
         taskName.setText("");
         taskDescription.setText("");
