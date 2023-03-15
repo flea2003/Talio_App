@@ -119,16 +119,6 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.List>>() {});
-        System.out.println(res.size());
-        for(commons.List list : res){
-            System.out.println(list.name);
-            System.out.println(list.cards.size());
-            for(Card card : list.cards){
-                System.out.println(card);
-            }
-        }
-        System.out.println();
-        System.out.println();
         return res;
     }
 
