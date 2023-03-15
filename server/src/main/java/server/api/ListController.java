@@ -2,6 +2,7 @@ package server.api;
 
 import java.util.*;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class ListController {
     @PostMapping(path = { "", "/" })
     public ResponseEntity<commons.List> add(@RequestBody commons.List list) {
 
-        if (list.name == null) {
+        if (list.name == null|| list.name.strip().length()==0) {
             return ResponseEntity.badRequest().build();
         }
         commons.List saved = repo.save(list);
@@ -58,11 +59,12 @@ public class ListController {
     @PostMapping("/changeName/{id}")
     public ResponseEntity<commons.List> changeName(@PathVariable("id") long id, @RequestBody String name){
 
-        if (id < 0 || !repo.existsById(id)) {
+        if (id < 0 || !repo.existsById(id) || name == null || name.trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         commons.List list=repo.getById(id);
         repo.getById(id).setName(name);
+        repo.save(list);
         return ResponseEntity.ok(list);
     }
 

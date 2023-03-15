@@ -17,6 +17,7 @@ package client.utils;
 
 import client.scenes.MainCtrl;
 import client.scenes.ServerConnectCtrl;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.inject.Provides;
 import commons.Board;
 import commons.Card;
@@ -49,16 +50,6 @@ public class ServerUtils {
     public void setSERVER(String server){
         SERVER=server;
         System.out.println(SERVER);
-    }
-
-    public void getQuotesTheHardWay() throws IOException {
-        var url = new URL("http://localhost:8080/api/quotes");
-        var is = url.openConnection().getInputStream();
-        var br = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-        }
     }
 
     public List<Quote> getQuotes() {
@@ -149,14 +140,24 @@ public class ServerUtils {
                 .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
     }
 
-    public commons.List updateListName(commons.List list){
+    public commons.List updateListName(commons.List list,String name){
         String endpoint = String.format("api/lists/changeName/%d", list.id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
+                .post(Entity.entity(name, APPLICATION_JSON), commons.List.class);
     }
+
+    public commons.List getListById(long id){
+        String endpoint = String.format("/api/lists/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(commons.List.class);
+    }
+
 
     public commons.List deleteList(long id){
         String endpoint = String.format("api/lists/delete/%2d", id);

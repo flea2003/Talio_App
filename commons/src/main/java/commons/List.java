@@ -71,4 +71,9 @@ public class List {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Object getID() {
+        return id;
+    }
+
 }
