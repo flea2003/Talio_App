@@ -108,7 +108,7 @@ public class ServerUtils {
     }
 
     public Card deleteCard(long id){
-        String endpoint = String.format("api/cards/delete/%2d", id);
+        String endpoint = String.format("api/cards/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -131,7 +131,7 @@ public class ServerUtils {
     }
 
     public commons.List getList(long id){
-        String endpoint = String.format("api/lists/%2d", id);
+        String endpoint = String.format("api/lists/%d", id);
         return  ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -149,6 +149,13 @@ public class ServerUtils {
     }
 
     public commons.List updateList(commons.List list){
+        int indx = 0;
+        for(Card card : list.cards){
+            ++indx;
+            card.setNumberInTheList(indx);
+            System.out.println("CHECK " + indx);
+        }
+
         String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)

@@ -35,6 +35,10 @@ public class Card {
         this.numberInTheList = numberInTheList;
     }
 
+    public List getList() {
+        return list;
+    }
+
     @SuppressWarnings("unused")
     public Card() {}
 
