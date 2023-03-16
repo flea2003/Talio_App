@@ -61,7 +61,7 @@ public class TaskCreationCtrl {
                 mainCtrl.switchDashboard("LOL");
             }
         }
-        Card card = new Card(valueDes, valueName, listCurr);
+        Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
         listCurr.cards.add(card);
 //        server.addCard(card);
         server.updateList(listCurr);

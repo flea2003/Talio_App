@@ -26,6 +26,7 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import org.apache.logging.log4j.util.PropertySource;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -42,6 +43,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -120,6 +123,10 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.List>>() {});
+        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
+        for(commons.List list : res){
+            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+        }
         return res;
     }
 
@@ -170,7 +177,7 @@ public class ServerUtils {
 
 
     public commons.List deleteList(long id){
-        String endpoint = String.format("api/lists/delete/%2d", id);
+        String endpoint = String.format("api/lists/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)

@@ -28,6 +28,7 @@ public class List {
     @JoinColumn(name="board_id")
     public Board board;
 
+    public int numberInTheBoard;
     public java.util.List<Card>  getCards() {
         return cards;
     }
@@ -46,6 +47,14 @@ public class List {
         this.name = name;
         this.cards = cards;
         this.board=board;
+    }
+
+    public int getNumberInTheBoard() {
+        return numberInTheBoard;
+    }
+
+    public void setNumberInTheBoard(int numberInTheBoard) {
+        this.numberInTheBoard = numberInTheBoard;
     }
 
     @Override

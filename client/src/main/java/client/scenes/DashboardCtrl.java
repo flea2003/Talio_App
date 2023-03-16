@@ -53,7 +53,7 @@ public class DashboardCtrl implements Initializable {
     private Button disconnectButton;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
-        this.main=main;
+        this.main = main;
         this.mainCtrl = mainCtrl;
         this.server = server;
     }
@@ -73,7 +73,7 @@ public class DashboardCtrl implements Initializable {
 //                });
 //            }
 //        }, 0L, 500L);
-        server.refreshLists("/topic/updates", List.class, l -> {
+        server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> {
                 try{
                     fetchUpdatesDashboard();
@@ -189,7 +189,7 @@ public class DashboardCtrl implements Initializable {
                     setText("");
                 }
                 else{
-                    setText(q.description);
+                    setText(q.name);
                     setOnMouseClicked(event -> {
                         mainCtrl.switchTaskView(q);
                     });

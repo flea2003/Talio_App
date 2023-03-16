@@ -21,16 +21,18 @@ public class Card {
     public String description;
 
     public String name;
+    public int numberInTheList;
 
     @ManyToOne
     @JoinColumn(name = "list_id")
     @JsonBackReference
     private List list;
 
-    public Card( String description,String name, List list) {
-        this.description=description;
-        this.name=name;
-        this.list=list;
+    public Card(String description, String name, List list, int numberInTheList) {
+        this.description = description;
+        this.name = name;
+        this.list = list;
+        this.numberInTheList = numberInTheList;
     }
 
     @SuppressWarnings("unused")
@@ -49,6 +51,14 @@ public class Card {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public void setNumberInTheList(int numberInTheList) {
+        this.numberInTheList = numberInTheList;
+    }
+
+    public int getNumberInTheList() {
+        return numberInTheList;
     }
 
     public String getDescription() {
