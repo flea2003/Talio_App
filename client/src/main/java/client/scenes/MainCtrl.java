@@ -85,6 +85,7 @@ public class MainCtrl {
         this.server=server;
         this.serverCtrl= serverCtrl;
 
+        fetchUpdatesDashboard("");
         switchDashboard("");
     }
 
@@ -127,6 +128,10 @@ public class MainCtrl {
         primaryStage.setTitle("Dashboard");
         dashboardCtrl.refresh();
         primaryStage.setScene(dashboard);
+    }
+
+    public void fetchUpdatesDashboard(String user){
+        dashboardCtrl.refresh();
     }
 
     public void switchServer(){

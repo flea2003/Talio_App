@@ -34,6 +34,8 @@ public class TaskViewCtrl {
 
     @FXML
     private Button done;
+    @FXML
+    private Text taskNo;
 
     @FXML
     private List listCurr;
@@ -74,6 +76,7 @@ public class TaskViewCtrl {
         System.out.println(card.description);
         taskName.setText(card.name);
         taskDescription.setText(card.description);
+        taskNo.setText("Task No. " + card.getNumberInTheList());
         return;
     }
 

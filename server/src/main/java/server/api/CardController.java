@@ -3,6 +3,7 @@ package server.api;
 import commons.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.CardRepository;
 
@@ -14,6 +15,13 @@ public class CardController {
 
     @Autowired
     CardRepository repo;
+
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public CardController(CardRepository repo, SimpMessagingTemplate messagingTemplate) {
+        this.repo = repo;
+        this.messagingTemplate = messagingTemplate;
+    }
 
     public  List<Card> getAllFromList(long list_id){
         var optList = repo.findAllByList_id(list_id);
@@ -39,6 +47,7 @@ public class CardController {
 
         Card card = repo.findById(id).get();
         repo.delete(card);
+        messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(card);
     }
 
@@ -49,6 +58,7 @@ public class CardController {
         }
         else{
             repo.save(card);
+            messagingTemplate.convertAndSend("/topic/updates", true);
             return ResponseEntity.ok(card);
         }
     }
@@ -59,7 +69,7 @@ public class CardController {
             return ResponseEntity.badRequest().build();
 
         repo.save(card);
-
+        messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(card);
     }
 
