@@ -76,4 +76,12 @@ public class Card {
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * getter for name
+     * @return the string name
+     */
+    public String getName() {
+        return this.name;
+    }
 }

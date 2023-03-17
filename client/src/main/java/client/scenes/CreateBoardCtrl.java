@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
@@ -115,5 +116,21 @@ public class CreateBoardCtrl {
      */
     private void setError(String err){
         error.setText(err);
+    }
+
+    /**
+     * a getter for create
+     * @return the textfield create
+     */
+    public TextField getCreate() {
+        return create;
+    }
+
+    public Button getButtonCreate() {
+        return buttonCreate;
+    }
+
+    public Text getError() {
+        return error;
     }
 }

@@ -13,8 +13,10 @@ public class UserTest {
     public void checkConstructor() {
         var boards=new ArrayList<Board>() ;
         var p = new User("a",boards );
+        User emptyUser = new User();
         assertEquals("a", p.username);
         assertEquals(new ArrayList<Board>(), p.boards);
+        assertNotNull(emptyUser);
     }
 
     @Test
