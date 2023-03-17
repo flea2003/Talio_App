@@ -14,7 +14,7 @@
    <top>
       <HBox alignment="TOP_RIGHT" BorderPane.alignment="TOP_CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dummy App Name">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Talio">
                <font>
                   <Font size="24.0" />
                </font>
@@ -22,29 +22,29 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Text>
-            <Button mnemonicParsing="false" onAction="#refreshDashboard" text="Refresh">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-            </Button>
+<!--            <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshDashboard" text="Refresh">-->
+<!--               <HBox.margin>-->
+<!--                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />-->
+<!--               </HBox.margin>-->
+<!--            </Button>-->
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="logOut" mnemonicParsing="false" onAction="#logOut" style="-fx-background-color: #00000000;" text="Log Out">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <font>
-                  <Font name="Serif Italic" size="12.0" />
-               </font>
-            </Button>
+<!--            <Button fx:id="logOut" mnemonicParsing="false" onAction="#logOut" style="-fx-background-color: #00000000;" text="Log Out">-->
+<!--               <HBox.margin>-->
+<!--                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />-->
+<!--               </HBox.margin>-->
+<!--               <opaqueInsets>-->
+<!--                  <Insets />-->
+<!--               </opaqueInsets>-->
+<!--               <font>-->
+<!--                  <Font name="Serif Italic" size="12.0" />-->
+<!--               </font>-->
+<!--            </Button>-->
          </children>
       </HBox>
    </top>
-   <left>
-      <TreeView BorderPane.alignment="CENTER" />
-   </left>
+<!--   <left>-->
+<!--      <TreeView fx:id="boards" BorderPane.alignment="CENTER" />-->
+<!--   </left>-->
    <bottom>
       <HBox BorderPane.alignment="CENTER">
          <children>
@@ -56,14 +56,14 @@
                   <Font name="Serif Bold Italic" size="12.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#createBoard" style="-fx-background-color: #00000000;" text="Create Board">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-               <font>
-                  <Font name="Serif Bold" size="12.0" />
-               </font>
-            </Button>
+<!--            <Button mnemonicParsing="false" onAction="#createBoard" style="-fx-background-color: #00000000;" text="Create Board">-->
+<!--               <HBox.margin>-->
+<!--                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />-->
+<!--               </HBox.margin>-->
+<!--               <font>-->
+<!--                  <Font name="Serif Bold" size="12.0" />-->
+<!--               </font>-->
+<!--            </Button>-->
          </children>
       </HBox>
    </bottom>
