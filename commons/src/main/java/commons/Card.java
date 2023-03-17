@@ -27,10 +27,10 @@ public class Card {
     @JsonBackReference
     private List list;
 
-    public Card( String description,String name, List list) {
-        this.description=description;
-        this.name=name;
-        this.list=list;
+    public Card(String description, String name, List list) {
+        this.description = description;
+        this.name = name;
+        this.list = list;
     }
 
     @SuppressWarnings("unused")
@@ -61,5 +61,13 @@ public class Card {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * getter for name
+     * @return the string name
+     */
+    public String getName() {
+        return this.name;
     }
 }

@@ -15,9 +15,7 @@
  */
 package commons;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +24,10 @@ public class PersonTest {
 	@Test
 	public void checkConstructor() {
 		var p = new Person("f", "l");
+		Person emptyPerson = new Person();
 		assertEquals("f", p.firstName);
 		assertEquals("l", p.lastName);
+		assertNotNull(emptyPerson);
 	}
 
 	@Test
