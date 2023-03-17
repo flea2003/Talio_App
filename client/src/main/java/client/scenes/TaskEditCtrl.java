@@ -56,10 +56,12 @@ public class TaskEditCtrl {
         } else {
 //            server.updateCard(setCard(card));
             setError("");
+            currCard.name = valueName;
+            currCard.description = valueDes;
+            server.updateList(currCard.getList());
+//            server.updateCard(card);
             mainCtrl.switchDashboard("LOL");
         }
-//        server.addCard(card);
-        server.updateList(listCurr);
         name.setText("");
         description.setText("");
     }

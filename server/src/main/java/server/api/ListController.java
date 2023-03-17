@@ -83,6 +83,7 @@ public class ListController {
 
     @PostMapping("/update")
     public ResponseEntity<commons.List> changeName(@RequestBody commons.List list){
+        System.out.println(list);
         repo.save(list);
         messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(list);

@@ -104,7 +104,7 @@ public class ServerUtils {
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .put(Entity.entity(card, APPLICATION_JSON), Card.class);
+                .post(Entity.entity(card, APPLICATION_JSON), Card.class);
     }
 
     public Card deleteCard(long id){
@@ -149,12 +149,12 @@ public class ServerUtils {
     }
 
     public commons.List updateList(commons.List list){
-        int indx = 0;
-        for(Card card : list.cards){
-            ++indx;
-            card.setNumberInTheList(indx);
-            System.out.println("CHECK " + indx);
-        }
+//        int indx = 0;
+//        for(Card card : list.cards){
+//            ++indx;
+//            card.setNumberInTheList(indx);
+//            System.out.println("CHECK " + indx);
+//        }
 
         String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())
