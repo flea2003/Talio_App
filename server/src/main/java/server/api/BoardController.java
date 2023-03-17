@@ -4,6 +4,7 @@ import commons.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 
@@ -12,9 +13,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
-
+    private final SimpMessagingTemplate messagingTemplate;
     @Autowired
     BoardRepository repo;
+
+    public BoardController(SimpMessagingTemplate messagingTemplate, BoardRepository repo) {
+        this.messagingTemplate = messagingTemplate;
+        this.repo = repo;
+    }
 
     @GetMapping(path = { "", "/" })
     public List<Board> getAll() {
@@ -36,6 +42,7 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
         Board saved = repo.save(board);
+        messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(saved);
     }
 
@@ -47,17 +54,18 @@ public class BoardController {
         }
         Board board = repo.getById(id);
         repo.delete(board);
+        messagingTemplate.convertAndSend("/topic/updates", true);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/changeName/{id}")
     public ResponseEntity<Board> changeName(@PathVariable("id") long id,@RequestBody String name){
-
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
         Board board=repo.getById(id);
         repo.getById(id).setName(name);
+        messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(board);
     }
 

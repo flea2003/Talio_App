@@ -9,14 +9,16 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -26,8 +28,6 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class DashboardCtrl implements Initializable {
 
@@ -42,37 +42,26 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private HBox hboxList;
 
-    private ObservableList<List> data;
+    private List data;
 
     @FXML
     private ScrollPane pane;
-
     @FXML
     private Button refreshButton;
     @FXML
     private Button disconnectButton;
+    private ListCell<Card> draggedCard;
+    private VBox draggedVbox;
+    private boolean sus;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
-        this.main=main;
+        this.main = main;
         this.mainCtrl = mainCtrl;
         this.server = server;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-//        new Timer().scheduleAtFixedRate(new TimerTask() {
-//            @Override
-//            public void run() {
-//                Platform.runLater(() -> {
-//                    try{
-//                        fetchUpdatesDashboard();
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                });
-//            }
-//        }, 0L, 500L);
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> {
                 try{
@@ -142,6 +131,22 @@ public class DashboardCtrl implements Initializable {
                 mainCtrl.switchTaskCreation(listCurr);
             });
             ListView<Card>listView = new ListView<>();
+            listView.setOnDragOver(event -> {
+                event.acceptTransferModes(TransferMode.MOVE);
+            });
+            listView.setOnDragDropped(event -> {
+                if (draggedCard != null) {
+                    var sourceListView = draggedCard.getListView();
+                    var sourceItems = sourceListView.getItems();
+                    int sourceIndex = draggedCard.getIndex();
+
+                    Card removed = sourceItems.remove(sourceIndex);
+                    listView.getItems().add(removed);
+                }
+
+                event.setDropCompleted(true);
+                event.consume();
+            });
             // Call the method that sets the cell factory review.
             setFactory(listView);
 
@@ -183,17 +188,78 @@ public class DashboardCtrl implements Initializable {
     private void setFactory(ListView list){
         list.setCellFactory(q -> new ListCell<Card>() {
             @Override
-            protected void updateItem(Card q, boolean bool) {
-                super.updateItem(q, bool);
-                if(bool) {
+            protected void updateItem(Card q, boolean empty) {
+                super.updateItem(q, empty);
+                if (empty) {
                     setText("");
                 }
                 else{
-                    setText(q.description);
+                    setText(q.name);
                     setOnMouseClicked(event -> {
                         mainCtrl.switchTaskView(q);
                     });
                 }
+                setOnDragDetected(event -> {
+                    if (getItem() == null) {
+                        return;
+                    }
+
+                    draggedCard = this;
+                    server.deleteCard(this.getItem().id);
+                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+
+                    content.putString(getItem().name);
+                    dragboard.setContent(content);
+                    dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
+
+
+                    event.consume();
+                });
+
+                setOnMouseDragged(event -> {
+
+                });
+
+                setOnDragOver(event -> {
+                    double mouseX = event.getSceneX();
+                    double mouseY = event.getSceneY();
+
+                    double listViewY = this.localToScene(0, 0).getY();
+                    if (mouseY - listViewY >= 50) {
+                        sus = false;
+                        this.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 0 0 4 0;");
+                    } else {
+                        sus = true;
+                        this.setStyle("-fx-border-color: black transparent transparent transparent; -fx-border-width: 4 0 0 0;");
+                    }
+                    event.acceptTransferModes(TransferMode.MOVE);
+
+                    event.consume();
+                });
+
+                setOnDragEntered(event -> {
+                });
+
+                setOnDragExited(event -> {
+                    this.setStyle("-fx-background-insets: 0 0 0 0;");
+                });
+
+                setOnDragDropped(event -> {
+                    if (draggedCard != null) {
+                        var sourceListView = draggedCard.getListView();
+                        var sourceItems = sourceListView.getItems();
+                        int sourceIndex = draggedCard.getIndex();
+                        int dropIndex = this.getIndex() + (!sus ? 1 : 0);
+                        Card removed = sourceItems.remove(sourceIndex);
+                        this.getListView().getItems().add(dropIndex, removed);
+                        this.getItem().getList().cards.add(dropIndex, removed);
+                        server.updateList(this.getItem().getList());
+                    }
+                    event.setDropCompleted(true);
+                    event.consume();
+                });
+
                 double size = 100; // Adjust this value to change the size of the cells
                 setMinHeight(size);
                 setMaxHeight(size);
@@ -201,10 +267,16 @@ public class DashboardCtrl implements Initializable {
                 setMinWidth(size);
                 setMaxWidth(size);
                 setPrefWidth(size);
-
             }
         });
     }
+
+//    private class CardCell extends ListCell<Card> {
+//        private Card card;
+//        public CardCell (Card card){
+//            card =
+//        }
+//    }
 
     public void createBoard(ActionEvent actionEvent) {
         mainCtrl.switchCreateBoard();
@@ -230,11 +302,7 @@ public class DashboardCtrl implements Initializable {
             }else{
                 if(textField.getText().strip().length()!=0) {
                     String newText = textField.getText();
-//
                     server.addList(new List(newText));//send the text to the database
-//
-//                    server.send("/app/addlist", new List(newText));
-
                     vboxEnd.getChildren().remove(textField);
                     vboxEnd.getChildren().remove(spacer);
                 }
@@ -243,9 +311,9 @@ public class DashboardCtrl implements Initializable {
 
         textField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                    String newText = textField.getText();
-                    vboxEnd.getChildren().remove(textField);
-                    vboxEnd.getChildren().remove(spacer);
+                String newText = textField.getText();
+                vboxEnd.getChildren().remove(textField);
+                vboxEnd.getChildren().remove(spacer);
             }
         });
 
@@ -278,7 +346,6 @@ public class DashboardCtrl implements Initializable {
 
     @FXML
     public void refreshDashboard(){
-        System.out.println("VREAU REFRESH");
         mainCtrl.switchDashboard("");
     }
 
