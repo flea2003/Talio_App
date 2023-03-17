@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Stage;
 import commons.Card;
+import commons.List;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -33,6 +34,12 @@ public class TaskViewCtrl {
 
     @FXML
     private Button done;
+
+    @FXML
+    private List listCurr;
+
+    @FXML
+    private Text error;
 
 
     @Inject
@@ -70,11 +77,24 @@ public class TaskViewCtrl {
         return;
     }
 
-    public void setDone(){
-        mainCtrl.switchDashboard("User");
-    }
-
     public void goEdit(){
         mainCtrl.switchEdit(currCard);
+    }
+
+    @FXML
+    public void setDone(){
+        mainCtrl.switchDashboard("LOL");
+    }
+
+    private String extractValue(Text curr){
+        return curr.getText();
+    }
+
+    private void setError(String err){
+        error.setText(err);
+    }
+
+    public void setListCurr(List listCurr) {
+        this.listCurr = listCurr;
     }
 }
