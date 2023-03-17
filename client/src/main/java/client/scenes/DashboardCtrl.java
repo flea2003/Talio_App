@@ -73,7 +73,7 @@ public class DashboardCtrl implements Initializable {
 //                });
 //            }
 //        }, 0L, 500L);
-        server.refreshLists("/topic/updates", List.class, l -> {
+        server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> {
                 try{
                     fetchUpdatesDashboard();

@@ -222,26 +222,22 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .delete(new GenericType<commons.Board>() {});
     }
-//    public List<commons.List> getLists(){
-//        List<commons.List>list = new ArrayList<>();
-//        ArrayList<Card> cards = new ArrayList<>();
-//        cards.add(new Card("Uno Dos", "Card2", null));
-//        cards.add(new Card("HAHAHHA", "Card3", null));
-//        cards.add(new Card("Ole", "Card4", null));
-//
-//        ArrayList<Card> cards2 = new ArrayList<>();
-//        cards2.add(new Card("test", "LMAO", null));
-//        cards2.add(new Card("wext", "ROFL", null));
-//        cards2.add(new Card("rest", "Card4", null));
-//
-//        list.add(new commons.List(1, cards, "Test", null));
-//        list.add(new commons.List(2, cards2, "Testing", null));
-//        return list;
-//
-//    }
 
-    private StompSession session = connect("ws://localhost:8080/websocket");
+    private StompSession session ;
 
+    /**
+     * Creates a websocket connection
+     * @param IP the IP address of the server to create a websocket connection
+     */
+    public void initialiseSession(String IP){
+        session=connect("ws://"+IP+":8080/websocket");
+    }
+
+    /**
+     * Creates a StompSession to be used for receiving updates on the database
+     * @param url the url of the websocket connection
+     * @return a StompSession to send and receive messages between the client and the server
+     */
     private StompSession connect(String url){
         var client=new StandardWebSocketClient();
         var stomp=new WebSocketStompClient(client);
@@ -256,6 +252,14 @@ public class ServerUtils {
         throw new IllegalStateException();
     }
 
+    /**
+     * Subscribes to a destination on the WebSocket connection established by session,
+     * is used to update the app with new information in real-time
+     * @param destination the destination the session will subscribe to
+     * @param type the type of the payload
+     * @param consumer a consumer of objects of type "type"
+     * @param <T> a general object enabling the generalization of the method to any type
+     */
     public <T> void refreshLists(String destination,Type type, Consumer<T> consumer){
         session.subscribe(destination, new StompFrameHandler() {
             @Override

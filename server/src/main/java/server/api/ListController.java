@@ -47,7 +47,7 @@ public class ListController {
             return ResponseEntity.badRequest().build();
         }
         commons.List saved = repo.save(list);
-        messagingTemplate.convertAndSend("/topic/updates", saved);
+        messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(list);
     }
 
@@ -66,6 +66,7 @@ public class ListController {
         }
         commons.List list=repo.getById(id);
         repo.delete(Objects.requireNonNull(getById(id).getBody()));
+        messagingTemplate.convertAndSend("/topic/updates", true);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -78,6 +79,7 @@ public class ListController {
         commons.List list=repo.getById(id);
         repo.getById(id).setName(name);
         repo.save(list);
+        messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(list);
     }
 
