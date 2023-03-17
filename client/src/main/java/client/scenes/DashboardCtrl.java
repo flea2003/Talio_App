@@ -114,7 +114,6 @@ public class DashboardCtrl implements Initializable {
             //edit list using double-click
             label.setOnMouseClicked(e ->{
                 if (e.getClickCount() == 2) {
-                    System.out.println("Label was double-clicked!");
                     editList(vBox,label);
                 }
             });
@@ -200,21 +199,25 @@ public class DashboardCtrl implements Initializable {
                     });
                 }
                 setOnDragDetected(event -> {
-                    if (getItem() == null) {
-                        return;
-                    }
+                        if (getItem() == null || isEmpty()) {
+                            return;
+                        }
 
-                    draggedCard = this;
-                    server.deleteCard(this.getItem().id);
-                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
+                        System.err.println("************" + this.getItem().getList() + "*************");
 
-                    content.putString(getItem().name);
-                    dragboard.setContent(content);
-                    dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
+                        draggedCard = this;
+                        Card card = getItem(); // store the Card object in a local variable
+                        card.getList().cards.remove(card); // remove the card from the list
+                        server.updateList(card.getList());
+                        server.deleteCard(card.id);
+                        Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                        ClipboardContent content = new ClipboardContent();
 
+                        content.putString(getItem().name);
+                        dragboard.setContent(content);
+                        dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
 
-                    event.consume();
+                        event.consume();
                 });
 
                 setOnMouseDragged(event -> {
@@ -222,42 +225,58 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragOver(event -> {
-                    double mouseX = event.getSceneX();
-                    double mouseY = event.getSceneY();
+                    Platform.runLater(() -> {
+                        double mouseX = event.getSceneX();
+                        double mouseY = event.getSceneY();
 
-                    double listViewY = this.localToScene(0, 0).getY();
-                    if (mouseY - listViewY >= 50) {
-                        sus = false;
-                        this.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 0 0 4 0;");
-                    } else {
-                        sus = true;
-                        this.setStyle("-fx-border-color: black transparent transparent transparent; -fx-border-width: 4 0 0 0;");
-                    }
-                    event.acceptTransferModes(TransferMode.MOVE);
+                        double listViewY = this.localToScene(0, 0).getY();
+                        if (mouseY - listViewY >= 50) {
+                            sus = false;
+                            this.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 0 0 4 0;");
+                        } else {
+                            sus = true;
+                            this.setStyle("-fx-border-color: black transparent transparent transparent; -fx-border-width: 4 0 0 0;");
+                        }
+                        event.acceptTransferModes(TransferMode.MOVE);
 
-                    event.consume();
+                        event.consume();
+                    });
                 });
 
                 setOnDragEntered(event -> {
                 });
 
                 setOnDragExited(event -> {
-                    this.setStyle("-fx-background-insets: 0 0 0 0;");
+                    Platform.runLater(() -> {
+                        this.setStyle("-fx-background-insets: 0 0 0 0;");
+                    });
                 });
 
                 setOnDragDropped(event -> {
-                    if (draggedCard != null) {
-                        var sourceListView = draggedCard.getListView();
-                        var sourceItems = sourceListView.getItems();
-                        int sourceIndex = draggedCard.getIndex();
-                        int dropIndex = this.getIndex() + (!sus ? 1 : 0);
-                        Card removed = sourceItems.remove(sourceIndex);
-                        this.getListView().getItems().add(dropIndex, removed);
-                        this.getItem().getList().cards.add(dropIndex, removed);
-                        server.updateList(this.getItem().getList());
+                    Platform.runLater(() -> {
+                        if (draggedCard != null) {
+                            var sourceListView = draggedCard.getListView();
+                            var sourceItems = sourceListView.getItems();
+                            int sourceIndex = draggedCard.getIndex();
+                            int dropIndex = this.getIndex() + (!sus ? 1 : 0);
+                            Card removed = sourceItems.remove(sourceIndex);
+                            this.getListView().getItems().add(dropIndex, removed);
+                            this.getItem().getList().cards.add(dropIndex, removed);
+                            server.updateList(this.getItem().getList());
+                        }
+                        event.setDropCompleted(true);
+                        event.consume();
+                    });
+                });
+
+                setOnDragDone(event -> {
+                    Node targetNode = (Node) event.getGestureTarget();
+                    if(!(targetNode instanceof ListCell || targetNode instanceof TableView)){
+                        Platform.runLater(() -> {
+                            q.getList().cards.add(q);
+                            server.updateList(q.getList());
+                        });
                     }
-                    event.setDropCompleted(true);
-                    event.consume();
                 });
 
                 double size = 100; // Adjust this value to change the size of the cells
@@ -280,7 +299,6 @@ public class DashboardCtrl implements Initializable {
 
     public void createBoard(ActionEvent actionEvent) {
         mainCtrl.switchCreateBoard();
-        System.out.println("new Board");
     }
 
     public void createList(VBox vboxEnd){

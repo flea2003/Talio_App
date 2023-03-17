@@ -153,7 +153,6 @@ public class ServerUtils {
         for(Card card : list.cards){
             ++indx;
             card.setNumberInTheList(indx);
-            System.out.println("CHECK " + indx);
         }
 
         String endpoint = String.format("api/lists/update");
