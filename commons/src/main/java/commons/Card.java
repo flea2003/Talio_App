@@ -39,6 +39,10 @@ public class Card {
         return list;
     }
 
+    public void setList(List list) {
+        this.list = list;
+    }
+
     @SuppressWarnings("unused")
     public Card() {}
 
