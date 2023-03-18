@@ -134,14 +134,13 @@ public class DashboardCtrl implements Initializable {
             listView.setOnDragOver(event -> {
                 event.acceptTransferModes(TransferMode.MOVE);
             });
-            listView.setOnDragDropped(event -> {
+            listView.setOnDragDropped(event -> { // if the drag ended on a tableview I add a new card to it
                 if (draggedCard != null) {
                     done = true; // the dragged ended succesfully
                     var sourceListView = draggedCard.getListView();
                     var sourceItems = sourceListView.getItems();
                     int sourceIndex = draggedCard.getIndex();
 
-                    Card removed = sourceItems.remove(sourceIndex);
                     listCurr.cards.add(cardDragged); // update with the card dropped
                     server.updateList(listCurr);
                 }
@@ -201,7 +200,7 @@ public class DashboardCtrl implements Initializable {
                         mainCtrl.switchTaskView(q);
                     });
                 }
-                setOnDragDetected(event -> {
+                setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
                         if (getItem() == null || isEmpty()) {
                             return;
                         }
@@ -225,7 +224,7 @@ public class DashboardCtrl implements Initializable {
 
                 });
 
-                setOnDragOver(event -> {
+                setOnDragOver(event -> { // if there is a drag over we set the black border and find if it targets the upper cell or lower
                     double mouseX = event.getSceneX();
                     double mouseY = event.getSceneY();
 
@@ -245,11 +244,11 @@ public class DashboardCtrl implements Initializable {
                 setOnDragEntered(event -> {
                 });
 
-                setOnDragExited(event -> {
+                setOnDragExited(event -> { // if the drag exists a card we update the border
                     this.setStyle("-fx-background-insets: 0 0 0 0;");
                 });
 
-                setOnDragDropped(event -> {
+                setOnDragDropped(event -> { // if the drag ends on a card we update the table
                     if (draggedCard != null) {
                         done = true;
                         var sourceListView = draggedCard.getListView();
@@ -264,7 +263,7 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragDone(event -> {
-                    if(!done) {
+                    if(!done) { // if the drag ended neither on a cell nor on a table view we restore the card
                         cardDragged.getList().cards.add(cardDragged.getNumberInTheList() - 1, cardDragged);
                         server.updateList(cardDragged.getList());
                     }
