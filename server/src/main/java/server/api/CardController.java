@@ -54,10 +54,12 @@ public class CardController {
     @PostMapping(path =  {"", "/"})
     public ResponseEntity<Card>add(@RequestBody Card card){
         if(card == null || isNullOrEmpty(card.name)){
+            System.out.println("A CARD WAS UPDATED  feic");
             return ResponseEntity.badRequest().build();
         }
         else{
             repo.save(card);
+            System.out.println("A CARD WAS UPDATED");
             messagingTemplate.convertAndSend("/topic/updates", true);
             return ResponseEntity.ok(card);
         }

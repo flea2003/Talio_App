@@ -59,4 +59,20 @@ public class Board {
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * getter for the string name
+     * @return the board's name
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * getter for lists
+     * @return the List type of lists
+     */
+    public java.util.List getLists() {
+        return this.lists;
+    }
 }
