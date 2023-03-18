@@ -149,12 +149,12 @@ public class ServerUtils {
     }
 
     public commons.List updateList(commons.List list){
-//        int indx = 0;
-//        for(Card card : list.cards){
-//            ++indx;
-//            card.setNumberInTheList(indx);
-//            System.out.println("CHECK " + indx);
-//        }
+        int indx = 0;
+        for(Card card : list.cards){
+            ++indx;
+            card.setNumberInTheList(indx);
+        }
+
 
         String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())

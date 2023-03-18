@@ -112,7 +112,6 @@ public class MainCtrl {
     }
     
     public void switchTaskCreation(List listCurr){
-        System.out.println(listCurr);
         primaryStage.setTitle("Task Creation");
         primaryStage.setScene(taskCreation);
         taskCreationCtrl.setListCurr(listCurr);
@@ -124,7 +123,6 @@ public class MainCtrl {
      * @param user
      */
     public void switchDashboard(String user){
-        System.out.println("SWITCH TO DASHBOARD");
         primaryStage.setTitle("Dashboard");
         dashboardCtrl.refresh();
         primaryStage.setScene(dashboard);
@@ -151,14 +149,12 @@ public class MainCtrl {
     public void switchTaskView(Card q){
         primaryStage.setTitle("View Task");
         primaryStage.setScene(taskView);
-        System.out.println(q);
         taskViewCtrl.renderInfo(q);
     }
 
     public void switchEdit(Card q){
         primaryStage.setTitle("Edit Task");
         primaryStage.setScene(taskEdit);
-        System.out.println(q);
         taskEditCtrl.renderInfo(q);
     }
 

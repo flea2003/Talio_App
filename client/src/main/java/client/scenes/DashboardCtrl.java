@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -53,6 +54,8 @@ public class DashboardCtrl implements Initializable {
     private ListCell<Card> draggedCard;
     private VBox draggedVbox;
     private boolean sus;
+    private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
+    private Card cardDragged; // this sets the dragged card
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -63,7 +66,7 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         server.refreshLists("/topic/updates", Boolean.class, l -> {
-            Platform.runLater(() -> {
+            Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
                 try{
                     fetchUpdatesDashboard();
                 }catch (Exception e){
@@ -79,10 +82,9 @@ public class DashboardCtrl implements Initializable {
     }
 
     public void refresh() {
-        if(hboxList.getChildren().size() >= 1) {
+        if(hboxList.getChildren().size() >= 1) { // We need to preserve the add list button
             for (int i = hboxList.getChildren().size() - 2; i >= 0; i--) {
                 hboxList.getChildren().remove(i);
-
             }
             addLists(server.getLists());
         }
@@ -95,7 +97,6 @@ public class DashboardCtrl implements Initializable {
                 createList(vboxEnd);
             });
         }
-
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
     }
@@ -114,7 +115,6 @@ public class DashboardCtrl implements Initializable {
             //edit list using double-click
             label.setOnMouseClicked(e ->{
                 if (e.getClickCount() == 2) {
-                    System.out.println("Label was double-clicked!");
                     editList(vBox,label);
                 }
             });
@@ -134,14 +134,15 @@ public class DashboardCtrl implements Initializable {
             listView.setOnDragOver(event -> {
                 event.acceptTransferModes(TransferMode.MOVE);
             });
-            listView.setOnDragDropped(event -> {
+            listView.setOnDragDropped(event -> { // if the drag ended on a tableview I add a new card to it
                 if (draggedCard != null) {
+                    done = true; // the dragged ended succesfully
                     var sourceListView = draggedCard.getListView();
                     var sourceItems = sourceListView.getItems();
                     int sourceIndex = draggedCard.getIndex();
 
-                    Card removed = sourceItems.remove(sourceIndex);
-                    listView.getItems().add(removed);
+                    listCurr.cards.add(cardDragged); // update with the card dropped
+                    server.updateList(listCurr);
                 }
 
                 event.setDropCompleted(true);
@@ -199,29 +200,31 @@ public class DashboardCtrl implements Initializable {
                         mainCtrl.switchTaskView(q);
                     });
                 }
-                setOnDragDetected(event -> {
-                    if (getItem() == null) {
-                        return;
-                    }
+                setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
+                        if (getItem() == null || isEmpty()) {
+                            return;
+                        }
 
-                    draggedCard = this;
-                    server.deleteCard(this.getItem().id);
-                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
+                        draggedCard = this;
+                        cardDragged = getItem(); // store the Card object in a local variable
+                        cardDragged.getList().cards.remove(cardDragged); // remove the card from the list
+                        server.updateList(cardDragged.getList());
+                        server.deleteCard(cardDragged.id);
+                        Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                        ClipboardContent content = new ClipboardContent();
 
-                    content.putString(getItem().name);
-                    dragboard.setContent(content);
-                    dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
+                        content.putString(getItem().name);
+                        dragboard.setContent(content);
+                        dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
 
-
-                    event.consume();
+                        event.consume();
                 });
 
                 setOnMouseDragged(event -> {
 
                 });
 
-                setOnDragOver(event -> {
+                setOnDragOver(event -> { // if there is a drag over we set the black border and find if it targets the upper cell or lower
                     double mouseX = event.getSceneX();
                     double mouseY = event.getSceneY();
 
@@ -241,23 +244,30 @@ public class DashboardCtrl implements Initializable {
                 setOnDragEntered(event -> {
                 });
 
-                setOnDragExited(event -> {
+                setOnDragExited(event -> { // if the drag exists a card we update the border
                     this.setStyle("-fx-background-insets: 0 0 0 0;");
                 });
 
-                setOnDragDropped(event -> {
+                setOnDragDropped(event -> { // if the drag ends on a card we update the table
                     if (draggedCard != null) {
+                        done = true;
                         var sourceListView = draggedCard.getListView();
-                        var sourceItems = sourceListView.getItems();
                         int sourceIndex = draggedCard.getIndex();
                         int dropIndex = this.getIndex() + (!sus ? 1 : 0);
-                        Card removed = sourceItems.remove(sourceIndex);
-                        this.getListView().getItems().add(dropIndex, removed);
-                        this.getItem().getList().cards.add(dropIndex, removed);
+                        this.getItem().getList().cards.add(dropIndex, cardDragged);
+                        cardDragged.setList(this.getItem().getList());
                         server.updateList(this.getItem().getList());
                     }
                     event.setDropCompleted(true);
                     event.consume();
+                });
+
+                setOnDragDone(event -> {
+                    if(!done) { // if the drag ended neither on a cell nor on a table view we restore the card
+                        cardDragged.getList().cards.add(cardDragged.getNumberInTheList() - 1, cardDragged);
+                        server.updateList(cardDragged.getList());
+                    }
+                    done = false;
                 });
 
                 double size = 100; // Adjust this value to change the size of the cells
@@ -271,16 +281,8 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
-//    private class CardCell extends ListCell<Card> {
-//        private Card card;
-//        public CardCell (Card card){
-//            card =
-//        }
-//    }
-
     public void createBoard(ActionEvent actionEvent) {
         mainCtrl.switchCreateBoard();
-        System.out.println("new Board");
     }
 
     public void createList(VBox vboxEnd){
