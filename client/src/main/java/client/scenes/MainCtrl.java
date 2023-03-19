@@ -44,7 +44,6 @@ public class MainCtrl {
     private TaskEditCtrl taskEditCtrl;
 
     private Scene server;
-
     private  ServerConnectCtrl serverCtrl;
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
                            Pair<AddQuoteCtrl, Parent> add,
@@ -158,5 +157,8 @@ public class MainCtrl {
         taskEditCtrl.renderInfo(q);
     }
 
+    public void switchDelete(Card currCard) {
+        switchDashboard("deleted!");
+    }
 
 }

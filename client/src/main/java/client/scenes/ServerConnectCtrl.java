@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 
 
 public class ServerConnectCtrl {
-
     private final ServerUtils server;
 
     private final MainCtrl mainCtrl;
@@ -34,6 +33,9 @@ public class ServerConnectCtrl {
     public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+    }
+    public ServerUtils getServer() {
+        return server;
     }
 
     /**

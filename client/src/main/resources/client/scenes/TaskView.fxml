@@ -21,7 +21,7 @@
          </font>
       </Text>
       <Text fx:id="error" fill="RED" layoutX="286.0" layoutY="339.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-      <Button id="edit-button" fx:id="delete" layoutX="519.0" layoutY="322.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" stylesheets="@../../CSS/stylesheet.css" text="Delete" />
+      <Button id="edit-button" fx:id="delete" layoutX="519.0" layoutY="322.0" mnemonicParsing="false" onAction="#goDelete" prefHeight="25.0" prefWidth="60.0" stylesheets="@../../CSS/stylesheet.css" text="Delete" />
       <Pane layoutX="16.0" layoutY="108.0" prefHeight="194.0" prefWidth="567.0" style="-fx-background-color: #d3d3d3; -fx-padding: 10px; -fx-border-radius: 10px;">
          <children>
             <Text fx:id="taskDescription" layoutX="5.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." wrappingWidth="557.4701118469238">

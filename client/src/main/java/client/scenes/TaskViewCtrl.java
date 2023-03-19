@@ -43,13 +43,18 @@ public class TaskViewCtrl {
     @FXML
     private Text error;
 
+    @FXML
+    private Button deleteButton;
+
 
     @Inject
     public TaskViewCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.card = card;
+
     }
+
 
     @FXML
     public void editCard() {
@@ -83,6 +88,12 @@ public class TaskViewCtrl {
     public void goEdit(){
         mainCtrl.switchEdit(currCard);
     }
+    public void goDelete(){
+        currCard.getList().cards.remove(currCard);
+        server.updateList(currCard.getList());
+        server.deleteCard(currCard.id);
+        mainCtrl.switchDelete(currCard);
+    }
 
     @FXML
     public void setDone(){
@@ -100,4 +111,5 @@ public class TaskViewCtrl {
     public void setListCurr(List listCurr) {
         this.listCurr = listCurr;
     }
+
 }
