@@ -15,35 +15,54 @@
  */
 package client.utils;
 
+import client.scenes.MainCtrl;
+import client.scenes.ServerConnectCtrl;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.inject.Provides;
 import commons.Board;
 import commons.Card;
 import commons.Quote;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import org.apache.logging.log4j.util.PropertySource;
 import org.glassfish.jersey.client.ClientConfig;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.inject.Inject;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
 
-    private static final String SERVER = "http://localhost:8080/";
+    private String SERVER;
 
-    public void getQuotesTheHardWay() throws IOException {
-        var url = new URL("http://localhost:8080/api/quotes");
-        var is = url.openConnection().getInputStream();
-        var br = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-        }
+    @Inject
+    public ServerUtils(String server){
+        SERVER=server;
+    }
+
+    public void setSERVER(String server){
+        SERVER=server;
+        System.out.println(SERVER);
     }
 
     public List<Quote> getQuotes() {
@@ -72,11 +91,10 @@ public class ServerUtils {
     }
 
     public Card addCard(Card card){
-        String endpoint = String.format("api/cards/%2d", card.id);
+        String endpoint = String.format("api/cards", card.id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
+                .request(APPLICATION_JSON).accept(APPLICATION_JSON)
                 .post(Entity.entity(card, APPLICATION_JSON), Card.class);
     }
 
@@ -86,11 +104,11 @@ public class ServerUtils {
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .put(Entity.entity(card, APPLICATION_JSON), Card.class);
+                .post(Entity.entity(card, APPLICATION_JSON), Card.class);
     }
 
     public Card deleteCard(long id){
-        String endpoint = String.format("api/cards/delete/%2d", id);
+        String endpoint = String.format("api/cards/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -98,17 +116,22 @@ public class ServerUtils {
                 .delete(new GenericType<Card>() {});
     }
 
-//    public List<commons.List> getLists(){
-//        String endpoint = String.format("api/lists");
-//        return  ClientBuilder.newClient(new ClientConfig())
-//                .target(SERVER).path(endpoint)
-//                .request(APPLICATION_JSON)
-//                .accept(APPLICATION_JSON)
-//                .get(new GenericType<List<commons.List>>() {});
-//    }
+    public List<commons.List> getLists(){
+        String endpoint = String.format("api/lists");
+        List<commons.List>res =  ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<commons.List>>() {});
+        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
+        for(commons.List list : res){
+            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+        }
+        return res;
+    }
 
     public commons.List getList(long id){
-        String endpoint = String.format("api/lists/%2d", id);
+        String endpoint = String.format("api/lists/%d", id);
         return  ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -126,7 +149,14 @@ public class ServerUtils {
     }
 
     public commons.List updateList(commons.List list){
-        String endpoint = String.format("api/lists/changeName/%2d", list.id);
+        int indx = 0;
+        for(Card card : list.cards){
+            ++indx;
+            card.setNumberInTheList(indx);
+        }
+
+
+        String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -134,8 +164,27 @@ public class ServerUtils {
                 .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
     }
 
+    public commons.List updateListName(commons.List list,String name){
+        String endpoint = String.format("api/lists/changeName/%d", list.id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(name, APPLICATION_JSON), commons.List.class);
+    }
+
+    public commons.List getListById(long id){
+        String endpoint = String.format("/api/lists/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(commons.List.class);
+    }
+
+
     public commons.List deleteList(long id){
-        String endpoint = String.format("api/lists/delete/%2d", id);
+        String endpoint = String.format("api/lists/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -188,21 +237,58 @@ public class ServerUtils {
                 .delete(new GenericType<commons.Board>() {});
     }
 
-    public List<commons.List> getLists(){
-        List<commons.List>list = new ArrayList<>();
-        ArrayList<Card> cards = new ArrayList<>();
-        cards.add(new Card("Uno Dos", "Card2", null));
-        cards.add(new Card("HAHAHHA", "Card3", null));
-        cards.add(new Card("Ole", "Card4", null));
+    private StompSession session ;
 
-        ArrayList<Card> cards2 = new ArrayList<>();
-        cards2.add(new Card("test", "LMAO", null));
-        cards2.add(new Card("wext", "ROFL", null));
-        cards2.add(new Card("rest", "Card4", null));
+    /**
+     * Creates a websocket connection
+     * @param IP the IP address of the server to create a websocket connection
+     */
+    public void initialiseSession(String IP){
+        session=connect("ws://"+IP+":8080/websocket");
+    }
 
-        list.add(new commons.List(1, cards, "Test", null));
-        list.add(new commons.List(2, cards2, "Testing", null));
-        return list;
+    /**
+     * Creates a StompSession to be used for receiving updates on the database
+     * @param url the url of the websocket connection
+     * @return a StompSession to send and receive messages between the client and the server
+     */
+    private StompSession connect(String url){
+        var client=new StandardWebSocketClient();
+        var stomp=new WebSocketStompClient(client);
+        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        try {
+            return stomp.connect(url, new StompSessionHandlerAdapter() {}).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        throw new IllegalStateException();
+    }
 
+    /**
+     * Subscribes to a destination on the WebSocket connection established by session,
+     * is used to update the app with new information in real-time
+     * @param destination the destination the session will subscribe to
+     * @param type the type of the payload
+     * @param consumer a consumer of objects of type "type"
+     * @param <T> a general object enabling the generalization of the method to any type
+     */
+    public <T> void refreshLists(String destination,Type type, Consumer<T> consumer){
+        session.subscribe(destination, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return type;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((T) payload);
+            }
+        });
+    }
+
+    public void send(String destination,Object o){
+        session.send(destination, o);
     }
 }

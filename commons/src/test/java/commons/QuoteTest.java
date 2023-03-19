@@ -15,9 +15,7 @@
  */
 package commons;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +26,10 @@ public class QuoteTest {
 	@Test
 	public void checkConstructor() {
 		var q = new Quote(SOME_PERSON, "q");
+		Quote emptyQuote = new Quote();
 		assertEquals(SOME_PERSON, q.person);
 		assertEquals("q", q.quote);
+		assertNotNull(emptyQuote);
 	}
 
 	@Test

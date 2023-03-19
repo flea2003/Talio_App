@@ -15,7 +15,9 @@
  */
 package client.scenes;
 
+import client.utils.ServerUtils;
 import commons.Card;
+import commons.List;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -31,6 +33,7 @@ public class MainCtrl {
     private RegistrationCtrl regCtrl;
     private TaskViewCtrl taskViewCtrl;
     private TaskCreationCtrl taskCreationCtrl;
+    private DashboardCtrl dashboardCtrl;
     private Scene registration;
     private CreateBoardCtrl boardCtrl;
     private Scene board;
@@ -40,8 +43,11 @@ public class MainCtrl {
     private Scene taskEdit;
     private TaskEditCtrl taskEditCtrl;
 
+    private Scene server;
+    private  ServerConnectCtrl serverCtrl;
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
                            Pair<AddQuoteCtrl, Parent> add,
+                           Scene server, ServerConnectCtrl serverConnectCtrl,
                            Pair<RegistrationCtrl, Parent> registration,
                            Pair<DashboardCtrl, Parent> dashboard,
                            Pair<CreateBoardCtrl, Parent> board,
@@ -59,6 +65,8 @@ public class MainCtrl {
         this.add = new Scene(add.getValue());
 
         this.registration = new Scene(registration.getValue());
+
+        this.dashboardCtrl = dashboard.getKey();
         this.dashboard = new Scene(dashboard.getValue());
 
         this.board = new Scene(board.getValue());
@@ -72,11 +80,17 @@ public class MainCtrl {
 
         this.taskCreation = new Scene(taskCreation.getValue());
         this.taskCreationCtrl = taskCreation.getKey();
-        switchRegistration();
-        primaryStage.show();
 
+        this.server=server;
+        this.serverCtrl= serverCtrl;
+
+        fetchUpdatesDashboard("");
+        switchDashboard("");
     }
 
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
 
     public void showOverview() {
         primaryStage.setTitle("Quotes: Overview");
@@ -96,9 +110,10 @@ public class MainCtrl {
         registration.setOnKeyPressed(e -> regCtrl.keyPressed(e));
     }
     
-    public void switchTaskCreation(){
+    public void switchTaskCreation(List listCurr){
         primaryStage.setTitle("Task Creation");
         primaryStage.setScene(taskCreation);
+        taskCreationCtrl.setListCurr(listCurr);
         taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
     }
 
@@ -108,7 +123,17 @@ public class MainCtrl {
      */
     public void switchDashboard(String user){
         primaryStage.setTitle("Dashboard");
+        dashboardCtrl.refresh();
         primaryStage.setScene(dashboard);
+    }
+
+    public void fetchUpdatesDashboard(String user){
+        dashboardCtrl.refresh();
+    }
+
+    public void switchServer(){
+        primaryStage.setTitle("Choose a server");
+        primaryStage.setScene(server);
     }
 
     /**
@@ -123,14 +148,17 @@ public class MainCtrl {
     public void switchTaskView(Card q){
         primaryStage.setTitle("View Task");
         primaryStage.setScene(taskView);
-        System.out.println(q);
         taskViewCtrl.renderInfo(q);
     }
 
     public void switchEdit(Card q){
         primaryStage.setTitle("Edit Task");
         primaryStage.setScene(taskEdit);
-        System.out.println(q);
         taskEditCtrl.renderInfo(q);
     }
+
+    public void switchDelete(Card currCard) {
+        switchDashboard("deleted!");
+    }
+
 }

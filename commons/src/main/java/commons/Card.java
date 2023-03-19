@@ -4,6 +4,9 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -18,15 +21,26 @@ public class Card {
     public String description;
 
     public String name;
+    public int numberInTheList;
 
     @ManyToOne
-    @JoinColumn(name="list_id")
-    public List list;
+    @JoinColumn(name = "list_id")
+    @JsonBackReference
+    private List list;
 
-    public Card( String description,String name, List list) {
-        this.description=description;
-        this.name=name;
-        this.list=list;
+    public Card(String description, String name, List list, int numberInTheList) {
+        this.description = description;
+        this.name = name;
+        this.list = list;
+        this.numberInTheList = numberInTheList;
+    }
+
+    public List getList() {
+        return list;
+    }
+
+    public void setList(List list) {
+        this.list = list;
     }
 
     @SuppressWarnings("unused")
@@ -47,6 +61,14 @@ public class Card {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 
+    public void setNumberInTheList(int numberInTheList) {
+        this.numberInTheList = numberInTheList;
+    }
+
+    public int getNumberInTheList() {
+        return numberInTheList;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -57,5 +79,13 @@ public class Card {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * getter for name
+     * @return the string name
+     */
+    public String getName() {
+        return this.name;
     }
 }

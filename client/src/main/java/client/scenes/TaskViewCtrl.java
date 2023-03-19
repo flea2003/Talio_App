@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Stage;
 import commons.Card;
+import commons.List;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -33,6 +34,17 @@ public class TaskViewCtrl {
 
     @FXML
     private Button done;
+    @FXML
+    private Text taskNo;
+
+    @FXML
+    private List listCurr;
+
+    @FXML
+    private Text error;
+
+    @FXML
+    private Button deleteButton;
 
 
     @Inject
@@ -40,7 +52,9 @@ public class TaskViewCtrl {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.card = card;
+
     }
+
 
     @FXML
     public void editCard() {
@@ -67,14 +81,35 @@ public class TaskViewCtrl {
         System.out.println(card.description);
         taskName.setText(card.name);
         taskDescription.setText(card.description);
+        taskNo.setText("Task No. " + card.getNumberInTheList());
         return;
-    }
-
-    public void setDone(){
-        mainCtrl.switchDashboard("User");
     }
 
     public void goEdit(){
         mainCtrl.switchEdit(currCard);
     }
+    public void goDelete(){
+        currCard.getList().cards.remove(currCard);
+        server.updateList(currCard.getList());
+        server.deleteCard(currCard.id);
+        mainCtrl.switchDelete(currCard);
+    }
+
+    @FXML
+    public void setDone(){
+        mainCtrl.switchDashboard("LOL");
+    }
+
+    private String extractValue(Text curr){
+        return curr.getText();
+    }
+
+    private void setError(String err){
+        error.setText(err);
+    }
+
+    public void setListCurr(List listCurr) {
+        this.listCurr = listCurr;
+    }
+
 }

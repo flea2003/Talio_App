@@ -17,7 +17,7 @@ public class Board {
     public long id;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="list_id")
+    @JoinColumn(name="board_id")
     public java.util.List<List> lists;
 
     public String name;
@@ -58,5 +58,21 @@ public class Board {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * getter for the string name
+     * @return the board's name
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * getter for lists
+     * @return the List type of lists
+     */
+    public java.util.List getLists() {
+        return this.lists;
     }
 }

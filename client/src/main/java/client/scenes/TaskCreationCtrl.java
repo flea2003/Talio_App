@@ -1,7 +1,10 @@
 package client.scenes;
 
+import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Card;
+import commons.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -31,6 +34,7 @@ public class TaskCreationCtrl {
     @FXML
     private Text error;
 
+    private List listCurr;
 
     @Inject
     public TaskCreationCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -43,7 +47,7 @@ public class TaskCreationCtrl {
         System.out.println(event);
         System.out.println("hi");
         String valueName = "";
-        String valueDes;
+        String valueDes = "";
         setError("");
         System.out.println(addTask);
         System.out.println(event.getSource());
@@ -57,8 +61,11 @@ public class TaskCreationCtrl {
                 mainCtrl.switchDashboard("LOL");
             }
         }
-        System.out.println(valueName);
-        System.out.println(valueName);
+        listCurr = server.getList(listCurr.id);
+        Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
+        listCurr.cards.add(card);
+//        server.addCard(card);
+        server.updateList(listCurr);
         taskName.setText("");
         taskDescription.setText("");
     }
@@ -83,4 +90,7 @@ public class TaskCreationCtrl {
         error.setText(err);
     }
 
+    public void setListCurr(List listCurr) {
+        this.listCurr = listCurr;
+    }
 }

@@ -12,6 +12,6 @@ public class SomeController {
     @GetMapping("/")
     @ResponseBody
     public String index() {
-        return "Hello world!";
+        return "Talio app";
     }
 }
