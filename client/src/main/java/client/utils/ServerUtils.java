@@ -210,6 +210,16 @@ public class ServerUtils {
                 .get(new GenericType<commons.Board>() {});
     }
 
+
+    public commons.Board getBoardByKey(String key){
+        String endpoint = String.format("api/boards/key/%s", key);
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<commons.Board>() {});
+    }
+
     public commons.Board addList(commons.Board board){
         String endpoint = String.format("api/boards");
         return  ClientBuilder.newClient(new ClientConfig())
