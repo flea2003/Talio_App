@@ -154,7 +154,7 @@ public class ServerUtils {
             ++indx;
             card.setNumberInTheList(indx);
         }
-
+        System.out.println("aaaaaa"+list);
         String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)

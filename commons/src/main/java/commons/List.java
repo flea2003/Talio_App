@@ -1,11 +1,8 @@
 package commons;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -129,6 +126,10 @@ public class List {
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
 }

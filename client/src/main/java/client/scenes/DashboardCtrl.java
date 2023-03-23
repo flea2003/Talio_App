@@ -54,6 +54,7 @@ public class DashboardCtrl implements Initializable {
     private boolean sus;
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
+    private long idOfCurrentBoard=-1;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -88,8 +89,16 @@ public class DashboardCtrl implements Initializable {
             Label label = new Label(boardCurr.name);
 
             label.setUserData(boardCurr.id);
+            if(idOfCurrentBoard != -1 && idOfCurrentBoard==boardCurr.id){
+                label.setStyle("-fx-font-size: 18px;");
+            }
 
             label.setOnMouseClicked(e -> {
+                for(Node child : boardsVBox.getChildren()) {
+                    child.setStyle("");
+                }
+                idOfCurrentBoard = (Long) label.getUserData();
+                label.setStyle("-fx-font-size: 18px;");
                 refreshSpecificBoard((Long) label.getUserData());
             });
 
@@ -143,25 +152,29 @@ public class DashboardCtrl implements Initializable {
             //edit list using double-click
             label.setOnMouseClicked(e ->{
                 if (e.getClickCount() == 2) {
-                    editList(vBox,label);
+                    editList(vBox,label, boardId);
                 }
             });
 
             //edit list using edit button
             edit.setOnAction(e->{
-                editList(vBox,label);
+                editList(vBox, label, boardId);
             });
 
             // Add Card Button
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
+
             addTaskButton.setOnAction(e -> {
                 mainCtrl.switchTaskCreation(listCurr);
             });
+
             ListView<Card>listView = new ListView<>();
+
             listView.setOnDragOver(event -> {
                 event.acceptTransferModes(TransferMode.MOVE);
             });
+
             listView.setOnDragDropped(event -> { // if the drag ended on a tableview I add a new card to it
                 if (draggedCard != null) {
                     done = true; // the dragged ended succesfully
@@ -196,7 +209,7 @@ public class DashboardCtrl implements Initializable {
         }
     }
 
-    private void editList(VBox vBox, Label label) {
+    private void editList(VBox vBox, Label label, Long boardId) {
         TextField textField = new TextField(label.getText());
 
         int labelIndex = vBox.getChildren().indexOf(label);
@@ -209,6 +222,16 @@ public class DashboardCtrl implements Initializable {
                 //update the database with the changes
                 List newList=server.getListById((Long) label.getUserData());
                 newList.setName(txt);
+
+                Board boardCurr=server.getBoard(boardId);
+                for(int i=0; i<boardCurr.lists.size(); i++){
+                    if(boardCurr.lists.get(i).getID()==newList.getID()){
+                        boardCurr.lists.set(i,newList);
+                    }
+                }
+                newList.setBoard(boardCurr);
+                System.out.println(newList);
+
                 server.updateList(newList);
             }
         });
@@ -332,7 +355,7 @@ public class DashboardCtrl implements Initializable {
                     Board boardCurr = server.getBoard(boardId);
                     List newList=new List(new ArrayList<Card>(), newText, boardCurr, boardCurr.lists.size() + 1);
                     boardCurr.lists.add(newList);
-                    System.out.println(boardCurr);
+
                     server.updateBoard(boardCurr);//send the text to the database
 
                     vboxEnd.getChildren().remove(textField);
