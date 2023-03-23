@@ -54,7 +54,6 @@ public class DashboardCtrl implements Initializable {
     private boolean sus;
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
-    private boolean addListShowing=false;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -81,8 +80,8 @@ public class DashboardCtrl implements Initializable {
             refreshSpecificBoard((Long) hboxList.getUserData());
         }
 
-        for (int i = boardsVBox.getChildren().size() - 1; i >= 0; i--) {
-            boardsVBox.getChildren().remove(i);
+        if (boardsVBox.getChildren().size() > 0) {
+            boardsVBox.getChildren().subList(0, boardsVBox.getChildren().size()).clear();
         }
 
         for (Board boardCurr : boards){
@@ -102,31 +101,28 @@ public class DashboardCtrl implements Initializable {
 
     public void refreshSpecificBoard(long id) {
         hboxList.setUserData(id);
-        if(!addListShowing) {                                               // We need to preserve the add list button
-            if (hboxList.getChildren().size() > 0) {
-                hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
-            }
-
-            addListShowing = true;
-            Button addListButton = new Button("Create List");
-
-            VBox vboxEnd = new VBox();
-            vboxEnd.getChildren().add(addListButton);
-            hboxList.getChildren().add(vboxEnd);
-
-            addListButton.setOnAction(e -> {
-                createList(vboxEnd, id);
-            });
+        if (hboxList.getChildren().size() > 0) {
+            hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
         }
+
+        Button addListButton = new Button("Create List");
+
+        VBox vboxEnd = new VBox();
+        vboxEnd.getChildren().add(addListButton);
+        hboxList.getChildren().add(vboxEnd);
+
+        addListButton.setOnAction(e -> {
+            createList(vboxEnd, id);
+        });
 
         if (server.getBoard(id).lists != null && server.getBoard(id).lists.size() > 0) {
             if (hboxList.getChildren().size() > 1) {
-                hboxList.getChildren().subList(0, hboxList.getChildren().size() - 1).clear();
+                hboxList.getChildren().subList(0, hboxList.getChildren().size() ).clear();
             }
 
             addLists(server.getBoard(id).lists, id);
         } else if (hboxList.getChildren().size() > 1) {
-                hboxList.getChildren().subList(0, hboxList.getChildren().size() - 1).clear();
+                hboxList.getChildren().subList(0, hboxList.getChildren().size() ).clear();
         }
 
         hboxList.setPadding(new Insets(30, 30, 30, 30));
@@ -376,7 +372,6 @@ public class DashboardCtrl implements Initializable {
     @FXML
     public void serverDisconnect(){
         hboxList.setUserData(null);
-        addListShowing=false;
         mainCtrl.getPrimaryStage().close();
         main.start(new Stage());
     }
