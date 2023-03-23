@@ -84,7 +84,7 @@ public class MainCtrl {
         this.server=server;
         this.serverCtrl= serverCtrl;
 
-        fetchUpdatesDashboard("");
+//        fetchUpdatesDashboard("");
         switchDashboard("");
     }
 
@@ -123,13 +123,13 @@ public class MainCtrl {
      */
     public void switchDashboard(String user){
         primaryStage.setTitle("Dashboard");
-        dashboardCtrl.refresh();
+//        dashboardCtrl.refresh();
         primaryStage.setScene(dashboard);
     }
 
-    public void fetchUpdatesDashboard(String user){
-        dashboardCtrl.refresh();
-    }
+//    public void fetchUpdatesDashboard(String user){
+//        dashboardCtrl.refresh();
+//    }
 
     public void switchServer(){
         primaryStage.setTitle("Choose a server");

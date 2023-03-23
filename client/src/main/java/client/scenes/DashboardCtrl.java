@@ -3,31 +3,35 @@ package client.scenes;
 import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class DashboardCtrl implements Initializable {
@@ -35,27 +39,22 @@ public class DashboardCtrl implements Initializable {
     private Main main;
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-
-    @FXML
-    private Button logOut;
-    private String currentBoard;
-
     @FXML
     private HBox hboxList;
-
-    private List data;
-
     @FXML
     private ScrollPane pane;
     @FXML
-    private Button refreshButton;
-    @FXML
     private Button disconnectButton;
+    @FXML
+    private AnchorPane boardsPane;
+    @FXML
+    private VBox boardsVBox;
     private ListCell<Card> draggedCard;
     private VBox draggedVbox;
     private boolean sus;
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
+    private boolean addListShowing=false;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -65,43 +64,76 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        refreshBoards(server.getBoards());
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
                 try{
-                    fetchUpdatesDashboard();
+                    refreshBoards(server.getBoards());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             });
-//            refreshDashboard();
         });
     }
 
-    public void logOut(){
-        mainCtrl.switchRegistration();
+    public void refreshBoards(java.util.List<Board> boards){
+        if(hboxList.getUserData()!=null){
+            refreshSpecificBoard((Long) hboxList.getUserData());
+        }
+
+        for (int i = boardsVBox.getChildren().size() - 1; i >= 0; i--) {
+            boardsVBox.getChildren().remove(i);
+        }
+
+        for (Board boardCurr : boards){
+            Label label = new Label(boardCurr.name);
+
+            label.setUserData(boardCurr.id);
+
+            label.setOnMouseClicked(e -> {
+                refreshSpecificBoard((Long) label.getUserData());
+            });
+
+            boardsVBox.getChildren().add(label);
+            boardsVBox.setPadding(new Insets(5, 5, 5, 10));
+            boardsVBox.setSpacing(10);
+        }
     }
 
-    public void refresh() {
-        if(hboxList.getChildren().size() >= 1) { // We need to preserve the add list button
-            for (int i = hboxList.getChildren().size() - 2; i >= 0; i--) {
-                hboxList.getChildren().remove(i);
+    public void refreshSpecificBoard(long id) {
+        hboxList.setUserData(id);
+        if(!addListShowing) {                                               // We need to preserve the add list button
+            if (hboxList.getChildren().size() > 0) {
+                hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
             }
-            addLists(server.getLists());
-        }
-        else{
+
+            addListShowing = true;
             Button addListButton = new Button("Create List");
+
             VBox vboxEnd = new VBox();
             vboxEnd.getChildren().add(addListButton);
             hboxList.getChildren().add(vboxEnd);
+
             addListButton.setOnAction(e -> {
-                createList(vboxEnd);
+                createList(vboxEnd, id);
             });
         }
+
+        if (server.getBoard(id).lists != null && server.getBoard(id).lists.size() > 0) {
+            if (hboxList.getChildren().size() > 1) {
+                hboxList.getChildren().subList(0, hboxList.getChildren().size() - 1).clear();
+            }
+
+            addLists(server.getBoard(id).lists, id);
+        } else if (hboxList.getChildren().size() > 1) {
+                hboxList.getChildren().subList(0, hboxList.getChildren().size() - 1).clear();
+        }
+
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
     }
 
-    private void addLists(java.util.List<List>list){
+    private void addLists(java.util.List<List>list, long boardId){
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
@@ -179,12 +211,12 @@ public class DashboardCtrl implements Initializable {
             if (!newValue) {
                 String txt=textField.getText();
                 //update the database with the changes
-                server.updateListName(server.getListById((Long) label.getUserData()),txt);
+                List newList=server.getListById((Long) label.getUserData());
+                newList.setName(txt);
+                server.updateList(newList);
             }
         });
     }
-
-
 
     private void setFactory(ListView list){
         list.setCellFactory(q -> new ListCell<Card>() {
@@ -201,23 +233,23 @@ public class DashboardCtrl implements Initializable {
                     });
                 }
                 setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
-                        if (getItem() == null || isEmpty()) {
-                            return;
-                        }
+                    if (getItem() == null || isEmpty()) {
+                        return;
+                    }
 
-                        draggedCard = this;
-                        cardDragged = getItem(); // store the Card object in a local variable
-                        cardDragged.getList().cards.remove(cardDragged); // remove the card from the list
-                        server.updateList(cardDragged.getList());
-                        server.deleteCard(cardDragged.id);
-                        Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                        ClipboardContent content = new ClipboardContent();
+                    draggedCard = this;
+                    cardDragged = getItem(); // store the Card object in a local variable
+                    cardDragged.getList().cards.remove(cardDragged); // remove the card from the list
+                    server.updateList(cardDragged.getList());
+                    server.deleteCard(cardDragged.id);
+                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
 
-                        content.putString(getItem().name);
-                        dragboard.setContent(content);
-                        dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
+                    content.putString(getItem().name);
+                    dragboard.setContent(content);
+                    dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
 
-                        event.consume();
+                    event.consume();
                 });
 
                 setOnMouseDragged(event -> {
@@ -281,11 +313,7 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
-    public void createBoard(ActionEvent actionEvent) {
-        mainCtrl.switchCreateBoard();
-    }
-
-    public void createList(VBox vboxEnd){
+    public void createList(VBox vboxEnd, long boardId){
         if(vboxEnd.getChildren().size()>1){
             ObservableList<Node> children = vboxEnd.getChildren();
             int numChildren = children.size();
@@ -304,7 +332,13 @@ public class DashboardCtrl implements Initializable {
             }else{
                 if(textField.getText().strip().length()!=0) {
                     String newText = textField.getText();
-                    server.addList(new List(newText));//send the text to the database
+
+                    Board boardCurr = server.getBoard(boardId);
+                    List newList=new List(new ArrayList<Card>(), newText, boardCurr, boardCurr.lists.size() + 1);
+                    boardCurr.lists.add(newList);
+                    System.out.println(boardCurr);
+                    server.updateBoard(boardCurr);//send the text to the database
+
                     vboxEnd.getChildren().remove(textField);
                     vboxEnd.getChildren().remove(spacer);
                 }
@@ -318,16 +352,15 @@ public class DashboardCtrl implements Initializable {
                 vboxEnd.getChildren().remove(spacer);
             }
         });
-
-//        String text = textField.getText();
-//        server.send("/app/lists",new List(text));
     }
-
 
     public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
         java.util.List<Card> cardlist = list.cards;
         listView.setItems(FXCollections.observableList(cardlist));
-        int index = hboxList.getChildren().size() - 1;
+        int index=0;
+        if(hboxList.getChildren().size()>0){
+            index = hboxList.getChildren().size() - 1;
+        }
         hboxList.getChildren().add(index, vBox);
 
         // Make the card have a specified height and width
@@ -342,19 +375,12 @@ public class DashboardCtrl implements Initializable {
 
     @FXML
     public void serverDisconnect(){
+        hboxList.setUserData(null);
+        addListShowing=false;
         mainCtrl.getPrimaryStage().close();
         main.start(new Stage());
     }
 
-    @FXML
-    public void refreshDashboard(){
-        mainCtrl.switchDashboard("");
-    }
-
-    @FXML
-    public void fetchUpdatesDashboard(){
-        mainCtrl.fetchUpdatesDashboard("");
-    }
 
 }
 
