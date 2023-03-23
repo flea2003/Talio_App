@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -33,6 +34,15 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(repo.findById(id).get());
+    }
+
+    @GetMapping("/key/{key}")
+    public ResponseEntity<Board> getByKey(@PathVariable("key") String key) {
+        Optional<Board> board = repo.findBoardByKey(key);
+        if(board.isEmpty())
+            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(board.get());
+
     }
 
     @PostMapping(path = { "", "/" })
