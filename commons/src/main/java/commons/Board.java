@@ -31,6 +31,7 @@ public class Board {
         this.key = UUID.randomUUID().toString();
     }
     @SuppressWarnings("unused")
+    // what is this??
     public Board(int id, ArrayList<Board> boards, String a) {}
 
     public Board(long id, ArrayList<List> lists, String name) {
@@ -66,6 +67,8 @@ public class Board {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getKey(){return key;}
 
     /**
      * getter for the string name
