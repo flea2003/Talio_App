@@ -161,6 +161,7 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
+
     }
 
 //    public commons.List updateListName(commons.List list,String name){

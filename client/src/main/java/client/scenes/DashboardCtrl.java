@@ -138,7 +138,8 @@ public class DashboardCtrl implements Initializable {
         hboxList.setSpacing(30);
     }
 
-    private void addLists(java.util.List<List>list, long boardId){
+    private void addLists(java.util.List<List> list, long boardId){
+        Board boardCurr=server.getBoard(boardId);
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
@@ -166,7 +167,7 @@ public class DashboardCtrl implements Initializable {
             Button addTaskButton = new Button("Add Task");
 
             addTaskButton.setOnAction(e -> {
-                mainCtrl.switchTaskCreation(listCurr);
+                mainCtrl.switchTaskCreation(listCurr, boardId);
             });
 
             ListView<Card>listView = new ListView<>();
@@ -183,14 +184,21 @@ public class DashboardCtrl implements Initializable {
                     int sourceIndex = draggedCard.getIndex();
 
                     listCurr.cards.add(cardDragged); // update with the card dropped
-                    server.updateList(listCurr);
+
+                    for(int i=0; i<boardCurr.lists.size(); i++){
+                        if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                            boardCurr.lists.set(i,listCurr);
+                        }
+                    }
+
+                    server.updateBoard(boardCurr);
                 }
 
                 event.setDropCompleted(true);
                 event.consume();
             });
             // Call the method that sets the cell factory review.
-            setFactory(listView);
+            setFactory(listView, boardId);
 
             // Delete List Button
             delete.setOnAction(e -> {
@@ -219,25 +227,25 @@ public class DashboardCtrl implements Initializable {
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
                 String txt=textField.getText();
-                //update the database with the changes
                 List newList=server.getListById((Long) label.getUserData());
+                Board boardCurr = server.getBoard(boardId);
                 newList.setName(txt);
+                newList.setBoard(boardCurr);
 
-                Board boardCurr=server.getBoard(boardId);
                 for(int i=0; i<boardCurr.lists.size(); i++){
                     if(boardCurr.lists.get(i).getID()==newList.getID()){
                         boardCurr.lists.set(i,newList);
                     }
                 }
-                newList.setBoard(boardCurr);
-                System.out.println(newList);
 
-                server.updateList(newList);
+                server.updateBoard(boardCurr);//send the text to the database
+
             }
         });
     }
 
-    private void setFactory(ListView list){
+    private void setFactory(ListView list, long boardId){
+        Board boardCurr=server.getBoard(boardId);
         list.setCellFactory(q -> new ListCell<Card>() {
             @Override
             protected void updateItem(Card q, boolean empty) {
@@ -248,7 +256,7 @@ public class DashboardCtrl implements Initializable {
                 else{
                     setText(q.name);
                     setOnMouseClicked(event -> {
-                        mainCtrl.switchTaskView(q);
+                        mainCtrl.switchTaskView(q, server.getBoard(boardId));
                     });
                 }
                 setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
@@ -258,9 +266,18 @@ public class DashboardCtrl implements Initializable {
 
                     draggedCard = this;
                     cardDragged = getItem(); // store the Card object in a local variable
-                    cardDragged.getList().cards.remove(cardDragged); // remove the card from the list
-                    server.updateList(cardDragged.getList());
+                    List listCurr=cardDragged.getList();
+                    listCurr.cards.remove(cardDragged); // remove the card from the list
+
+                    for(int i=0; i<boardCurr.lists.size(); i++){
+                        if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                            boardCurr.lists.set(i,listCurr);
+                        }
+                    }
+
+                    server.updateBoard(boardCurr);
                     server.deleteCard(cardDragged.id);
+
                     Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
                     ClipboardContent content = new ClipboardContent();
 
@@ -305,9 +322,17 @@ public class DashboardCtrl implements Initializable {
                         var sourceListView = draggedCard.getListView();
                         int sourceIndex = draggedCard.getIndex();
                         int dropIndex = this.getIndex() + (!sus ? 1 : 0);
-                        this.getItem().getList().cards.add(dropIndex, cardDragged);
+                        List listCurr=this.getItem().getList();
+                        listCurr.cards.add(dropIndex, cardDragged);
                         cardDragged.setList(this.getItem().getList());
-                        server.updateList(this.getItem().getList());
+
+                        for(int i=0; i<boardCurr.lists.size(); i++){
+                            if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                                boardCurr.lists.set(i,listCurr);
+                            }
+                        }
+
+                        server.updateBoard(boardCurr);
                     }
                     event.setDropCompleted(true);
                     event.consume();
@@ -315,8 +340,16 @@ public class DashboardCtrl implements Initializable {
 
                 setOnDragDone(event -> {
                     if(!done) { // if the drag ended neither on a cell nor on a table view we restore the card
-                        cardDragged.getList().cards.add(cardDragged.getNumberInTheList() - 1, cardDragged);
-                        server.updateList(cardDragged.getList());
+                        List listCurr= cardDragged.getList();
+                        listCurr.cards.add(cardDragged.getNumberInTheList() - 1, cardDragged);
+
+                        for(int i=0; i<boardCurr.lists.size(); i++){
+                            if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                                boardCurr.lists.set(i,listCurr);
+                            }
+                        }
+
+                        server.updateBoard(boardCurr);
                     }
                     done = false;
                 });
@@ -354,9 +387,11 @@ public class DashboardCtrl implements Initializable {
 
                     Board boardCurr = server.getBoard(boardId);
                     List newList=new List(new ArrayList<Card>(), newText, boardCurr, boardCurr.lists.size() + 1);
+                    newList.setBoard(boardCurr);
                     boardCurr.lists.add(newList);
 
                     server.updateBoard(boardCurr);//send the text to the database
+
 
                     vboxEnd.getChildren().remove(textField);
                     vboxEnd.getChildren().remove(spacer);
@@ -394,6 +429,7 @@ public class DashboardCtrl implements Initializable {
 
     @FXML
     public void serverDisconnect(){
+        idOfCurrentBoard=-1;
         hboxList.setUserData(null);
         mainCtrl.getPrimaryStage().close();
         main.start(new Stage());
