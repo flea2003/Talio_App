@@ -3,6 +3,7 @@ package client.scenes;
 import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.fxml.FXML;
@@ -36,6 +37,8 @@ public class TaskCreationCtrl {
 
     private List listCurr;
 
+    private long boardId;
+
     @Inject
     public TaskCreationCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
@@ -62,10 +65,23 @@ public class TaskCreationCtrl {
             }
         }
         listCurr = server.getList(listCurr.id);
+        Board boardCurr=server.getBoard(boardId);
+
         Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
         listCurr.cards.add(card);
+
+        for(int i=0; i<boardCurr.lists.size(); i++){
+            if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                boardCurr.lists.set(i,listCurr);
+            }
+        }
+
+        System.out.println(listCurr);
 //        server.addCard(card);
-        server.updateList(listCurr);
+
+//        server.updateList(listCurr);
+        server.updateBoard(boardCurr);
+
         taskName.setText("");
         taskDescription.setText("");
     }
@@ -92,5 +108,9 @@ public class TaskCreationCtrl {
 
     public void setListCurr(List listCurr) {
         this.listCurr = listCurr;
+    }
+
+    public void setBoardId(long boardId) {
+        this.boardId = boardId;
     }
 }

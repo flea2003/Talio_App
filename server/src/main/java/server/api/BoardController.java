@@ -79,4 +79,11 @@ public class BoardController {
         return ResponseEntity.ok(board);
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<Board> updateBoard(@RequestBody Board board){
+        repo.save(board);
+        messagingTemplate.convertAndSend("/topic/updates", true);
+        return ResponseEntity.ok(board);
+    }
+
 }

@@ -4,6 +4,7 @@ import java.util.*;
 
 import commons.Quote;
 import org.apache.catalina.connector.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.core.AbstractDestinationResolvingMessagingTemplate;
@@ -19,7 +20,8 @@ import server.database.ListRepository;
 public class ListController {
     private final SimpMessagingTemplate messagingTemplate;
     private final Random random;
-    private final ListRepository repo;
+    @Autowired
+    ListRepository repo;
 
     public ListController(Random random, ListRepository repo, SimpMessagingTemplate messagingTemplate) {
         this.random = random;
@@ -69,21 +71,21 @@ public class ListController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/changeName/{id}")
-    public ResponseEntity<commons.List> changeName(@PathVariable("id") long id, @RequestBody String name){
-        if (id < 0 || !repo.existsById(id) || name == null || name.trim().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        commons.List list=repo.getById(id);
-        repo.getById(id).setName(name);
-        repo.save(list);
-        messagingTemplate.convertAndSend("/topic/updates", true);
-        return ResponseEntity.ok(list);
-    }
+//    @PostMapping("/changeName/{id}")
+//    public ResponseEntity<commons.List> changeName(@PathVariable("id") long id, @RequestBody String name){
+//        if (id < 0 || !repo.existsById(id) || name == null || name.trim().isEmpty()) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        commons.List list=repo.getById(id);
+//        repo.getById(id).setName(name);
+//        repo.save(list);
+//        messagingTemplate.convertAndSend("/topic/updates", true);
+//        return ResponseEntity.ok(list);
+//    }
 
     @PostMapping("/update")
-    public ResponseEntity<commons.List> changeName(@RequestBody commons.List list){
-        System.out.println(list);
+    public ResponseEntity<commons.List> updateList(@RequestBody commons.List list){
+        System.out.println(list.getBoard());
         repo.save(list);
         messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(list);

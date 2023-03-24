@@ -3,6 +3,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -19,8 +20,8 @@ public class Board {
 
     public String key;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="board_id")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @JsonManagedReference
     public java.util.List<List> lists;
 
     public String name;
@@ -30,9 +31,6 @@ public class Board {
     public void onCreate() {
         this.key = UUID.randomUUID().toString();
     }
-    @SuppressWarnings("unused")
-    // what is this??
-    public Board(int id, ArrayList<Board> boards, String a) {}
 
     public Board(long id, ArrayList<List> lists, String name) {
         this.id = id;
