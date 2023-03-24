@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Entity
 public class Board {
@@ -16,6 +17,8 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
 
+    public String key;
+
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name="board_id")
     public java.util.List<List> lists;
@@ -23,7 +26,12 @@ public class Board {
     public String name;
 
 
+    @PrePersist
+    public void onCreate() {
+        this.key = UUID.randomUUID().toString();
+    }
     @SuppressWarnings("unused")
+    // what is this??
     public Board(int id, ArrayList<Board> boards, String a) {}
 
     public Board(long id, ArrayList<List> lists, String name) {
@@ -59,6 +67,8 @@ public class Board {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getKey(){return key;}
 
     /**
      * getter for the string name

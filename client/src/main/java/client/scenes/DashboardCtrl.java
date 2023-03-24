@@ -3,23 +3,24 @@ package client.scenes;
 import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -28,6 +29,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class DashboardCtrl implements Initializable {
@@ -46,6 +48,10 @@ public class DashboardCtrl implements Initializable {
     private List data;
 
     @FXML
+    public Button shareBoard;
+
+    private boolean isShareBoardVisible;
+    @FXML
     private ScrollPane pane;
     @FXML
     private Button refreshButton;
@@ -56,6 +62,9 @@ public class DashboardCtrl implements Initializable {
     private boolean sus;
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
+
+    private java.util.List<commons.Board> localBoards;
+    private commons.Board focusedBoard;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -75,6 +84,10 @@ public class DashboardCtrl implements Initializable {
             });
 //            refreshDashboard();
         });
+        isShareBoardVisible = false;
+        //temporary testing
+        focusedBoard = new Board(1, (ArrayList<List>) null, "testing");
+        focusedBoard.key = "testing";
     }
 
     public void logOut(){
@@ -82,6 +95,7 @@ public class DashboardCtrl implements Initializable {
     }
 
     public void refresh() {
+        //this should become a for Boards in localBoards getListsOfBoard
         if(hboxList.getChildren().size() >= 1) { // We need to preserve the add list button
             for (int i = hboxList.getChildren().size() - 2; i >= 0; i--) {
                 hboxList.getChildren().remove(i);
@@ -356,5 +370,42 @@ public class DashboardCtrl implements Initializable {
         mainCtrl.fetchUpdatesDashboard("");
     }
 
+    @FXML
+    public void openShare() {
+
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem copy = new MenuItem("Copy board code");
+//        might use this later if I want to display the code to the user
+//        contextMenu.getScene().getRoot().
+
+        copy.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+                ClipboardContent content = new ClipboardContent();
+                content.putString(focusedBoard.getKey());
+                clipboard.setContent(content);
+            }
+        });
+        contextMenu.getItems().addAll( copy);
+
+        contextMenu.setAutoHide(true);
+        contextMenu.setHideOnEscape(true);
+        shareBoard.setOnMousePressed(new EventHandler<MouseEvent>() {
+           Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
+            @Override
+            public void handle(MouseEvent event) {
+                if(! isShareBoardVisible){
+
+                    contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
+                    isShareBoardVisible = true;
+                } else {
+                    contextMenu.hide();
+                    isShareBoardVisible = false;
+                }
+            }
+            });
+
+    }
 }
 
