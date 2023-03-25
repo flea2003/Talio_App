@@ -255,7 +255,7 @@ public class ServerUtils {
     }
 
     public commons.Board deleteBoard(long id){
-        String endpoint = String.format("api/lists/delete/%2d", id);
+        String endpoint = String.format("api/boards/delete/%2d", id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
