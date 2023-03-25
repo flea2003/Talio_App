@@ -21,10 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -60,7 +57,8 @@ public class DashboardCtrl implements Initializable {
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
     private long idOfCurrentBoard=-1;
-
+    @FXML
+    private BorderPane innerBoardsPane;
     private java.util.List<commons.Board> localBoards;
     private commons.Board focusedBoard;
     @Inject
@@ -72,6 +70,7 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+//        innerBoardsPane.set
         refreshBoards(server.getBoards());
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
@@ -100,7 +99,7 @@ public class DashboardCtrl implements Initializable {
         for (Board boardCurr : boards){
             Label label = new Label(boardCurr.name);
 
-            label.setUserData(boardCurr.id);
+            label.setUserData(boardCurr);
             if(idOfCurrentBoard != -1 && idOfCurrentBoard==boardCurr.id){
                 label.setStyle("-fx-font-size: 18px;");
             }
@@ -109,9 +108,10 @@ public class DashboardCtrl implements Initializable {
                 for(Node child : boardsVBox.getChildren()) {
                     child.setStyle("");
                 }
-                idOfCurrentBoard = (Long) label.getUserData();
+                focusedBoard = (Board) label.getUserData();
+                idOfCurrentBoard = focusedBoard.getId();
                 label.setStyle("-fx-font-size: 18px;");
-                refreshSpecificBoard((Long) label.getUserData());
+                refreshSpecificBoard(idOfCurrentBoard);
             });
 
             boardsVBox.getChildren().add(label);
