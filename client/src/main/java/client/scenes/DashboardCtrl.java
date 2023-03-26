@@ -3,6 +3,7 @@ package client.scenes;
 import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import com.sun.javafx.scene.control.ContextMenuContent;
 import com.sun.prism.paint.Paint;
 import commons.Board;
 import commons.Card;
@@ -30,6 +31,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.scene.paint.Color;
+
+import static java.lang.Thread.*;
 
 public class DashboardCtrl implements Initializable {
 
@@ -67,6 +70,7 @@ public class DashboardCtrl implements Initializable {
     private java.util.List<commons.Board> localBoards;
     private Board focusedBoard;
     java.util.List<Board> connectedBoards;
+
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -78,7 +82,8 @@ public class DashboardCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
         connectedBoards = new ArrayList<>();
-
+        openShare();
+        openAddBoard();
 //        refreshBoards(server.getBoards());
 //        server.refreshLists("/topic/updates", Boolean.class, l -> {
 //            Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
@@ -455,70 +460,65 @@ public class DashboardCtrl implements Initializable {
 
     @FXML
     public void openShare() {
-
         final ContextMenu contextMenu = new ContextMenu();
         MenuItem copy = new MenuItem("Copy board code");
-//        might use this later if I want to display the code to the user
-//        contextMenu.getScene().getRoot().
 
         copy.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Clipboard clipboard = Clipboard.getSystemClipboard();
-                ClipboardContent content = new ClipboardContent();
-                content.putString(focusedBoard.getKey());
-                clipboard.setContent(content);
-            }
-        });
-        contextMenu.getItems().addAll( copy);
-
-        contextMenu.setAutoHide(true);
-        contextMenu.setHideOnEscape(true);
-        System.out.println(contextMenu.isShowing());
-        shareBoard.setOnMousePressed(new EventHandler<MouseEvent>() {
-           Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
-
-            @Override
-            public void handle(MouseEvent event) {
-                if(isShareBoardVisible){
-
-                    contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
-                    isShareBoardVisible = true;
-                } else {
-                    contextMenu.hide();
-                    isShareBoardVisible = false;
+                if (focusedBoard != null) {
+                    Clipboard clipboard = Clipboard.getSystemClipboard();
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(focusedBoard.getKey());
+                    clipboard.setContent(content);
                 }
             }
-            });
+        });
 
+        contextMenu.getItems().addAll(copy);
+        contextMenu.setAutoHide(true);
+        contextMenu.setHideOnEscape(true);
+
+
+        shareBoard.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if(!newValue)
+                contextMenu.hide();
+        }));
+
+        shareBoard.setOnMouseClicked(event -> {
+            Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY)
+                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
+
+        });
+
+        shareBoard.setContextMenu(contextMenu);
     }
 
     @FXML
     public void openAddBoard() {
-
-        final ContextMenu contextMenu = new ContextMenu();
-//        might use this later if I want to display the code to the user
-//        contextMenu.getScene().getRoot().
-        VBox container = new VBox();
         Label description = new Label("Key of the board:");
         Label errorMessage = new Label();
         errorMessage.setTextFill(Color.RED);
         TextField input = new TextField();
 
-        System.out.println("1");
         Button submit = new Button("Add board");
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 String key = input.getText();
                 Board retrievedBoard;
-                if(key == "") {
-                    errorMessage.setText("The key that you have entered doesn't exist");
+
+                if(input.getText().isEmpty()) {
+                    errorMessage.setText("The key that you have entered is empty");
                 } else {
                     retrievedBoard = server.getBoardByKey(key);
                     if(retrievedBoard != null){
+                        errorMessage.setText("");
                         connectedBoards.add(retrievedBoard);
                         refreshBoards(connectedBoards);
+                        ContextMenu contextMenu = addBoardButton.getContextMenu();
+                        contextMenu.setY(contextMenu.getY() + 24);
                     }
 
                     else errorMessage.setText("Such a board doesn't exist");
@@ -526,27 +526,29 @@ public class DashboardCtrl implements Initializable {
             }
         });
 
+        VBox container = new VBox();
         container.getChildren().addAll(description, errorMessage, input, submit);
         CustomMenuItem popUpMenu= new CustomMenuItem(container);
-        contextMenu.getItems().addAll(popUpMenu);
+        popUpMenu.setHideOnClick(false);
 
+        final ContextMenu contextMenu = new ContextMenu();
+        contextMenu.getItems().addAll(popUpMenu);
         contextMenu.setAutoHide(true);
         contextMenu.setHideOnEscape(true);
-        addBoardButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+
+        addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if(!newValue)
+                contextMenu.hide();
+        }));
+
+        addBoardButton.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("3");
-                if(! isShareBoardVisible){
-                    contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
-                    isShareBoardVisible = true;
-                } else {
-                    contextMenu.hide();
-                    isShareBoardVisible = false;
-                }
-            }
+            if(event.getButton() == MouseButton.PRIMARY)
+                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
+
         });
 
+        addBoardButton.setContextMenu(contextMenu);
     }
 }
 
