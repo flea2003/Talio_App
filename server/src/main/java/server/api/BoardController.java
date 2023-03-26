@@ -40,7 +40,7 @@ public class BoardController {
     public ResponseEntity<Board> getByKey(@PathVariable("key") String key) {
         Optional<Board> board = repo.findBoardByKey(key);
         if(board.isEmpty())
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.ok(null);
         return ResponseEntity.ok(board.get());
 
     }
