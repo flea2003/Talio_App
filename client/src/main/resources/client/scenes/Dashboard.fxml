@@ -125,7 +125,7 @@
                <bottom>
                   <VBox style="-fx-background-color: rgb(225,225,225); -fx-border-radius: 20%;" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="shareBoard1" mnemonicParsing="false" onAction="#openShare" style="-fx-background-color: rgb(245,245,245);" text="Add board" VBox.vgrow="ALWAYS">
+                        <Button fx:id="addBoardButton" mnemonicParsing="false" onAction="#openAddBoard" style="-fx-background-color: rgb(245,245,245);" text="Add board" VBox.vgrow="ALWAYS">
                            <font>
                               <Font name="Serif Bold Italic" size="12.0" />
                            </font>

@@ -3,6 +3,7 @@ package client.scenes;
 import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import com.sun.prism.paint.Paint;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -28,6 +29,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.scene.paint.Color;
 
 public class DashboardCtrl implements Initializable {
 
@@ -51,6 +53,9 @@ public class DashboardCtrl implements Initializable {
     private AnchorPane boardsPane;
     @FXML
     private VBox boardsVBox;
+
+    @FXML
+    private Button addBoardButton;
     private ListCell<Card> draggedCard;
     private VBox draggedVbox;
     private boolean sus;
@@ -82,9 +87,6 @@ public class DashboardCtrl implements Initializable {
             });
         });
         isShareBoardVisible = false;
-        //temporary testing
-        focusedBoard = new Board(1, (ArrayList<List>) null, "testing");
-        focusedBoard.key = "testing";
     }
 
     public void refreshBoards(java.util.List<Board> boards){
@@ -483,6 +485,57 @@ public class DashboardCtrl implements Initializable {
                 }
             }
             });
+
+    }
+
+    @FXML
+    public void openAddBoard() {
+
+        final ContextMenu contextMenu = new ContextMenu();
+//        might use this later if I want to display the code to the user
+//        contextMenu.getScene().getRoot().
+        MenuItem poop = new MenuItem("Pain");
+        VBox container = new VBox();
+        Label description = new Label("Key of the board:");
+        Label errorMessage = new Label();
+        TextField input = new TextField();
+
+        System.out.println("1");
+        Button submit = new Button("Add board");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("2");;
+                Board retrievedBoard = server.getBoardByKey(input.getText());
+                if(retrievedBoard == null) {
+                    errorMessage.setText("The key that you have entered doesn't exist");
+                    errorMessage.setTextFill(Color.RED);
+                } else {
+                    errorMessage.setText("it worked");
+                }
+            }
+        });
+
+        container.getChildren().addAll(description, errorMessage, input, submit);
+        CustomMenuItem popUpMenu= new CustomMenuItem(container);
+        contextMenu.getItems().addAll(popUpMenu, poop);
+
+        contextMenu.setAutoHide(true);
+        contextMenu.setHideOnEscape(true);
+        addBoardButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("3");
+                if(! isShareBoardVisible){
+                    contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
+                    isShareBoardVisible = true;
+                } else {
+                    contextMenu.hide();
+                    isShareBoardVisible = false;
+                }
+            }
+        });
 
     }
 }
