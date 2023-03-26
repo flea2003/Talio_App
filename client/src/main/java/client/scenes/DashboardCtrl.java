@@ -24,6 +24,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -242,6 +243,7 @@ public class DashboardCtrl implements Initializable {
         VBox popupVbox = new VBox(10);
         popupVbox.setStyle("-fx-background-color: rgb(169,169,169)");
         TextField textField = new TextField(label.getText());
+        Label error = new Label("");
 
         //Create buttons and allign them next to each other
         Button ok = new Button("OK");
@@ -251,16 +253,22 @@ public class DashboardCtrl implements Initializable {
 
         //populate the popup and show it
         popupVbox.getChildren().addAll(new Label("Enter new name for board '" +
-                server.getBoard((Long) label.getUserData()).getName() + "':"), textField, buttons);
+                server.getBoard((Long) label.getUserData()).getName() + "':"), textField, error,buttons);
         popup.getContent().addAll(popupVbox);
         popup.show(mainCtrl.getPrimaryStage());
 
         //handle events
         ok.setOnAction(event -> {
-            Board boardCurr = server.getBoard((Long) label.getUserData());
-            boardCurr.setName(textField.getText());
-            server.updateBoard(boardCurr);
-            popup.hide();
+            if(textField.getText().length()>0) {
+                Board boardCurr = server.getBoard((Long) label.getUserData());
+                boardCurr.setName(textField.getText());
+                server.updateBoard(boardCurr);
+                popup.hide();
+            }
+            else{
+               error.setText("The name of the board can not be empty.");
+               error.setStyle("-fx-text-fill: red");
+            }
         });
 
         cancel.setOnAction(e ->{
