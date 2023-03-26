@@ -65,7 +65,8 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private BorderPane innerBoardsPane;
     private java.util.List<commons.Board> localBoards;
-    private commons.Board focusedBoard;
+    private Board focusedBoard;
+    java.util.List<Board> connectedBoards;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -76,16 +77,18 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
-        refreshBoards(server.getBoards());
-        server.refreshLists("/topic/updates", Boolean.class, l -> {
-            Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
-                try{
-                    refreshBoards(server.getBoards());
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            });
-        });
+        connectedBoards = new ArrayList<>();
+
+//        refreshBoards(server.getBoards());
+//        server.refreshLists("/topic/updates", Boolean.class, l -> {
+//            Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
+//                try{
+//                    refreshBoards(server.getBoards());
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            });
+//        });
         isShareBoardVisible = false;
     }
 
@@ -471,11 +474,13 @@ public class DashboardCtrl implements Initializable {
 
         contextMenu.setAutoHide(true);
         contextMenu.setHideOnEscape(true);
+        System.out.println(contextMenu.isShowing());
         shareBoard.setOnMousePressed(new EventHandler<MouseEvent>() {
            Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
+
             @Override
             public void handle(MouseEvent event) {
-                if(! isShareBoardVisible){
+                if(isShareBoardVisible){
 
                     contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
                     isShareBoardVisible = true;
@@ -494,10 +499,10 @@ public class DashboardCtrl implements Initializable {
         final ContextMenu contextMenu = new ContextMenu();
 //        might use this later if I want to display the code to the user
 //        contextMenu.getScene().getRoot().
-        MenuItem poop = new MenuItem("Pain");
         VBox container = new VBox();
         Label description = new Label("Key of the board:");
         Label errorMessage = new Label();
+        errorMessage.setTextFill(Color.RED);
         TextField input = new TextField();
 
         System.out.println("1");
@@ -505,20 +510,25 @@ public class DashboardCtrl implements Initializable {
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("2");;
-                Board retrievedBoard = server.getBoardByKey(input.getText());
-                if(retrievedBoard == null) {
+                String key = input.getText();
+                Board retrievedBoard;
+                if(key == "") {
                     errorMessage.setText("The key that you have entered doesn't exist");
-                    errorMessage.setTextFill(Color.RED);
                 } else {
-                    errorMessage.setText("it worked");
+                    retrievedBoard = server.getBoardByKey(key);
+                    if(retrievedBoard != null){
+                        connectedBoards.add(retrievedBoard);
+                        refreshBoards(connectedBoards);
+                    }
+
+                    else errorMessage.setText("Such a board doesn't exist");
                 }
             }
         });
 
         container.getChildren().addAll(description, errorMessage, input, submit);
         CustomMenuItem popUpMenu= new CustomMenuItem(container);
-        contextMenu.getItems().addAll(popUpMenu, poop);
+        contextMenu.getItems().addAll(popUpMenu);
 
         contextMenu.setAutoHide(true);
         contextMenu.setHideOnEscape(true);
