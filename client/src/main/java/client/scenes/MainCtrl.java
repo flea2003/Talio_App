@@ -16,6 +16,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.scene.Parent;
@@ -84,7 +85,7 @@ public class MainCtrl {
         this.server=server;
         this.serverCtrl= serverCtrl;
 
-        fetchUpdatesDashboard("");
+//        fetchUpdatesDashboard("");
         switchDashboard("");
     }
 
@@ -110,10 +111,11 @@ public class MainCtrl {
         registration.setOnKeyPressed(e -> regCtrl.keyPressed(e));
     }
     
-    public void switchTaskCreation(List listCurr){
+    public void switchTaskCreation(List listCurr, long boardId){
         primaryStage.setTitle("Task Creation");
         primaryStage.setScene(taskCreation);
         taskCreationCtrl.setListCurr(listCurr);
+        taskCreationCtrl.setBoardId(boardId);
         taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
     }
 
@@ -123,13 +125,13 @@ public class MainCtrl {
      */
     public void switchDashboard(String user){
         primaryStage.setTitle("Dashboard");
-        dashboardCtrl.refresh();
+//        dashboardCtrl.refresh();
         primaryStage.setScene(dashboard);
     }
 
-    public void fetchUpdatesDashboard(String user){
-        dashboardCtrl.refresh();
-    }
+//    public void fetchUpdatesDashboard(String user){
+//        dashboardCtrl.refresh();
+//    }
 
     public void switchServer(){
         primaryStage.setTitle("Choose a server");
@@ -145,15 +147,17 @@ public class MainCtrl {
         board.setOnKeyPressed(e -> boardCtrl.keyPressed(e));
     }
 
-    public void switchTaskView(Card q){
+    public void switchTaskView(Card q, Board boardCurr){
         primaryStage.setTitle("View Task");
         primaryStage.setScene(taskView);
+        taskViewCtrl.setBoardCurr(boardCurr);
         taskViewCtrl.renderInfo(q);
     }
 
-    public void switchEdit(Card q){
+    public void switchEdit(Card q, Board boardCurr){
         primaryStage.setTitle("Edit Task");
         primaryStage.setScene(taskEdit);
+        taskEditCtrl.setBoardCurr(boardCurr);
         taskEditCtrl.renderInfo(q);
     }
 

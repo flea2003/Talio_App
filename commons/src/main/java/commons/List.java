@@ -1,11 +1,8 @@
 package commons;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,7 +23,8 @@ public class List {
     public String name;
 
     @ManyToOne
-    @JoinColumn(name="board_id")
+    @JoinColumn(name = "board_id")
+    @JsonBackReference
     public Board board;
 
     public int numberInTheBoard;
@@ -45,6 +43,18 @@ public class List {
         this.name = name;
         this.cards = cards;
         this.board=board;
+    }
+
+    public List(String name,Board board){
+        this.name = name;
+        this.board = board;
+    }
+
+    public List(java.util.List<Card> cards, String name, Board board, int numberInTheBoard) {
+        this.cards = cards;
+        this.name = name;
+        this.board = board;
+        this.numberInTheBoard = numberInTheBoard;
     }
 
     public int getNumberInTheBoard() {
@@ -112,6 +122,14 @@ public class List {
 
     public Object getID() {
         return id;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
 }
