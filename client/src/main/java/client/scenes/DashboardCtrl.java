@@ -106,7 +106,7 @@ public class DashboardCtrl implements Initializable {
             Label label = new Label(boardCurr.name);
 
             //create delete icon
-            Image imgDelete =new Image("pictures\\delete_icon.png");
+            Image imgDelete =new Image("pictures/delete_icon.png");
             ImageView imageDelete = new ImageView(imgDelete);
             imageDelete.setFitWidth(20);
             imageDelete.setFitHeight(20);

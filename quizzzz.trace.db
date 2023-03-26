@@ -2058,3 +2058,9 @@ select cards0_.list_id as list_id5_1_0_, cards0_.id as id1_1_0_, cards0_.id as i
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:1589)
+2023-03-25 16:32:51 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "BOARDS" not found; SQL statement:
+insert into boards (id,name) values (1,'a') [42102-200]
+2023-03-25 16:32:55 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "BOARDS" not found; SQL statement:
+insert into boards (id,name) values (2,'a') [42102-200]
