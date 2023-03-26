@@ -263,6 +263,15 @@ public class ServerUtils {
                 .delete(new GenericType<commons.Board>() {});
     }
 
+    public commons.Board addBoard(Board board){
+        String endpoint = String.format("api/boards/", board);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
+    }
+
     private StompSession session ;
 
     /**

@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class DashboardCtrl implements Initializable {
 
@@ -39,12 +40,9 @@ public class DashboardCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     @FXML
     private HBox hboxList;
-
     private List data;
-
     @FXML
     public Button shareBoard;
-
     private boolean isShareBoardVisible;
     @FXML
     private ScrollPane pane;
@@ -60,9 +58,12 @@ public class DashboardCtrl implements Initializable {
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
     private long idOfCurrentBoard=-1;
-
+    @FXML
+    private TreeView<Label> boardsTreeView;
     private java.util.List<commons.Board> localBoards;
     private commons.Board focusedBoard;
+    @FXML
+    private Button addBoard;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -72,7 +73,11 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        boardsTreeView.setRoot(new TreeItem<>(new Label("Boards")));
         refreshBoards(server.getBoards());
+        addBoard.setOnAction(e -> {
+            createBoard();
+        });
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
                 try{
@@ -89,19 +94,19 @@ public class DashboardCtrl implements Initializable {
     }
 
     public void refreshBoards(java.util.List<Board> boards){
-        if(hboxList.getUserData()!=null){
+        if(hboxList.getUserData() != null){
             refreshSpecificBoard((Long) hboxList.getUserData());
         }
 
-        if (boardsVBox.getChildren().size() > 0) {
-            boardsVBox.getChildren().subList(0, boardsVBox.getChildren().size()).clear();
+        if (boardsTreeView.getRoot().getChildren().size() > 0) {
+            boardsTreeView.getRoot().getChildren().clear();
         }
 
         for (Board boardCurr : boards){
             Label label = new Label(boardCurr.name);
 
             label.setUserData(boardCurr.id);
-            if(idOfCurrentBoard != -1 && idOfCurrentBoard==boardCurr.id){
+            if(idOfCurrentBoard != -1 && idOfCurrentBoard == boardCurr.id){
                 label.setStyle("-fx-font-size: 18px;");
             }
 
@@ -114,9 +119,9 @@ public class DashboardCtrl implements Initializable {
                 refreshSpecificBoard((Long) label.getUserData());
             });
 
-            boardsVBox.getChildren().add(label);
-            boardsVBox.setPadding(new Insets(5, 5, 5, 10));
-            boardsVBox.setSpacing(10);
+            boardsTreeView.getRoot().getChildren().add(new TreeItem<>(label));
+            boardsTreeView.setPadding(new Insets(5, 5, 5, 10));
+//            boardsTreeView.setSpacing(10);
         }
     }
 
@@ -376,7 +381,38 @@ public class DashboardCtrl implements Initializable {
             }
         });
     }
+// /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+    public void createBoard(){
+        TextField textField = new TextField("Enter Board Name");
+        Region spacer = new Region();
+        spacer.setPrefHeight(10);
+        boardsVBox.getChildren().add(boardsVBox.getChildren().size() - 1, textField);
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                textField.setText("");
+            }else{
+                if(textField.getText().strip().length()!=0) {
+                    String newText = textField.getText();
 
+                    Board boardCurr = new Board(newText);
+                    server.addBoard(boardCurr);
+
+                    boardsVBox.getChildren().remove(textField);
+                    boardsVBox.getChildren().remove(spacer);
+                }
+            }
+        });
+
+        textField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                String newText = textField.getText();
+                boardsVBox.getChildren().remove(textField);
+                boardsVBox.getChildren().remove(spacer);
+            }
+        });
+
+    }
+// /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     public void createList(VBox vboxEnd, long boardId){
         if(vboxEnd.getChildren().size()>1){
             ObservableList<Node> children = vboxEnd.getChildren();
@@ -404,9 +440,6 @@ public class DashboardCtrl implements Initializable {
 
                     server.updateBoard(boardCurr);//send the text to the database
 
-
-                    vboxEnd.getChildren().remove(textField);
-                    vboxEnd.getChildren().remove(spacer);
                 }
             }
         });
