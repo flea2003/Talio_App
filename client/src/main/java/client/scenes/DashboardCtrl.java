@@ -14,22 +14,27 @@ import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.*;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import javax.swing.*;
+import javax.swing.text.Element;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DashboardCtrl implements Initializable {
@@ -61,8 +66,8 @@ public class DashboardCtrl implements Initializable {
     private Card cardDragged; // this sets the dragged card
     private long idOfCurrentBoard=-1;
 
-    private java.util.List<commons.Board> localBoards;
-    private commons.Board focusedBoard;
+    private java.util.List<Board> localBoards;
+    private Board focusedBoard;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -100,21 +105,59 @@ public class DashboardCtrl implements Initializable {
         for (Board boardCurr : boards){
             Label label = new Label(boardCurr.name);
 
+            //create delete icon
+            Image imgDelete =new Image("pictures/delete_icon.png");
+            ImageView imageDelete = new ImageView(imgDelete);
+            imageDelete.setFitWidth(20);
+            imageDelete.setFitHeight(20);
+            Rectangle backroundDelete = new Rectangle(20, 20);
+            backroundDelete.setFill(Color.TRANSPARENT);
+            Node deleteBoard = new Group(backroundDelete, imageDelete);
+
+
+            HBox hBox = new HBox(label, deleteBoard);
+
+
+            //Make the delete icon visible only when hovering on the specific board
+            hBox.getChildren().get(1).setVisible(false);
+            hBox.setOnMouseEntered(e ->{
+                hBox.getChildren().get(1).setVisible(true);
+            });
+            hBox.setOnMouseExited(e ->{
+                hBox.getChildren().get(1).setVisible(false);
+            });
+
+
+            //Make it noticable when hovering on delete icon
+            deleteBoard.setOnMouseEntered(e ->{
+                backroundDelete.setFill(Color.RED);
+            });
+            deleteBoard.setOnMouseExited(e ->{
+                backroundDelete.setFill(Color.TRANSPARENT);
+            });
+
+
+            deleteBoard.setOnMouseClicked(e ->{
+                deleteBoard((Long) label.getUserData());
+            });
+
+
             label.setUserData(boardCurr.id);
             if(idOfCurrentBoard != -1 && idOfCurrentBoard==boardCurr.id){
                 label.setStyle("-fx-font-size: 18px;");
             }
 
+            //populate the interface with the clicked board
             label.setOnMouseClicked(e -> {
                 for(Node child : boardsVBox.getChildren()) {
-                    child.setStyle("");
+                    ((HBox) child).getChildren().get(0).setStyle("");
                 }
                 idOfCurrentBoard = (Long) label.getUserData();
                 label.setStyle("-fx-font-size: 18px;");
                 refreshSpecificBoard((Long) label.getUserData());
             });
 
-            boardsVBox.getChildren().add(label);
+            boardsVBox.getChildren().add(hBox);
             boardsVBox.setPadding(new Insets(5, 5, 5, 10));
             boardsVBox.setSpacing(10);
         }
@@ -148,6 +191,30 @@ public class DashboardCtrl implements Initializable {
 
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
+    }
+
+    public void deleteBoard(long id){
+        //Show a confirmation message
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Delete board '"+server.getBoard(id).getName()+"'?");
+        alert.setContentText("Are you sure you want to delete board '"+server.getBoard(id).getName()+
+                "'?\nThis will permanently delete the board from the server.");
+
+        ButtonType delete = new ButtonType("Delete");
+        ButtonType cancel = new ButtonType("Cancel");
+        alert.getButtonTypes().setAll(delete, cancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == delete){
+            //if the board to be deleted is selected remove its data from the interface
+            if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==id){
+                hboxList.setUserData(null);
+                hboxList.getChildren().clear();
+            }
+            //delete board
+            server.deleteBoard(id);
+        }
     }
 
     private void addLists(java.util.List<List> list, long boardId){
