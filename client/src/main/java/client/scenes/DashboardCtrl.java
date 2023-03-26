@@ -64,6 +64,8 @@ public class DashboardCtrl implements Initializable {
     private commons.Board focusedBoard;
     @FXML
     private Button addBoard;
+    @FXML
+    private TextField addBoardLabel;
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -73,7 +75,7 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        boardsTreeView.setRoot(new TreeItem<>(new Label("Boards")));
+        addBoardLabel.setVisible(false);
         refreshBoards(server.getBoards());
         addBoard.setOnAction(e -> {
             createBoard();
@@ -98,8 +100,8 @@ public class DashboardCtrl implements Initializable {
             refreshSpecificBoard((Long) hboxList.getUserData());
         }
 
-        if (boardsTreeView.getRoot().getChildren().size() > 0) {
-            boardsTreeView.getRoot().getChildren().clear();
+        if (boardsVBox.getChildren().size() > 0) {
+            boardsVBox.getChildren().clear();
         }
 
         for (Board boardCurr : boards){
@@ -119,8 +121,8 @@ public class DashboardCtrl implements Initializable {
                 refreshSpecificBoard((Long) label.getUserData());
             });
 
-            boardsTreeView.getRoot().getChildren().add(new TreeItem<>(label));
-            boardsTreeView.setPadding(new Insets(5, 5, 5, 10));
+            boardsVBox.getChildren().add(label);
+            boardsVBox.setPadding(new Insets(5, 5, 5, 10));
 //            boardsTreeView.setSpacing(10);
         }
     }
@@ -381,38 +383,32 @@ public class DashboardCtrl implements Initializable {
             }
         });
     }
-// /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+
     public void createBoard(){
-        TextField textField = new TextField("Enter Board Name");
-        Region spacer = new Region();
-        spacer.setPrefHeight(10);
-        boardsVBox.getChildren().add(boardsVBox.getChildren().size() - 1, textField);
-        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+        addBoardLabel.setVisible(true);
+        addBoardLabel.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                textField.setText("");
+                addBoardLabel.setText("");
             }else{
-                if(textField.getText().strip().length()!=0) {
-                    String newText = textField.getText();
+                if(addBoardLabel.getText().strip().length() != 0) {
+                    String newText = addBoardLabel.getText();
 
                     Board boardCurr = new Board(newText);
                     server.addBoard(boardCurr);
-
-                    boardsVBox.getChildren().remove(textField);
-                    boardsVBox.getChildren().remove(spacer);
+                    addBoardLabel.setVisible(false);
                 }
             }
         });
 
-        textField.setOnKeyPressed(event -> {
+        addBoardLabel.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                String newText = textField.getText();
-                boardsVBox.getChildren().remove(textField);
-                boardsVBox.getChildren().remove(spacer);
+                String newText = addBoardLabel.getText();
+                addBoardLabel.setVisible(false);
             }
         });
 
     }
-// /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+
     public void createList(VBox vboxEnd, long boardId){
         if(vboxEnd.getChildren().size()>1){
             ObservableList<Node> children = vboxEnd.getChildren();
