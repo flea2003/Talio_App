@@ -147,11 +147,11 @@ public class DashboardCtrl implements Initializable {
 
 
             deleteBoard.setOnMouseClicked(e ->{
-                deleteBoard((Long) label.getUserData());
+                deleteBoard((Board) label.getUserData());
             });
 
-
             label.setUserData(boardCurr);
+
             if(idOfCurrentBoard != -1 && idOfCurrentBoard==boardCurr.id){
                 label.setStyle("-fx-font-size: 18px;");
             }
@@ -203,11 +203,11 @@ public class DashboardCtrl implements Initializable {
         hboxList.setSpacing(30);
     }
 
-    public void deleteBoard(long id){
+    public void deleteBoard(Board board){
         //Show a confirmation message
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete board '"+server.getBoard(id).getName()+"'?");
-        alert.setContentText("Are you sure you want to delete board '"+server.getBoard(id).getName()+
+        alert.setHeaderText("Delete board '"+board.getName()+"'?");
+        alert.setContentText("Are you sure you want to delete board '"+board.getName()+
                 "'?\nThis will permanently delete the board from the server.");
 
         ButtonType delete = new ButtonType("Delete");
@@ -218,12 +218,14 @@ public class DashboardCtrl implements Initializable {
 
         if (result.get() == delete){
             //if the board to be deleted is selected remove its data from the interface
-            if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==id){
+            if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==board.getId()){
                 hboxList.setUserData(null);
                 hboxList.getChildren().clear();
             }
+            //remove board from connectedBoards
+            connectedBoards.remove(board);
             //delete board
-            server.deleteBoard(id);
+            server.deleteBoard(board.getId());
         }
     }
 
