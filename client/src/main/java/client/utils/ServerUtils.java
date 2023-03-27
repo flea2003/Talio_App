@@ -55,6 +55,10 @@ public class ServerUtils {
 
     private String SERVER;
 
+    public String getSERVER() {
+        return SERVER;
+    }
+
     @Inject
     public ServerUtils(String server){
         SERVER=server;
@@ -62,7 +66,6 @@ public class ServerUtils {
 
     public void setSERVER(String server){
         SERVER=server;
-        System.out.println(SERVER);
     }
 
     public List<Quote> getQuotes() {
@@ -154,24 +157,23 @@ public class ServerUtils {
             ++indx;
             card.setNumberInTheList(indx);
         }
-
-
         String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
+
     }
 
-    public commons.List updateListName(commons.List list,String name){
-        String endpoint = String.format("api/lists/changeName/%d", list.id);
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .post(Entity.entity(name, APPLICATION_JSON), commons.List.class);
-    }
+//    public commons.List updateListName(commons.List list,String name){
+//        String endpoint = String.format("api/lists/changeName/%d", list.id);
+//        return ClientBuilder.newClient(new ClientConfig())
+//                .target(SERVER).path(endpoint)
+//                .request(APPLICATION_JSON)
+//                .accept(APPLICATION_JSON)
+//                .post(Entity.entity(name, APPLICATION_JSON), commons.List.class);
+//    }
 
     public commons.List getListById(long id){
         String endpoint = String.format("/api/lists/%d", id);
@@ -210,6 +212,16 @@ public class ServerUtils {
                 .get(new GenericType<commons.Board>() {});
     }
 
+
+    public commons.Board getBoardByKey(String key){
+        String endpoint = String.format("api/boards/key/%s", key);
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<commons.Board>() {});
+    }
+
     public commons.Board addList(commons.Board board){
         String endpoint = String.format("api/boards");
         return  ClientBuilder.newClient(new ClientConfig())
@@ -219,22 +231,47 @@ public class ServerUtils {
                 .post(Entity.entity(board, APPLICATION_JSON), commons.Board.class);
     }
 
-    public commons.Board updateBoard(commons.Board board){
-        String endpoint = String.format("api/lists/changeName/%2d", board.id);
+
+//    public commons.Board updateBoard(commons.Board board){
+//        String endpoint = String.format("api/lists/changeName/%2d", board.id);
+//        return ClientBuilder.newClient(new ClientConfig())
+//                .target(SERVER).path(endpoint)
+//                .request(APPLICATION_JSON)
+//                .accept(APPLICATION_JSON)
+//                .post(Entity.entity(board, APPLICATION_JSON), commons.Board.class);
+//    }
+
+    public Board updateBoard(Board board){
+        int indx = 0;
+        for(commons.List list : board.lists){
+            ++indx;
+            list.numberInTheBoard=indx;
+        }
+
+        String endpoint = String.format("api/boards/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(board, APPLICATION_JSON), commons.Board.class);
+                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
     }
 
     public commons.Board deleteBoard(long id){
-        String endpoint = String.format("api/lists/delete/%2d", id);
+        String endpoint = String.format("api/boards/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .delete(new GenericType<commons.Board>() {});
+    }
+
+    public commons.Board addBoard(Board board){
+        String endpoint = String.format("api/boards/", board);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
     }
 
     private StompSession session ;

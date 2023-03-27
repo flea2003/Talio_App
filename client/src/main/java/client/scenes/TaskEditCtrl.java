@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.errorprone.annotations.FormatMethod;
+import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.fxml.FXML;
@@ -30,6 +31,8 @@ public class TaskEditCtrl {
     @FXML
     private List listCurr;
 
+    private Board boardCurr;
+
     @Inject
     public TaskEditCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
         this.server = server;
@@ -45,20 +48,28 @@ public class TaskEditCtrl {
 
     @FXML
     public void setDone(){
-        System.out.println("Done");
         String valueName = "";
         String valueDes = "";
         valueName = extractValue(name);
         valueDes = extractValue(description);
         if (valueName.equals("")) {
-            System.out.println("EMPTYY");
             setError("Task Name cannot be empty. Please try again!");
         } else {
 //            server.updateCard(setCard(card));
             setError("");
             currCard.name = valueName;
             currCard.description = valueDes;
-            server.updateList(currCard.getList());
+
+            listCurr=currCard.getList();
+
+            for(int i=0; i<boardCurr.lists.size(); i++){
+                if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                    boardCurr.lists.set(i,listCurr);
+                }
+            }
+
+            server.updateBoard(boardCurr);
+//            server.updateList(currCard.getList());
 //            server.updateCard(card);
             mainCtrl.switchDashboard("LOL");
         }
@@ -81,5 +92,9 @@ public class TaskEditCtrl {
 
     public void setListCurr(List listCurr) {
         this.listCurr = listCurr;
+    }
+
+    public void setBoardCurr(Board boardCurr) {
+        this.boardCurr = boardCurr;
     }
 }

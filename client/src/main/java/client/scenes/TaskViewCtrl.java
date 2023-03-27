@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Stage;
+import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.fxml.FXML;
@@ -46,6 +47,8 @@ public class TaskViewCtrl {
     @FXML
     private Button deleteButton;
 
+    private Board boardCurr;
+
 
     @Inject
     public TaskViewCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
@@ -55,42 +58,31 @@ public class TaskViewCtrl {
 
     }
 
-
-    @FXML
-    public void editCard() {
-        editTask.setOnKeyPressed(e1 -> {
-//            taskName.setEditable(true);
-//            taskDescription.setEditable(true);
-            done.setOnKeyPressed(e2 -> {
-                server.updateCard(setCard(card));
-            });
-//            taskName.setEditable(false);
-//            taskDescription.setEditable(false);
-        });
-    }
-
-    public Card setCard(Card card) {
-        card.setName(taskName.getText());
-        card.setDescription(taskDescription.getText());
-        return card;
-    }
-
     public void renderInfo(Card card){
         currCard = card;
-        System.out.println(card.name);
-        System.out.println(card.description);
         taskName.setText(card.name);
         taskDescription.setText(card.description);
+        if(taskNo==null){
+            taskNo=new Text();
+        }
         taskNo.setText("Task No. " + card.getNumberInTheList());
         return;
     }
 
     public void goEdit(){
-        mainCtrl.switchEdit(currCard);
+        mainCtrl.switchEdit(currCard, boardCurr);
     }
     public void goDelete(){
-        currCard.getList().cards.remove(currCard);
-        server.updateList(currCard.getList());
+        List listCurr=currCard.getList();
+        listCurr.cards.remove(currCard);
+
+        for(int i=0; i<boardCurr.lists.size(); i++){
+            if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                boardCurr.lists.set(i,listCurr);
+            }
+        }
+
+        server.updateBoard(boardCurr);
         server.deleteCard(currCard.id);
         mainCtrl.switchDelete(currCard);
     }
@@ -110,6 +102,10 @@ public class TaskViewCtrl {
 
     public void setListCurr(List listCurr) {
         this.listCurr = listCurr;
+    }
+
+    public void setBoardCurr(Board boardCurr) {
+        this.boardCurr = boardCurr;
     }
 
 }

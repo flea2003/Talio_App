@@ -53,11 +53,8 @@ public class CreateBoardCtrl {
      */
     @FXML
     public void processClick(javafx.event.ActionEvent event){
-        System.out.println(event);
         String value = new String("");
         setError("");
-        System.out.println(buttonCreate);
-        System.out.println(event.getSource());
         if (event.getSource() == buttonCreate) {
             value = extractValue(create);
             if (value.equals("")){
@@ -68,7 +65,6 @@ public class CreateBoardCtrl {
                 mainCtrl.switchDashboard(value);
             }
         }
-        System.out.println(value);
         create.setText("");
     }
 
