@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
@@ -28,16 +27,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import javax.swing.*;
-import javax.swing.text.Element;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import javafx.scene.paint.Color;
 
 import static java.lang.Thread.*;
@@ -77,6 +74,8 @@ public class DashboardCtrl implements Initializable {
     private Board focusedBoard;
     java.util.List<Board> connectedBoards;
 
+    Map<String, java.util.List<Board>> serverBoards;
+
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -87,14 +86,25 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
+
+        String currentServer = server.getSERVER();
+        if(serverBoards ==null) {
+            serverBoards = new HashMap<>();
+        }
+        if(serverBoards.get(currentServer) == null){
+            java.util.List<Board> boards = new ArrayList<>();
+            serverBoards.put(currentServer, boards);
+        }
         connectedBoards = new ArrayList<>();
+        connectedBoards.addAll(serverBoards.get(currentServer));
+
         openShare();
         openAddBoard();
         refreshBoards(connectedBoards);
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
                 try{
-                    refreshBoards(connectedBoards);
+                    refreshBoards(serverBoards.get(currentServer));
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -123,31 +133,55 @@ public class DashboardCtrl implements Initializable {
             backroundDelete.setFill(Color.TRANSPARENT);
             Node deleteBoard = new Group(backroundDelete, imageDelete);
 
+            //create edit icon
+            Image imgEdit =new Image("pictures/edit_icon.png");
+            ImageView imageEdit = new ImageView(imgEdit);
+            imageEdit.setFitWidth(20);
+            imageEdit.setFitHeight(20);
+            Rectangle backroundEdit = new Rectangle(20, 20);
+            backroundEdit.setFill(Color.TRANSPARENT);
+            Node editBoard = new Group(backroundEdit, imageEdit);
 
-            HBox hBox = new HBox(label, deleteBoard);
+
+            HBox hBox = new HBox(label, new Text(" "), editBoard, deleteBoard);
 
 
-            //Make the delete icon visible only when hovering on the specific board
-            hBox.getChildren().get(1).setVisible(false);
+            //Make the icons visible only when hovering on the specific board
+            hBox.getChildren().get(3).setVisible(false);
+            hBox.getChildren().get(2).setVisible(false);
             hBox.setOnMouseEntered(e ->{
-                hBox.getChildren().get(1).setVisible(true);
+                hBox.getChildren().get(3).setVisible(true);
+                hBox.getChildren().get(2).setVisible(true);
             });
             hBox.setOnMouseExited(e ->{
-                hBox.getChildren().get(1).setVisible(false);
+                hBox.getChildren().get(3).setVisible(false);
+                hBox.getChildren().get(2).setVisible(false);
             });
 
 
             //Make it noticable when hovering on delete icon
             deleteBoard.setOnMouseEntered(e ->{
-                backroundDelete.setFill(Color.RED);
+                backroundDelete.setFill(Color.rgb(255,99,71));
             });
             deleteBoard.setOnMouseExited(e ->{
                 backroundDelete.setFill(Color.TRANSPARENT);
             });
 
+            //Make it noticable when hovering on edit icon
+            editBoard.setOnMouseEntered(e ->{
+                backroundEdit.setFill(Color.YELLOW);
+            });
+            editBoard.setOnMouseExited(e ->{
+                backroundEdit.setFill(Color.TRANSPARENT);
+            });
+
 
             deleteBoard.setOnMouseClicked(e ->{
                 deleteBoard((Board) label.getUserData());
+            });
+
+            editBoard.setOnMouseClicked(e ->{
+                editBoard(label);
             });
 
             label.setUserData(boardCurr);
@@ -227,6 +261,45 @@ public class DashboardCtrl implements Initializable {
             //delete board
             server.deleteBoard(board.getId());
         }
+    }
+
+    public void editBoard(Label label){
+        //Create pop up for editing the board
+        Popup popup = new Popup();
+        VBox popupVbox = new VBox(10);
+        popupVbox.setStyle("-fx-background-color: rgb(169,169,169)");
+        TextField textField = new TextField(label.getText());
+        Label error = new Label("");
+
+        //Create buttons and allign them next to each other
+        Button ok = new Button("OK");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(ok, cancel);
+        buttons.setSpacing(10);
+
+        Board boardCurr = (Board) label.getUserData();
+        //populate the popup and show it
+        popupVbox.getChildren().addAll(new Label("Enter new name for board '" +
+                boardCurr.getName() + "':"), textField, error,buttons);
+        popup.getContent().addAll(popupVbox);
+        popup.show(mainCtrl.getPrimaryStage());
+
+        //handle events
+        ok.setOnAction(event -> {
+            if(textField.getText().length()>0) {
+                boardCurr.setName(textField.getText());
+                server.updateBoard(boardCurr);
+                popup.hide();
+            }
+            else{
+               error.setText("The name of the board can not be empty.");
+               error.setStyle("-fx-text-fill: red");
+            }
+        });
+
+        cancel.setOnAction(e ->{
+            popup.hide();
+        });
     }
 
     private void addLists(java.util.List<List> list, long boardId){
@@ -585,6 +658,7 @@ public class DashboardCtrl implements Initializable {
                     if(retrievedBoard != null){
                         errorMessage.setText("");
                         connectedBoards.add(retrievedBoard);
+                        serverBoards.get(server.getSERVER()).add(retrievedBoard);
                         refreshBoards(connectedBoards);
                         ContextMenu contextMenu = addBoardButton.getContextMenu();
                         contextMenu.setY(contextMenu.getY() + 24);
