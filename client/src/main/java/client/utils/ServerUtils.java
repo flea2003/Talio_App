@@ -66,7 +66,6 @@ public class ServerUtils {
 
     public void setSERVER(String server){
         SERVER=server;
-        System.out.println(SERVER);
     }
 
     public List<Quote> getQuotes() {
@@ -158,7 +157,6 @@ public class ServerUtils {
             ++indx;
             card.setNumberInTheList(indx);
         }
-        System.out.println("aaaaaa"+list);
         String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
@@ -259,12 +257,21 @@ public class ServerUtils {
     }
 
     public commons.Board deleteBoard(long id){
-        String endpoint = String.format("api/boards/delete/%2d", id);
+        String endpoint = String.format("api/boards/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .delete(new GenericType<commons.Board>() {});
+    }
+
+    public commons.Board addBoard(Board board){
+        String endpoint = String.format("api/boards/", board);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
     }
 
     private StompSession session ;

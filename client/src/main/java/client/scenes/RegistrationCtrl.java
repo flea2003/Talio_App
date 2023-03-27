@@ -51,11 +51,8 @@ public class RegistrationCtrl {
 
     @FXML
     public void processClick(javafx.event.ActionEvent event){
-        System.out.println(event);
         String value = new String("");
         setError("");
-        System.out.println(buttonLogIn);
-        System.out.println(event.getSource());
         if(event.getSource() == buttonLogIn) {
             value = extractValue(logIn);
             if(value.equals("")){
@@ -74,7 +71,6 @@ public class RegistrationCtrl {
                 mainCtrl.switchDashboard(value);
             }
         }
-        System.out.println(value);
         signUp.setText("");
         logIn.setText("");
     }

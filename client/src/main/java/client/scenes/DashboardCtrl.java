@@ -73,8 +73,11 @@ public class DashboardCtrl implements Initializable {
     private java.util.List<commons.Board> localBoards;
     private Board focusedBoard;
     java.util.List<Board> connectedBoards;
-
     Map<String, java.util.List<Board>> serverBoards;
+    @FXML
+    private Button addBoard;
+    @FXML
+    private TextField addBoardLabel;
 
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
@@ -86,7 +89,6 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
-
         String currentServer = server.getSERVER();
         if(serverBoards ==null) {
             serverBoards = new HashMap<>();
@@ -95,11 +97,14 @@ public class DashboardCtrl implements Initializable {
             java.util.List<Board> boards = new ArrayList<>();
             serverBoards.put(currentServer, boards);
         }
+        addBoardLabel.setVisible(false);
         connectedBoards = new ArrayList<>();
         connectedBoards.addAll(serverBoards.get(currentServer));
-
         openShare();
         openAddBoard();
+        addBoard.setOnAction(e -> {
+            createBoard();
+        });
         refreshBoards(connectedBoards);
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
@@ -239,7 +244,7 @@ public class DashboardCtrl implements Initializable {
 
             addLists(server.getBoard(id).lists, id);
         } else if (hboxList.getChildren().size() > 1) {
-                hboxList.getChildren().subList(0, hboxList.getChildren().size() ).clear();
+            hboxList.getChildren().subList(0, hboxList.getChildren().size() ).clear();
         }
 
         hboxList.setPadding(new Insets(30, 30, 30, 30));
@@ -303,13 +308,50 @@ public class DashboardCtrl implements Initializable {
                 popup.hide();
             }
             else{
-               error.setText("The name of the board can not be empty.");
-               error.setStyle("-fx-text-fill: red");
+                error.setText("The name of the board can not be empty.");
+                error.setStyle("-fx-text-fill: red");
             }
         });
 
         cancel.setOnAction(e ->{
             popup.hide();
+        });
+    }
+
+    public void createBoard(){
+        addBoardLabel.setVisible(true);
+        addBoardLabel.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                addBoardLabel.setText("");
+            }else{
+                if(addBoardLabel.getText().strip().length() != 0) {
+                    String newText = addBoardLabel.getText();
+
+                    Board boardCurr = new Board(newText);
+                    boardCurr = server.addBoard(boardCurr);
+                    boardCurr.lists = new ArrayList<>();
+                    System.out.println(boardCurr.id);
+//                    boardCurr = server.getBoard(boardCurr.id);
+//                    System.out.println(boardCurr);
+                    connectedBoards.add(boardCurr);
+                    serverBoards.get(server.getSERVER()).add(boardCurr);
+                    addBoardLabel.setText("");
+                    addBoardLabel.setVisible(false);
+                    refreshBoards(connectedBoards);
+                }
+            }
+        });
+
+        /**
+         * this method handles the event in which Add Board button is pressed
+         */
+        addBoardLabel.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                Scene scene = addBoardLabel.getScene();
+                scene.getRoot().requestFocus(); // take the focus away from the textlabel
+                addBoardLabel.setText("");
+                addBoardLabel.setVisible(false);
+            }
         });
     }
 
@@ -420,7 +462,7 @@ public class DashboardCtrl implements Initializable {
     }
 
     private void setFactory(ListView list, long boardId){
-        Board boardCurr=server.getBoard(boardId);
+        Board boardCurr = server.getBoard(boardId);
         list.setCellFactory(q -> new ListCell<Card>() {
             @Override
             protected void updateItem(Card q, boolean empty) {
@@ -586,7 +628,7 @@ public class DashboardCtrl implements Initializable {
     public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
         java.util.List<Card> cardlist = list.cards;
         listView.setItems(FXCollections.observableList(cardlist));
-        int index=0;
+        int index = 0;
         if(hboxList.getChildren().size()>0){
             index = hboxList.getChildren().size() - 1;
         }
@@ -680,6 +722,7 @@ public class DashboardCtrl implements Initializable {
                     } else {
                         errorMessage.setText("Such a board doesn't exist");
                     }
+
                 }
             }
         });

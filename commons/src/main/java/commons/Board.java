@@ -43,6 +43,10 @@ public class Board {
 
     }
 
+    public Board(String name) {
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);

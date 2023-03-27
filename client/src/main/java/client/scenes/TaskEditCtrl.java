@@ -48,13 +48,11 @@ public class TaskEditCtrl {
 
     @FXML
     public void setDone(){
-        System.out.println("Done");
         String valueName = "";
         String valueDes = "";
         valueName = extractValue(name);
         valueDes = extractValue(description);
         if (valueName.equals("")) {
-            System.out.println("EMPTYY");
             setError("Task Name cannot be empty. Please try again!");
         } else {
 //            server.updateCard(setCard(card));
