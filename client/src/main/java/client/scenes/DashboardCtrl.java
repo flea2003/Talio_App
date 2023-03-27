@@ -109,6 +109,9 @@ public class DashboardCtrl implements Initializable {
     }
 
     public void refreshBoards(java.util.List<Board> boards){
+        for(Board board : boards){
+            System.out.println(board);
+        }
         if(hboxList.getUserData()!=null){
             refreshSpecificBoard((Long) hboxList.getUserData());
         }
@@ -309,10 +312,15 @@ public class DashboardCtrl implements Initializable {
                     String newText = addBoardLabel.getText();
 
                     Board boardCurr = new Board(newText);
+                    boardCurr = server.addBoard(boardCurr);
+                    boardCurr.lists = new ArrayList<>();
+                    System.out.println(boardCurr.id);
+//                    boardCurr = server.getBoard(boardCurr.id);
+//                    System.out.println(boardCurr);
                     connectedBoards.add(boardCurr);
-                    server.addBoard(boardCurr);
                     addBoardLabel.setText("");
                     addBoardLabel.setVisible(false);
+                    refreshBoards(connectedBoards);
                 }
             }
         });
@@ -437,7 +445,7 @@ public class DashboardCtrl implements Initializable {
     }
 
     private void setFactory(ListView list, long boardId){
-        Board boardCurr=server.getBoard(boardId);
+        Board boardCurr = server.getBoard(boardId);
         list.setCellFactory(q -> new ListCell<Card>() {
             @Override
             protected void updateItem(Card q, boolean empty) {
@@ -603,7 +611,7 @@ public class DashboardCtrl implements Initializable {
     public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
         java.util.List<Card> cardlist = list.cards;
         listView.setItems(FXCollections.observableList(cardlist));
-        int index=0;
+        int index = 0;
         if(hboxList.getChildren().size()>0){
             index = hboxList.getChildren().size() - 1;
         }
