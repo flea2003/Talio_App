@@ -109,7 +109,7 @@ public class DashboardCtrl implements Initializable {
 
             label.setUserData(boardCurr.id);
             if(idOfCurrentBoard != -1 && idOfCurrentBoard == boardCurr.id){
-                label.setStyle("-fx-font-size: 18px;");
+                label.setStyle("-fx-font-size: 18px; -fx-background-color: blue;");
             }
 
             label.setOnMouseClicked(e -> {
@@ -117,7 +117,8 @@ public class DashboardCtrl implements Initializable {
                     child.setStyle("");
                 }
                 idOfCurrentBoard = (Long) label.getUserData();
-                label.setStyle("-fx-font-size: 18px;");
+                label.setStyle("-fx-font-size: 18px; -fx-background-color: blue;");
+
                 refreshSpecificBoard((Long) label.getUserData());
             });
 
@@ -264,7 +265,7 @@ public class DashboardCtrl implements Initializable {
     }
 
     private void setFactory(ListView list, long boardId){
-        Board boardCurr=server.getBoard(boardId);
+        Board boardCurr = server.getBoard(boardId);
         list.setCellFactory(q -> new ListCell<Card>() {
             @Override
             protected void updateItem(Card q, boolean empty) {
@@ -442,7 +443,6 @@ public class DashboardCtrl implements Initializable {
 
         textField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                String newText = textField.getText();
                 vboxEnd.getChildren().remove(textField);
                 vboxEnd.getChildren().remove(spacer);
             }
