@@ -55,6 +55,10 @@ public class ServerUtils {
 
     private String SERVER;
 
+    public String getSERVER() {
+        return SERVER;
+    }
+
     @Inject
     public ServerUtils(String server){
         SERVER=server;

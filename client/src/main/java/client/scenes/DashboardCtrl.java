@@ -34,6 +34,7 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.scene.paint.Color;
@@ -74,6 +75,7 @@ public class DashboardCtrl implements Initializable {
     private java.util.List<commons.Board> localBoards;
     private Board focusedBoard;
     java.util.List<Board> connectedBoards;
+    Map<String, java.util.List<Board>> serverBoards;
     @FXML
     private Button addBoard;
     @FXML
@@ -89,6 +91,14 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
+        String currentServer = server.getSERVER();
+        if(serverBoards ==null) {
+            serverBoards = new HashMap<>();
+        }
+        if(serverBoards.get(currentServer) == null){
+            java.util.List<Board> boards = new ArrayList<>();
+            serverBoards.put(currentServer, boards);
+        }
         addBoardLabel.setVisible(false);
         connectedBoards = new ArrayList<>();
         openShare();
@@ -109,9 +119,6 @@ public class DashboardCtrl implements Initializable {
     }
 
     public void refreshBoards(java.util.List<Board> boards){
-        for(Board board : boards){
-            System.out.println(board);
-        }
         if(hboxList.getUserData()!=null){
             refreshSpecificBoard((Long) hboxList.getUserData());
         }
@@ -142,20 +149,29 @@ public class DashboardCtrl implements Initializable {
             Node editBoard = new Group(backroundEdit, imageEdit);
 
 
-            HBox hBox = new HBox(label, editBoard, deleteBoard);
+            HBox hBox = new HBox(label, new Region(), editBoard, deleteBoard);
+            hBox.setMaxWidth(120);
+            hBox.setPrefWidth(120);//set the preferred width to the max width so the updates are noy noticeable
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS); //Set spacer to fill available space
+
+
+            //Ensure that there is space for the buttons
+            label.maxWidthProperty().bind(hBox.widthProperty().multiply(0.75));
 
 
             //Make the icons visible only when hovering on the specific board
-            hBox.getChildren().get(1).setVisible(false);
+            hBox.getChildren().get(3).setVisible(false);
             hBox.getChildren().get(2).setVisible(false);
             hBox.setOnMouseEntered(e ->{
-                hBox.getChildren().get(1).setVisible(true);
+                hBox.getChildren().get(3).setVisible(true);
                 hBox.getChildren().get(2).setVisible(true);
             });
             hBox.setOnMouseExited(e ->{
-                hBox.getChildren().get(1).setVisible(false);
+                hBox.getChildren().get(3).setVisible(false);
                 hBox.getChildren().get(2).setVisible(false);
             });
+
 
 
             //Make it noticable when hovering on delete icon
@@ -178,7 +194,6 @@ public class DashboardCtrl implements Initializable {
             deleteBoard.setOnMouseClicked(e ->{
                 deleteBoard((Board) label.getUserData());
             });
-
 
             editBoard.setOnMouseClicked(e ->{
                 editBoard(label);
@@ -259,6 +274,8 @@ public class DashboardCtrl implements Initializable {
             //remove board from connectedBoards
             connectedBoards.remove(board);
             //delete board
+            connectedBoards.remove(board);
+            serverBoards.get(server.getSERVER()).remove(board);
             server.deleteBoard(board.getId());
         }
     }
@@ -729,3 +746,4 @@ public class DashboardCtrl implements Initializable {
         addBoardButton.setContextMenu(contextMenu);
     }
 }
+
