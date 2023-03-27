@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,9 +33,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import javafx.scene.paint.Color;
 
 import static java.lang.Thread.*;
@@ -74,6 +74,8 @@ public class DashboardCtrl implements Initializable {
     private Board focusedBoard;
     java.util.List<Board> connectedBoards;
 
+    Map<String, java.util.List<Board>> serverBoards;
+
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -84,14 +86,25 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
+
+        String currentServer = server.getSERVER();
+        if(serverBoards ==null) {
+            serverBoards = new HashMap<>();
+        }
+        if(serverBoards.get(currentServer) == null){
+            java.util.List<Board> boards = new ArrayList<>();
+            serverBoards.put(currentServer, boards);
+        }
         connectedBoards = new ArrayList<>();
+        connectedBoards.addAll(serverBoards.get(currentServer));
+
         openShare();
         openAddBoard();
         refreshBoards(connectedBoards);
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
                 try{
-                    refreshBoards(connectedBoards);
+                    refreshBoards(serverBoards.get(currentServer));
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -166,7 +179,6 @@ public class DashboardCtrl implements Initializable {
             deleteBoard.setOnMouseClicked(e ->{
                 deleteBoard((Board) label.getUserData());
             });
-
 
             editBoard.setOnMouseClicked(e ->{
                 editBoard(label);
@@ -247,6 +259,8 @@ public class DashboardCtrl implements Initializable {
             //remove board from connectedBoards
             connectedBoards.remove(board);
             //delete board
+            connectedBoards.remove(board);
+            serverBoards.get(server.getSERVER()).remove(board);
             server.deleteBoard(board.getId());
         }
     }
@@ -643,15 +657,20 @@ public class DashboardCtrl implements Initializable {
                     errorMessage.setText("The key that you have entered is empty");
                 } else {
                     retrievedBoard = server.getBoardByKey(key);
-                    if(retrievedBoard != null){
-                        errorMessage.setText("");
-                        connectedBoards.add(retrievedBoard);
-                        refreshBoards(connectedBoards);
-                        ContextMenu contextMenu = addBoardButton.getContextMenu();
-                        contextMenu.setY(contextMenu.getY() + 24);
+                    if(retrievedBoard != null ) {
+                        if (connectedBoards.contains(retrievedBoard)) {
+                            errorMessage.setText("Board is already added");
+                        } else {
+                            errorMessage.setText("");
+                            connectedBoards.add(retrievedBoard);
+                            serverBoards.get(server.getSERVER()).add(retrievedBoard);
+                            refreshBoards(connectedBoards);
+                            ContextMenu contextMenu = addBoardButton.getContextMenu();
+                            contextMenu.setY(contextMenu.getY() + 24);
+                        }
+                    } else {
+                        errorMessage.setText("Such a board doesn't exist");
                     }
-
-                    else errorMessage.setText("Such a board doesn't exist");
                 }
             }
         });
