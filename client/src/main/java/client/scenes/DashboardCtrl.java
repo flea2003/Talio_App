@@ -57,7 +57,7 @@ public class DashboardCtrl implements Initializable {
     private boolean sus;
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
-    private long idOfCurrentBoard=-1;
+    private long idOfCurrentBoard = -1;
     @FXML
     private TreeView<Label> boardsTreeView;
     private java.util.List<commons.Board> localBoards;
@@ -72,7 +72,7 @@ public class DashboardCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
         this.server = server;
     }
-
+    private static int numberListener;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         addBoardLabel.setVisible(false);
@@ -90,7 +90,7 @@ public class DashboardCtrl implements Initializable {
             });
         });
         isShareBoardVisible = false;
-        //temporary testing
+        //temporary testing - ok ^-^
         focusedBoard = new Board(1, (ArrayList<List>) null, "testing");
         focusedBoard.key = "testing";
     }
@@ -109,7 +109,7 @@ public class DashboardCtrl implements Initializable {
 
             label.setUserData(boardCurr.id);
             if(idOfCurrentBoard != -1 && idOfCurrentBoard == boardCurr.id){
-                label.setStyle("-fx-font-size: 18px; -fx-background-color: blue;");
+                label.setStyle("-fx-font-size: 18px; -fx-background-color: green;");
             }
 
             label.setOnMouseClicked(e -> {
@@ -117,7 +117,7 @@ public class DashboardCtrl implements Initializable {
                     child.setStyle("");
                 }
                 idOfCurrentBoard = (Long) label.getUserData();
-                label.setStyle("-fx-font-size: 18px; -fx-background-color: blue;");
+                label.setStyle("-fx-font-size: 18px; -fx-background-color: green;");
 
                 refreshSpecificBoard((Long) label.getUserData());
             });
@@ -396,18 +396,24 @@ public class DashboardCtrl implements Initializable {
 
                     Board boardCurr = new Board(newText);
                     server.addBoard(boardCurr);
+                    addBoardLabel.setText("");
+                    System.out.println(newText);
                     addBoardLabel.setVisible(false);
                 }
             }
         });
 
+        /**
+         * this method handles the event in which Add Board button is pressed
+         */
         addBoardLabel.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                String newText = addBoardLabel.getText();
+                Scene scene = addBoardLabel.getScene();
+                scene.getRoot().requestFocus(); // take the focus away from the textlabel
+                addBoardLabel.setText("");
                 addBoardLabel.setVisible(false);
             }
         });
-
     }
 
     public void createList(VBox vboxEnd, long boardId){
@@ -429,7 +435,6 @@ public class DashboardCtrl implements Initializable {
             }else{
                 if(textField.getText().strip().length()!=0) {
                     String newText = textField.getText();
-
                     Board boardCurr = server.getBoard(boardId);
                     List newList=new List(new ArrayList<Card>(), newText, boardCurr, boardCurr.lists.size() + 1);
                     newList.setBoard(boardCurr);

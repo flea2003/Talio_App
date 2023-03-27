@@ -60,8 +60,6 @@ public class TaskViewCtrl {
 
     public void renderInfo(Card card){
         currCard = card;
-        System.out.println(card.name);
-        System.out.println(card.description);
         taskName.setText(card.name);
         taskDescription.setText(card.description);
         if(taskNo==null){

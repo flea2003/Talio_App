@@ -47,13 +47,9 @@ public class TaskCreationCtrl {
 
     @FXML
     public void processClick(javafx.event.ActionEvent event){
-        System.out.println(event);
-        System.out.println("hi");
         String valueName = "";
         String valueDes = "";
         setError("");
-        System.out.println(addTask);
-        System.out.println(event.getSource());
         if(event.getSource() == addTask) {
             valueName = extractValue(taskName);
             valueDes = extractValue(taskDescription);
@@ -76,10 +72,6 @@ public class TaskCreationCtrl {
             }
         }
 
-        System.out.println(listCurr);
-//        server.addCard(card);
-
-//        server.updateList(listCurr);
         server.updateBoard(boardCurr);
 
         taskName.setText("");
@@ -87,7 +79,6 @@ public class TaskCreationCtrl {
     }
 
     public void keyPressed(KeyEvent e) {
-        System.out.println("LOL");
         if (Objects.requireNonNull(e.getCode()) == KeyCode.ENTER) {
             String taskNameText = extractValue(taskName);
             if (taskNameText.length() >= 1) {

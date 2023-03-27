@@ -82,7 +82,7 @@
                   <VBox fx:id="boardsVBox" />
                </content>
             </ScrollPane>
-            <TextField fx:id="addBoardLabel" prefHeight="26.0" prefWidth="133.0">
+            <TextField fx:id="addBoardLabel" prefHeight="26.0" prefWidth="133.0" promptText="Enter Board Name">
                <VBox.margin>
                   <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>

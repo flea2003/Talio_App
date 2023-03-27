@@ -62,7 +62,6 @@ public class ServerUtils {
 
     public void setSERVER(String server){
         SERVER=server;
-        System.out.println(SERVER);
     }
 
     public List<Quote> getQuotes() {
@@ -154,7 +153,6 @@ public class ServerUtils {
             ++indx;
             card.setNumberInTheList(indx);
         }
-        System.out.println("aaaaaa"+list);
         String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path(endpoint)
