@@ -1,0 +1,1 @@
+INSERT into BOARD values (2, 'Testing', 'Test')

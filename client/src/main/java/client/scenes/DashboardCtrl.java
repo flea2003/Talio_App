@@ -3,6 +3,8 @@ package client.scenes;
 import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import com.sun.javafx.scene.control.ContextMenuContent;
+import com.sun.prism.paint.Paint;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -33,6 +35,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.scene.paint.Color;
+
+import static java.lang.Thread.*;
 
 public class DashboardCtrl implements Initializable {
 
@@ -46,8 +51,6 @@ public class DashboardCtrl implements Initializable {
 
     @FXML
     public Button shareBoard;
-
-    private boolean isShareBoardVisible;
     @FXML
     private ScrollPane pane;
     @FXML
@@ -56,15 +59,21 @@ public class DashboardCtrl implements Initializable {
     private AnchorPane boardsPane;
     @FXML
     private VBox boardsVBox;
+
+    @FXML
+    private Button addBoardButton;
     private ListCell<Card> draggedCard;
     private VBox draggedVbox;
     private boolean sus;
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
     private long idOfCurrentBoard=-1;
-
-    private java.util.List<Board> localBoards;
+    @FXML
+    private BorderPane innerBoardsPane;
+    private java.util.List<commons.Board> localBoards;
     private Board focusedBoard;
+    java.util.List<Board> connectedBoards;
+
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -74,20 +83,20 @@ public class DashboardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        refreshBoards(server.getBoards());
+//        innerBoardsPane.set
+        connectedBoards = new ArrayList<>();
+        openShare();
+        openAddBoard();
+        refreshBoards(connectedBoards);
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
                 try{
-                    refreshBoards(server.getBoards());
+                    refreshBoards(connectedBoards);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             });
         });
-        isShareBoardVisible = false;
-        //temporary testing
-        focusedBoard = new Board(1, (ArrayList<List>) null, "testing");
-        focusedBoard.key = "testing";
     }
 
     public void refreshBoards(java.util.List<Board> boards){
@@ -155,14 +164,15 @@ public class DashboardCtrl implements Initializable {
 
 
             deleteBoard.setOnMouseClicked(e ->{
-                deleteBoard((Long) label.getUserData());
+                deleteBoard((Board) label.getUserData());
             });
 
             editBoard.setOnMouseClicked(e ->{
                 editBoard(label);
             });
 
-            label.setUserData(boardCurr.id);
+            label.setUserData(boardCurr);
+
             if(idOfCurrentBoard != -1 && idOfCurrentBoard==boardCurr.id){
                 label.setStyle("-fx-font-size: 18px;");
             }
@@ -172,9 +182,10 @@ public class DashboardCtrl implements Initializable {
                 for(Node child : boardsVBox.getChildren()) {
                     ((HBox) child).getChildren().get(0).setStyle("");
                 }
-                idOfCurrentBoard = (Long) label.getUserData();
+                focusedBoard = (Board) label.getUserData();
+                idOfCurrentBoard = focusedBoard.getId();
                 label.setStyle("-fx-font-size: 18px;");
-                refreshSpecificBoard((Long) label.getUserData());
+                refreshSpecificBoard(idOfCurrentBoard);
             });
 
             boardsVBox.getChildren().add(hBox);
@@ -213,11 +224,11 @@ public class DashboardCtrl implements Initializable {
         hboxList.setSpacing(30);
     }
 
-    public void deleteBoard(long id){
+    public void deleteBoard(Board board){
         //Show a confirmation message
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete board '"+server.getBoard(id).getName()+"'?");
-        alert.setContentText("Are you sure you want to delete board '"+server.getBoard(id).getName()+
+        alert.setHeaderText("Delete board '"+board.getName()+"'?");
+        alert.setContentText("Are you sure you want to delete board '"+board.getName()+
                 "'?\nThis will permanently delete the board from the server.");
 
         ButtonType delete = new ButtonType("Delete");
@@ -228,12 +239,14 @@ public class DashboardCtrl implements Initializable {
 
         if (result.get() == delete){
             //if the board to be deleted is selected remove its data from the interface
-            if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==id){
+            if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==board.getId()){
                 hboxList.setUserData(null);
                 hboxList.getChildren().clear();
             }
+            //remove board from connectedBoards
+            connectedBoards.remove(board);
             //delete board
-            server.deleteBoard(id);
+            server.deleteBoard(board.getId());
         }
     }
 
@@ -251,16 +264,16 @@ public class DashboardCtrl implements Initializable {
         HBox buttons = new HBox(ok, cancel);
         buttons.setSpacing(10);
 
+        Board boardCurr = (Board) label.getUserData();
         //populate the popup and show it
         popupVbox.getChildren().addAll(new Label("Enter new name for board '" +
-                server.getBoard((Long) label.getUserData()).getName() + "':"), textField, error,buttons);
+                boardCurr.getName() + "':"), textField, error,buttons);
         popup.getContent().addAll(popupVbox);
         popup.show(mainCtrl.getPrimaryStage());
 
         //handle events
         ok.setOnAction(event -> {
             if(textField.getText().length()>0) {
-                Board boardCurr = server.getBoard((Long) label.getUserData());
                 boardCurr.setName(textField.getText());
                 server.updateBoard(boardCurr);
                 popup.hide();
@@ -576,40 +589,95 @@ public class DashboardCtrl implements Initializable {
 
     @FXML
     public void openShare() {
-
         final ContextMenu contextMenu = new ContextMenu();
         MenuItem copy = new MenuItem("Copy board code");
-//        might use this later if I want to display the code to the user
-//        contextMenu.getScene().getRoot().
 
         copy.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Clipboard clipboard = Clipboard.getSystemClipboard();
-                ClipboardContent content = new ClipboardContent();
-                content.putString(focusedBoard.getKey());
-                clipboard.setContent(content);
-            }
-        });
-        contextMenu.getItems().addAll( copy);
-
-        contextMenu.setAutoHide(true);
-        contextMenu.setHideOnEscape(true);
-        shareBoard.setOnMousePressed(new EventHandler<MouseEvent>() {
-           Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
-            @Override
-            public void handle(MouseEvent event) {
-                if(! isShareBoardVisible){
-
-                    contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
-                    isShareBoardVisible = true;
-                } else {
-                    contextMenu.hide();
-                    isShareBoardVisible = false;
+                if (focusedBoard != null) {
+                    Clipboard clipboard = Clipboard.getSystemClipboard();
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(focusedBoard.getKey());
+                    clipboard.setContent(content);
                 }
             }
-            });
+        });
 
+        contextMenu.getItems().addAll(copy);
+        contextMenu.setAutoHide(true);
+        contextMenu.setHideOnEscape(true);
+
+
+        shareBoard.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if(!newValue)
+                contextMenu.hide();
+        }));
+
+        shareBoard.setOnMouseClicked(event -> {
+            Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY)
+                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
+
+        });
+
+        shareBoard.setContextMenu(contextMenu);
+    }
+
+    @FXML
+    public void openAddBoard() {
+        Label description = new Label("Key of the board:");
+        Label errorMessage = new Label();
+        errorMessage.setTextFill(Color.RED);
+        TextField input = new TextField();
+
+        Button submit = new Button("Add board");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String key = input.getText();
+                Board retrievedBoard;
+
+                if(input.getText().isEmpty()) {
+                    errorMessage.setText("The key that you have entered is empty");
+                } else {
+                    retrievedBoard = server.getBoardByKey(key);
+                    if(retrievedBoard != null){
+                        errorMessage.setText("");
+                        connectedBoards.add(retrievedBoard);
+                        refreshBoards(connectedBoards);
+                        ContextMenu contextMenu = addBoardButton.getContextMenu();
+                        contextMenu.setY(contextMenu.getY() + 24);
+                    }
+
+                    else errorMessage.setText("Such a board doesn't exist");
+                }
+            }
+        });
+
+        VBox container = new VBox();
+        container.getChildren().addAll(description, errorMessage, input, submit);
+        CustomMenuItem popUpMenu= new CustomMenuItem(container);
+        popUpMenu.setHideOnClick(false);
+
+        final ContextMenu contextMenu = new ContextMenu();
+        contextMenu.getItems().addAll(popUpMenu);
+        contextMenu.setAutoHide(true);
+        contextMenu.setHideOnEscape(true);
+
+        addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if(!newValue)
+                contextMenu.hide();
+        }));
+
+        addBoardButton.setOnMouseClicked(event -> {
+            Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY)
+                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
+
+        });
+
+        addBoardButton.setContextMenu(contextMenu);
     }
 }
 
