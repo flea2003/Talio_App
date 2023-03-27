@@ -143,18 +143,18 @@ public class DashboardCtrl implements Initializable {
             Node editBoard = new Group(backroundEdit, imageEdit);
 
 
-            HBox hBox = new HBox(label, new Text(" "), editBoard, deleteBoard);
+            HBox hBox = new HBox(label, editBoard, deleteBoard);
 
 
             //Make the icons visible only when hovering on the specific board
-            hBox.getChildren().get(3).setVisible(false);
+            hBox.getChildren().get(1).setVisible(false);
             hBox.getChildren().get(2).setVisible(false);
             hBox.setOnMouseEntered(e ->{
-                hBox.getChildren().get(3).setVisible(true);
+                hBox.getChildren().get(1).setVisible(true);
                 hBox.getChildren().get(2).setVisible(true);
             });
             hBox.setOnMouseExited(e ->{
-                hBox.getChildren().get(3).setVisible(false);
+                hBox.getChildren().get(1).setVisible(false);
                 hBox.getChildren().get(2).setVisible(false);
             });
 
