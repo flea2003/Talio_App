@@ -143,20 +143,29 @@ public class DashboardCtrl implements Initializable {
             Node editBoard = new Group(backroundEdit, imageEdit);
 
 
-            HBox hBox = new HBox(label, editBoard, deleteBoard);
+            HBox hBox = new HBox(label, new Region(), editBoard, deleteBoard);
+            hBox.setMaxWidth(120);
+            hBox.setPrefWidth(120);//set the preferred width to the max width so the updates are noy noticeable
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS); //Set spacer to fill available space
+
+
+            //Ensure that there is space for the buttons
+            label.maxWidthProperty().bind(hBox.widthProperty().multiply(0.75));
 
 
             //Make the icons visible only when hovering on the specific board
-            hBox.getChildren().get(1).setVisible(false);
+            hBox.getChildren().get(3).setVisible(false);
             hBox.getChildren().get(2).setVisible(false);
             hBox.setOnMouseEntered(e ->{
-                hBox.getChildren().get(1).setVisible(true);
+                hBox.getChildren().get(3).setVisible(true);
                 hBox.getChildren().get(2).setVisible(true);
             });
             hBox.setOnMouseExited(e ->{
-                hBox.getChildren().get(1).setVisible(false);
+                hBox.getChildren().get(3).setVisible(false);
                 hBox.getChildren().get(2).setVisible(false);
             });
+
 
 
             //Make it noticable when hovering on delete icon
