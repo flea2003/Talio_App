@@ -13,13 +13,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,14 +26,13 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import javax.swing.*;
-import javax.swing.text.Element;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.scene.paint.Color;
@@ -123,31 +120,56 @@ public class DashboardCtrl implements Initializable {
             backroundDelete.setFill(Color.TRANSPARENT);
             Node deleteBoard = new Group(backroundDelete, imageDelete);
 
+            //create edit icon
+            Image imgEdit =new Image("pictures/edit_icon.png");
+            ImageView imageEdit = new ImageView(imgEdit);
+            imageEdit.setFitWidth(20);
+            imageEdit.setFitHeight(20);
+            Rectangle backroundEdit = new Rectangle(20, 20);
+            backroundEdit.setFill(Color.TRANSPARENT);
+            Node editBoard = new Group(backroundEdit, imageEdit);
 
-            HBox hBox = new HBox(label, deleteBoard);
+
+            HBox hBox = new HBox(label, editBoard, deleteBoard);
 
 
-            //Make the delete icon visible only when hovering on the specific board
+            //Make the icons visible only when hovering on the specific board
             hBox.getChildren().get(1).setVisible(false);
+            hBox.getChildren().get(2).setVisible(false);
             hBox.setOnMouseEntered(e ->{
                 hBox.getChildren().get(1).setVisible(true);
+                hBox.getChildren().get(2).setVisible(true);
             });
             hBox.setOnMouseExited(e ->{
                 hBox.getChildren().get(1).setVisible(false);
+                hBox.getChildren().get(2).setVisible(false);
             });
 
 
             //Make it noticable when hovering on delete icon
             deleteBoard.setOnMouseEntered(e ->{
-                backroundDelete.setFill(Color.RED);
+                backroundDelete.setFill(Color.rgb(255,99,71));
             });
             deleteBoard.setOnMouseExited(e ->{
                 backroundDelete.setFill(Color.TRANSPARENT);
             });
 
+            //Make it noticable when hovering on edit icon
+            editBoard.setOnMouseEntered(e ->{
+                backroundEdit.setFill(Color.YELLOW);
+            });
+            editBoard.setOnMouseExited(e ->{
+                backroundEdit.setFill(Color.TRANSPARENT);
+            });
+
 
             deleteBoard.setOnMouseClicked(e ->{
                 deleteBoard((Board) label.getUserData());
+            });
+
+
+            editBoard.setOnMouseClicked(e ->{
+                editBoard(label);
             });
 
             label.setUserData(boardCurr);
@@ -227,6 +249,45 @@ public class DashboardCtrl implements Initializable {
             //delete board
             server.deleteBoard(board.getId());
         }
+    }
+
+    public void editBoard(Label label){
+        //Create pop up for editing the board
+        Popup popup = new Popup();
+        VBox popupVbox = new VBox(10);
+        popupVbox.setStyle("-fx-background-color: rgb(169,169,169)");
+        TextField textField = new TextField(label.getText());
+        Label error = new Label("");
+
+        //Create buttons and allign them next to each other
+        Button ok = new Button("OK");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(ok, cancel);
+        buttons.setSpacing(10);
+
+        Board boardCurr = (Board) label.getUserData();
+        //populate the popup and show it
+        popupVbox.getChildren().addAll(new Label("Enter new name for board '" +
+                boardCurr.getName() + "':"), textField, error,buttons);
+        popup.getContent().addAll(popupVbox);
+        popup.show(mainCtrl.getPrimaryStage());
+
+        //handle events
+        ok.setOnAction(event -> {
+            if(textField.getText().length()>0) {
+                boardCurr.setName(textField.getText());
+                server.updateBoard(boardCurr);
+                popup.hide();
+            }
+            else{
+               error.setText("The name of the board can not be empty.");
+               error.setStyle("-fx-text-fill: red");
+            }
+        });
+
+        cancel.setOnAction(e ->{
+            popup.hide();
+        });
     }
 
     private void addLists(java.util.List<List> list, long boardId){
