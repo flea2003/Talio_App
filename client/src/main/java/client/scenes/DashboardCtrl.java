@@ -33,10 +33,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import javafx.scene.paint.Color;
 
 import static java.lang.Thread.*;
@@ -101,6 +99,7 @@ public class DashboardCtrl implements Initializable {
         }
         addBoardLabel.setVisible(false);
         connectedBoards = new ArrayList<>();
+        connectedBoards.addAll(serverBoards.get(currentServer));
         openShare();
         openAddBoard();
         addBoard.setOnAction(e -> {
@@ -110,7 +109,7 @@ public class DashboardCtrl implements Initializable {
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
                 try{
-                    refreshBoards(connectedBoards);
+                    refreshBoards(serverBoards.get(currentServer));
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -335,6 +334,7 @@ public class DashboardCtrl implements Initializable {
 //                    boardCurr = server.getBoard(boardCurr.id);
 //                    System.out.println(boardCurr);
                     connectedBoards.add(boardCurr);
+                    serverBoards.get(server.getSERVER()).add(boardCurr);
                     addBoardLabel.setText("");
                     addBoardLabel.setVisible(false);
                     refreshBoards(connectedBoards);
@@ -708,15 +708,21 @@ public class DashboardCtrl implements Initializable {
                     errorMessage.setText("The key that you have entered is empty");
                 } else {
                     retrievedBoard = server.getBoardByKey(key);
-                    if(retrievedBoard != null){
-                        errorMessage.setText("");
-                        connectedBoards.add(retrievedBoard);
-                        refreshBoards(connectedBoards);
-                        ContextMenu contextMenu = addBoardButton.getContextMenu();
-                        contextMenu.setY(contextMenu.getY() + 24);
+                    if(retrievedBoard != null ) {
+                        if (connectedBoards.contains(retrievedBoard)) {
+                            errorMessage.setText("Board is already added");
+                        } else {
+                            errorMessage.setText("");
+                            connectedBoards.add(retrievedBoard);
+                            serverBoards.get(server.getSERVER()).add(retrievedBoard);
+                            refreshBoards(connectedBoards);
+                            ContextMenu contextMenu = addBoardButton.getContextMenu();
+                            contextMenu.setY(contextMenu.getY() + 24);
+                        }
+                    } else {
+                        errorMessage.setText("Such a board doesn't exist");
                     }
 
-                    else errorMessage.setText("Such a board doesn't exist");
                 }
             }
         });
