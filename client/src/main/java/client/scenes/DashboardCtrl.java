@@ -167,13 +167,11 @@ public class DashboardCtrl implements Initializable {
                 deleteBoard((Board) label.getUserData());
             });
 
-<<<<<<< client/src/main/java/client/scenes/DashboardCtrl.java
+
             editBoard.setOnMouseClicked(e ->{
                 editBoard(label);
             });
 
-=======
->>>>>>> client/src/main/java/client/scenes/DashboardCtrl.java
             label.setUserData(boardCurr);
 
             if(idOfCurrentBoard != -1 && idOfCurrentBoard==boardCurr.id){
