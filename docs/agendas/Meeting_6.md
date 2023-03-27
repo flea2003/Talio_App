@@ -16,7 +16,7 @@ Note taker:     Antreas Ioannou
 <br />
 
 # Heuristic Usability Evaluation (15:50)
- - # Our PRoduct
+ - # Our Product
     - Is it possible to add images and tables in the required template?
     - Is a short description of our prototype enough or do we need to add it?
     - Are References required?
