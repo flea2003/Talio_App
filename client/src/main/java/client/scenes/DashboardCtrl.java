@@ -33,10 +33,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import javafx.scene.paint.Color;
 
 import static java.lang.Thread.*;
