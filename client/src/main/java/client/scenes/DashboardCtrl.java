@@ -89,6 +89,7 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
+        addBoardLabel.setVisible(false);
         connectedBoards = new ArrayList<>();
         openShare();
         openAddBoard();

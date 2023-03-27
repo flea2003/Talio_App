@@ -72,7 +72,6 @@
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="326.0" prefWidth="135.0" style="-fx-border-color: #000000;" BorderPane.alignment="CENTER">
          <children>
-            <<<<<<< HEAD
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="My Boards">
                <font>
                   <Font name="Cambria Italic" size="27.0" />
@@ -96,7 +95,7 @@
                   <Font name="Serif Regular" size="12.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Join Board" onAction="#openShare">
+            <Button fx:id="addBoardButton" mnemonicParsing="false" onAction="#openShare" prefHeight="26.0" prefWidth="134.0" text="Join Board">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
