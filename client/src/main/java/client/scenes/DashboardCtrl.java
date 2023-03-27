@@ -72,7 +72,6 @@ public class DashboardCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
         this.server = server;
     }
-    private static int numberListener;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         addBoardLabel.setVisible(false);
@@ -397,7 +396,6 @@ public class DashboardCtrl implements Initializable {
                     Board boardCurr = new Board(newText);
                     server.addBoard(boardCurr);
                     addBoardLabel.setText("");
-                    System.out.println(newText);
                     addBoardLabel.setVisible(false);
                 }
             }
