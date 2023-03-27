@@ -70,6 +70,8 @@ public class Board {
         this.name = name;
     }
 
+    public long getId(){return id;}
+
     public String getKey(){return key;}
 
     /**
