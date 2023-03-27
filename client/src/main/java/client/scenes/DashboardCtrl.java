@@ -259,6 +259,8 @@ public class DashboardCtrl implements Initializable {
             //remove board from connectedBoards
             connectedBoards.remove(board);
             //delete board
+            connectedBoards.remove(board);
+            serverBoards.get(server.getSERVER()).remove(board);
             server.deleteBoard(board.getId());
         }
     }
@@ -655,16 +657,20 @@ public class DashboardCtrl implements Initializable {
                     errorMessage.setText("The key that you have entered is empty");
                 } else {
                     retrievedBoard = server.getBoardByKey(key);
-                    if(retrievedBoard != null){
-                        errorMessage.setText("");
-                        connectedBoards.add(retrievedBoard);
-                        serverBoards.get(server.getSERVER()).add(retrievedBoard);
-                        refreshBoards(connectedBoards);
-                        ContextMenu contextMenu = addBoardButton.getContextMenu();
-                        contextMenu.setY(contextMenu.getY() + 24);
+                    if(retrievedBoard != null ) {
+                        if (connectedBoards.contains(retrievedBoard)) {
+                            errorMessage.setText("Board is already added");
+                        } else {
+                            errorMessage.setText("");
+                            connectedBoards.add(retrievedBoard);
+                            serverBoards.get(server.getSERVER()).add(retrievedBoard);
+                            refreshBoards(connectedBoards);
+                            ContextMenu contextMenu = addBoardButton.getContextMenu();
+                            contextMenu.setY(contextMenu.getY() + 24);
+                        }
+                    } else {
+                        errorMessage.setText("Such a board doesn't exist");
                     }
-
-                    else errorMessage.setText("Such a board doesn't exist");
                 }
             }
         });
