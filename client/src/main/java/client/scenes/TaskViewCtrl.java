@@ -5,12 +5,14 @@ import com.google.inject.Stage;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
 import javax.inject.Inject;

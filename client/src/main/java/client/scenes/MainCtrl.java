@@ -112,11 +112,13 @@ public class MainCtrl {
     }
     
     public void switchTaskCreation(List listCurr, long boardId){
-        primaryStage.setTitle("Task Creation");
-        primaryStage.setScene(taskCreation);
-        taskCreationCtrl.setListCurr(listCurr);
-        taskCreationCtrl.setBoardId(boardId);
-        taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
+        taskCreationCtrl.sendData(taskCreation, boardId, listCurr);
+        taskCreationCtrl.start(primaryStage);
+//        primaryStage.setTitle("Task Creation");
+//        primaryStage.setScene(taskCreation);
+//        taskCreationCtrl.setListCurr(listCurr);
+//        taskCreationCtrl.setBoardId(boardId);
+//        taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
     }
 
     /**

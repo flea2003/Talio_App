@@ -6,19 +6,23 @@ import com.google.inject.Inject;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import javafx.application.Application;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.util.Objects;
 
-public class TaskCreationCtrl {
+public class TaskCreationCtrl extends Application {
 
-    private final ServerUtils server;
-    private final MainCtrl mainCtrl;
+    private  ServerUtils server;
+    private  MainCtrl mainCtrl;
 
     @FXML
     private TextField taskName;
@@ -38,11 +42,36 @@ public class TaskCreationCtrl {
     private List listCurr;
 
     private long boardId;
+    Scene taskCreation;
+    Stage newStage;
+
 
     @Inject
     public TaskCreationCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+    }
+
+//    @Inject
+//    public  TaskCreationCtrl(){
+//
+//    }
+
+    public void sendData(Scene taskCreation, long boardId, List listCurr){
+        this.taskCreation = taskCreation;
+        this.boardId = boardId;
+        this.listCurr = listCurr;
+    }
+    @Override
+    public void start(javafx.stage.Stage primaryStage)  {
+        // Create a new stage and scene for the new scene
+
+        newStage = new Stage();
+        newStage.setTitle("Task Creation");
+        newStage.setScene(taskCreation);
+        newStage.show();
+
+        taskCreation.setOnKeyPressed(e -> this.keyPressed(e));
     }
 
     @FXML
@@ -58,6 +87,7 @@ public class TaskCreationCtrl {
             } else {
                 // here we send the value to the database
                 mainCtrl.switchDashboard("LOL");
+                newStage.close();
             }
         }
         listCurr = server.getList(listCurr.id);

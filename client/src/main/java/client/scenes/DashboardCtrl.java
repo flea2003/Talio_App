@@ -86,6 +86,20 @@ public class DashboardCtrl implements Initializable {
         this.server = server;
     }
 
+    public class ConsolePrinterThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                System.out.println(connectedBoards);
+                try {
+                    Thread.sleep(10000); // sleep for 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
@@ -115,6 +129,10 @@ public class DashboardCtrl implements Initializable {
                 }
             });
         });
+
+
+        ConsolePrinterThread printerThread = new ConsolePrinterThread();
+        printerThread.start();
     }
 
     public void refreshBoards(java.util.List<Board> boards){
