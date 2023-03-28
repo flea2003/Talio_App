@@ -82,7 +82,7 @@ Note taker:     Antreas Ioannou
 - What should we focus on for this week?
 - What went well and what can be improved next time?
 
-- #Minutes 
+- # Minutes 
     -   Write notes in the agenda as an md file
 
 <br />
