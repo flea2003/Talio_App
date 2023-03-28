@@ -31,5 +31,6 @@
             </Text>
          </children>
       </Pane>
+      <Text fx:id="taskNo" layoutX="502.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Task no. " />
    </children>
 </AnchorPane>
