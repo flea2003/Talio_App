@@ -492,7 +492,9 @@ public class DashboardCtrl implements Initializable {
                 else{
                     setText(q.name);
                     setOnMouseClicked(event -> {
-                        mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        if (event.getClickCount() == 2) {
+                            mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        }
                     });
                 }
                 setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
