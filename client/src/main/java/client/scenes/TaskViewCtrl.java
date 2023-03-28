@@ -1,7 +1,6 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import com.google.inject.Stage;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -14,11 +13,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class TaskViewCtrl {
+public class TaskViewCtrl extends Application {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
@@ -54,6 +54,10 @@ public class TaskViewCtrl {
 
     private Board boardCurr;
 
+    private Scene taskView;
+
+    private Stage newStage;
+
 
     @Inject
     public TaskViewCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
@@ -61,6 +65,22 @@ public class TaskViewCtrl {
         this.mainCtrl = mainCtrl;
         this.card = card;
 
+    }
+
+    public void sendData(Scene scene, Card card, Board board){
+        this.taskView = scene;
+        this.currCard = card;
+        this.boardCurr = board;
+    }
+
+    @Override
+    public void start(javafx.stage.Stage primaryStage)  {
+        newStage = new Stage();
+        newStage.setTitle("Task View");
+        newStage.setScene(taskView);
+        newStage.show();
+
+//        taskView.setOnKeyPressed(e -> this.keyPressed(e));
     }
 
     public void renderInfo(Card card){
@@ -101,15 +121,18 @@ public class TaskViewCtrl {
 
             server.updateBoard(boardCurr);
             server.deleteCard(currCard.id);
-            mainCtrl.switchDelete(currCard);
+            newStage.close();
+//            mainCtrl.switchDelete(currCard);
         }
 
     }
 
     @FXML
     public void setDone(){
-        mainCtrl.switchDashboard("LOL");
+//        mainCtrl.switchDashboard("LOL");
+        newStage.close();
     }
+
 
     private String extractValue(Text curr){
         return curr.getText();
@@ -127,4 +150,8 @@ public class TaskViewCtrl {
         this.boardCurr = boardCurr;
     }
 
+    public Card getCurrentCard(){return currCard;}
+
+    public Stage getStage(){return newStage;}
 }
+

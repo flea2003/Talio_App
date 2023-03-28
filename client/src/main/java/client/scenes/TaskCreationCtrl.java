@@ -52,11 +52,6 @@ public class TaskCreationCtrl extends Application {
         this.mainCtrl = mainCtrl;
     }
 
-//    @Inject
-//    public  TaskCreationCtrl(){
-//
-//    }
-
     public void sendData(Scene taskCreation, long boardId, List listCurr){
         this.taskCreation = taskCreation;
         this.boardId = boardId;
@@ -64,8 +59,6 @@ public class TaskCreationCtrl extends Application {
     }
     @Override
     public void start(javafx.stage.Stage primaryStage)  {
-        // Create a new stage and scene for the new scene
-        System.out.println("hielo");
         newStage = new Stage();
         newStage.setTitle("Task Creation");
         newStage.setScene(taskCreation);

@@ -27,6 +27,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
+
 import static client.Main.FXML;
 import static com.google.inject.Guice.createInjector;
 
@@ -50,6 +52,8 @@ public class MainCtrl {
     private Scene taskCreation;
     private Scene taskEdit;
     private TaskEditCtrl taskEditCtrl;
+
+    private java.util.List<TaskViewCtrl> taskViews = new ArrayList<>();
 
     private Scene server;
     private  ServerConnectCtrl serverCtrl;
@@ -119,18 +123,9 @@ public class MainCtrl {
     }
     
     public void switchTaskCreation(List listCurr, long boardId){
-//        MyFXML FXML = new MyFXML(INJECTOR);
-//        Injector INJECTOR = createInjector(new MyModule());
-//         MyFXML FXML = new MyFXML(INJECTOR);
-
         var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
         taskCreation.getKey().sendData(new Scene(taskCreation.getValue()), boardId, listCurr);
         taskCreation.getKey().start(primaryStage);
-//        primaryStage.setTitle("Task Creation");
-//        primaryStage.setScene(taskCreation);
-//        taskCreationCtrl.setListCurr(listCurr);
-//        taskCreationCtrl.setBoardId(boardId);
-//        taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
     }
 
     /**
@@ -162,10 +157,18 @@ public class MainCtrl {
     }
 
     public void switchTaskView(Card q, Board boardCurr){
-        primaryStage.setTitle("View Task");
-        primaryStage.setScene(taskView);
-        taskViewCtrl.setBoardCurr(boardCurr);
-        taskViewCtrl.renderInfo(q);
+
+        for (TaskViewCtrl viewCtrl : taskViews) {
+            if (viewCtrl.getCurrentCard().equals(q)) {
+                viewCtrl.getStage().requestFocus();
+                return;
+            }
+
+        }
+        var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+        taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
+        taskView.getKey().start(primaryStage);
+        taskViews.add(taskView.getKey());
     }
 
     public void switchEdit(Card q, Board boardCurr){
