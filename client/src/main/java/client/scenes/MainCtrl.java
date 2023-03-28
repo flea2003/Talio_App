@@ -15,7 +15,10 @@
  */
 package client.scenes;
 
+import client.MyFXML;
+import client.MyModule;
 import client.utils.ServerUtils;
+import com.google.inject.Injector;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -24,7 +27,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import static client.Main.FXML;
+import static com.google.inject.Guice.createInjector;
+
 public class MainCtrl {
+
 
     private Stage primaryStage;
     private QuoteOverviewCtrl overviewCtrl;
@@ -112,8 +119,13 @@ public class MainCtrl {
     }
     
     public void switchTaskCreation(List listCurr, long boardId){
-        taskCreationCtrl.sendData(taskCreation, boardId, listCurr);
-        taskCreationCtrl.start(primaryStage);
+//        MyFXML FXML = new MyFXML(INJECTOR);
+//        Injector INJECTOR = createInjector(new MyModule());
+//         MyFXML FXML = new MyFXML(INJECTOR);
+
+        var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
+        taskCreation.getKey().sendData(new Scene(taskCreation.getValue()), boardId, listCurr);
+        taskCreation.getKey().start(primaryStage);
 //        primaryStage.setTitle("Task Creation");
 //        primaryStage.setScene(taskCreation);
 //        taskCreationCtrl.setListCurr(listCurr);

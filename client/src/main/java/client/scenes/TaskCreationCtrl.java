@@ -2,7 +2,7 @@ package client.scenes;
 
 import client.Main;
 import client.utils.ServerUtils;
-import com.google.inject.Inject;
+
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -16,7 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
+import javax.inject.Inject;
 import java.util.Objects;
 
 public class TaskCreationCtrl extends Application {
@@ -65,7 +65,7 @@ public class TaskCreationCtrl extends Application {
     @Override
     public void start(javafx.stage.Stage primaryStage)  {
         // Create a new stage and scene for the new scene
-
+        System.out.println("hielo");
         newStage = new Stage();
         newStage.setTitle("Task Creation");
         newStage.setScene(taskCreation);
@@ -79,17 +79,13 @@ public class TaskCreationCtrl extends Application {
         String valueName = "";
         String valueDes = "";
         setError("");
-        if(event.getSource() == addTask) {
+
             valueName = extractValue(taskName);
             valueDes = extractValue(taskDescription);
             if (valueName.equals("")) {
-                setError("Task Name cannot be empty. Please try again1!");
-            } else {
-                // here we send the value to the database
-                mainCtrl.switchDashboard("LOL");
-                newStage.close();
+                setError("Task Name cannot be empty. Please try again!");
+                return;
             }
-        }
         listCurr = server.getList(listCurr.id);
         Board boardCurr=server.getBoard(boardId);
 
@@ -106,6 +102,7 @@ public class TaskCreationCtrl extends Application {
 
         taskName.setText("");
         taskDescription.setText("");
+        newStage.close();
     }
 
     public void keyPressed(KeyEvent e) {

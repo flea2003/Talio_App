@@ -90,7 +90,7 @@ public class DashboardCtrl implements Initializable {
         @Override
         public void run() {
             while (true) {
-                System.out.println(connectedBoards);
+//                System.out.println(connectedBoards);
                 try {
                     Thread.sleep(10000); // sleep for 1 second
                 } catch (InterruptedException e) {
