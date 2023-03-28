@@ -667,7 +667,7 @@ public class DashboardCtrl implements Initializable {
     public ContextMenu createThreeDotContextMenu(Label label, Button button) {
         final ContextMenu contextMenu = new ContextMenu();
         MenuItem edit = new MenuItem("Rename board");
-        MenuItem remove = new MenuItem(("Remove board"));
+        MenuItem remove = new MenuItem(("Leave board"));
         MenuItem delete = new MenuItem("Delete board");
 
 
@@ -716,7 +716,17 @@ public class DashboardCtrl implements Initializable {
             }
         });
 
-        
+        remove.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Board board = (Board) label.getUserData();
+
+                connectedBoards.remove(board);
+                serverBoards.get(server.getSERVER()).remove(board);
+                refreshBoards(connectedBoards);
+            }
+        });
+
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
