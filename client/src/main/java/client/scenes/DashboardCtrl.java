@@ -496,6 +496,19 @@ public class DashboardCtrl implements Initializable {
                             mainCtrl.switchTaskView(q, server.getBoard(boardId));
                         }
                     });
+                    //if the card has a description add the description icon
+                    if(q.description != null && q.description.strip().length() != 0) {
+
+                        Image imgDescription = new Image("pictures/description_icon.png");
+                        ImageView imageDescription = new ImageView(imgDescription);
+                        imageDescription.setFitWidth(20);
+                        imageDescription.setFitHeight(20);
+
+                        StackPane stackPane = new StackPane(imageDescription);
+                        StackPane.setAlignment(imageDescription, Pos.TOP_RIGHT);
+
+                        setGraphic(stackPane);
+                    }
                 }
                 setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
                     if (getItem() == null || isEmpty()) {
