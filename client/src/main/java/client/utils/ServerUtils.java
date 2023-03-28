@@ -15,18 +15,12 @@
  */
 package client.utils;
 
-import client.scenes.MainCtrl;
-import client.scenes.ServerConnectCtrl;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.inject.Provides;
 import commons.Board;
 import commons.Card;
 import commons.Quote;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
-import org.apache.logging.log4j.util.PropertySource;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -37,12 +31,7 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import javax.inject.Inject;
-import java.io.*;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

@@ -419,7 +419,7 @@ public class DashboardCtrl implements Initializable {
 
             // Delete List Button
             delete.setOnAction(e -> {
-                server.deleteList((Long) label.getUserData());
+                deleteList((Long)label.getUserData());
             });
 
             //Create a list
@@ -431,6 +431,25 @@ public class DashboardCtrl implements Initializable {
             hboxButtons.getChildren().add(edit);
 
             addCards(listCurr, vBox, listView);
+        }
+    }
+
+    private void deleteList(Long listId) {
+
+        List list = server.getList(listId);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Delete List '" + list.getName() + "'?");
+        alert.setContentText("Are you sure you want to delete list '" + list.getName() +
+                "'?\nThis will permanently delete the list from the server.");
+
+        ButtonType delete = new ButtonType("Delete");
+        ButtonType cancel = new ButtonType("Cancel");
+        alert.getButtonTypes().setAll(delete, cancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == delete) {
+            server.deleteList(listId);
         }
     }
 
@@ -473,7 +492,9 @@ public class DashboardCtrl implements Initializable {
                 else{
                     setText(q.name);
                     setOnMouseClicked(event -> {
-                        mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        if (event.getClickCount() == 2) {
+                            mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        }
                     });
                 }
                 setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
@@ -709,9 +730,14 @@ public class DashboardCtrl implements Initializable {
                 } else {
                     retrievedBoard = server.getBoardByKey(key);
                     if(retrievedBoard != null ) {
-                        if (connectedBoards.contains(retrievedBoard)) {
-                            errorMessage.setText("Board is already added");
-                        } else {
+                        boolean boardAdded = false;
+                        for(Board board : connectedBoards){
+                            if(board.id == retrievedBoard.id){
+                                errorMessage.setText("Board is already added");
+                                boardAdded = true;
+                            }
+                        }
+                        if (!boardAdded){
                             errorMessage.setText("");
                             connectedBoards.add(retrievedBoard);
                             serverBoards.get(server.getSERVER()).add(retrievedBoard);

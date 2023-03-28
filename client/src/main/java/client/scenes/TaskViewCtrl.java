@@ -7,11 +7,14 @@ import commons.Card;
 import commons.List;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class TaskViewCtrl {
 
@@ -73,18 +76,32 @@ public class TaskViewCtrl {
         mainCtrl.switchEdit(currCard, boardCurr);
     }
     public void goDelete(){
-        List listCurr=currCard.getList();
-        listCurr.cards.remove(currCard);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Delete Task '" + currCard.getName() + "'?");
+        alert.setContentText("Are you sure you want to delete task '" + currCard.getName() +
+                "'?\nThis will permanently delete the task from the server.");
 
-        for(int i=0; i<boardCurr.lists.size(); i++){
-            if(boardCurr.lists.get(i).getID()==listCurr.getID()){
-                boardCurr.lists.set(i,listCurr);
+        ButtonType delete = new ButtonType("Delete");
+        ButtonType cancel = new ButtonType("Cancel");
+        alert.getButtonTypes().setAll(delete, cancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == delete) {
+            List listCurr=currCard.getList();
+            listCurr.cards.remove(currCard);
+
+            for(int i=0; i<boardCurr.lists.size(); i++){
+                if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                    boardCurr.lists.set(i,listCurr);
+                }
             }
+
+            server.updateBoard(boardCurr);
+            server.deleteCard(currCard.id);
+            mainCtrl.switchDelete(currCard);
         }
 
-        server.updateBoard(boardCurr);
-        server.deleteCard(currCard.id);
-        mainCtrl.switchDelete(currCard);
     }
 
     @FXML
