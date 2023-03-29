@@ -35,6 +35,11 @@ public class Card {
         this.numberInTheList = numberInTheList;
     }
 
+    public Card(Long id, String name){
+        this.id = id;
+        this.name = name;
+    }
+
     public List getList() {
         return list;
     }
@@ -87,5 +92,9 @@ public class Card {
      */
     public String getName() {
         return this.name;
+    }
+
+    public long getId() {
+        return id;
     }
 }
