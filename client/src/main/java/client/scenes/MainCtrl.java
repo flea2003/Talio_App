@@ -19,11 +19,14 @@ import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Pair;
+
+import java.io.IOException;
 
 import static client.Main.FXML;
 import static com.google.inject.Guice.createInjector;
@@ -160,6 +163,20 @@ public class MainCtrl {
     public void switchTaskView(Card q, Board boardCurr){
         if(taskViews.getInstance().isOpened(q))
             return;
+
+
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("client/src/main/resources/client/scenes/TaskView.fxml"));
+//        Parent root = null;
+//        try {
+//            root = loader.load();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        TaskViewCtrl controller = loader.getController();
+//
+//        controller.sendData(new Scene(root), q, boardCurr);
+//        controller.start(null);
+//        taskViews.getInstance().add(controller);
 
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
