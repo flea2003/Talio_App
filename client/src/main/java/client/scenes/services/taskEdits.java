@@ -1,35 +1,37 @@
 package client.scenes.services;
 
+import client.scenes.TaskEditCtrl;
+import client.scenes.TaskEditCtrl;
 import commons.Card;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public  class ControllerArray<T extends CardControllerState>{
-    private static ControllerArray INSTANCE;
+public  class taskEdits {
+    private static taskEdits INSTANCE;
 
-    private ControllerArray() {
+    private taskEdits() {
     }
 
-    public synchronized static ControllerArray getInstance() {
+    public synchronized static taskEdits getInstance() {
         if (INSTANCE == null)
-            INSTANCE = new ControllerArray();
+            INSTANCE = new taskEdits();
         return INSTANCE;
     }
 
-    private List<T> controllers = new ArrayList<>();
+    private List<TaskEditCtrl> controllers = new ArrayList<>();
 
-    public void add(T controller) {
+    public void add(TaskEditCtrl controller) {
         controllers.add(controller);
     }
 
-    public void remove(T controller) {
+    public void remove(TaskEditCtrl controller) {
         controllers.remove(controller);
     }
-//    public List<TaskViewCtrl> (){return taskViewControllers;}
+//    public List<TaskEditCtrl> (){return taskViewControllers;}
 
     public boolean isOpened(Card card) {
-        for (T controller : controllers) {
+        for (TaskEditCtrl controller : controllers) {
             if (controller.getCard().id == card.id) {
                 controller.getStage().requestFocus();
                 return true;
@@ -39,7 +41,7 @@ public  class ControllerArray<T extends CardControllerState>{
     }
 
     public void closeAll() {
-        for(T controller: controllers)
+        for(TaskEditCtrl controller: controllers)
             controller.getStage().close();
         
     }

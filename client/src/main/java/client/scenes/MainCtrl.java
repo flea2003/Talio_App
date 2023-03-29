@@ -100,7 +100,7 @@ public class MainCtrl {
             }
         });
     }
-,
+
     public Stage getPrimaryStage() {
         return primaryStage;
     }
@@ -158,24 +158,44 @@ public class MainCtrl {
     }
 
     public void switchTaskView(Card q, Board boardCurr){
-        if(ControllerArray.getInstance(TaskViewCtrl.class).isOpened(q))
+        if(taskViews.getInstance().isOpened(q))
             return;
 
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
-        taskView.getKey().start(primaryStage);
-        ControllerArray.getInstance(TaskViewCtrl.class).add(taskView.getKey());
+        taskView.getKey().start(null);
+        taskViews.getInstance().add(taskView.getKey());
     }
 
     public void switchEdit(Card q, Board boardCurr){
-        primaryStage.setTitle("Edit Task");
-        primaryStage.setScene(taskEdit);
-        taskEditCtrl.setBoardCurr(boardCurr);
-        taskEditCtrl.renderInfo(q);
+        TaskViewCtrl controller = taskViews.getInstance().getCotroller(q);
+        Stage viewStage = controller.getStage();
+        if(viewStage == null)
+            return;
+        taskViews.getInstance().remove(controller);
+        var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
+        taskEdit.getKey().sendData(new Scene(taskEdit.getValue()), q, boardCurr);
+        taskEdit.getKey().start(viewStage);
+        taskEdits.getInstance().add(taskEdit.getKey());
     }
 
     public void switchDelete(Card currCard) {
         switchDashboard("deleted!");
     }
 
+    public void reallySwitchTaskView(Card q, Board boardCurr, Stage stage) {
+        if(taskViews.getInstance().isOpened(q))
+        return;
+
+        var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+        taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
+        taskView.getKey().start(stage);
+        taskViews.getInstance().add(taskView.getKey());
+    }
+
+    public void closeStages() {
+        taskCreations.getInstance().closeAll();
+        taskViews.getInstance().closeAll();
+        taskEdits.getInstance().closeAll();
+    }
 }

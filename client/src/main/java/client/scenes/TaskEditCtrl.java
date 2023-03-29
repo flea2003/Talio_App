@@ -1,22 +1,27 @@
 package client.scenes;
 
+import client.scenes.services.CardControllerState;
+import client.scenes.services.taskEdits;
 import client.utils.ServerUtils;
 import com.google.errorprone.annotations.FormatMethod;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import javafx.application.Application;
 import javafx.fxml.FXML;
 
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import javax.inject.Inject;
 
 
-public class TaskEditCtrl {
+public class TaskEditCtrl extends Application implements CardControllerState {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private final Card card;
+    private Card card;
     @FXML
     private TextArea name;
     @FXML
@@ -33,12 +38,17 @@ public class TaskEditCtrl {
 
     private Board boardCurr;
 
+    Scene scene;
+
+    Stage stage;
+
     @Inject
     public TaskEditCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        this.card = card;
+        this.currCard = card;
     }
+
 
     public void renderInfo(Card q){
         name.setText(q.name);
@@ -71,10 +81,13 @@ public class TaskEditCtrl {
             server.updateBoard(boardCurr);
 //            server.updateList(currCard.getList());
 //            server.updateCard(card);
-            mainCtrl.switchDashboard("LOL");
+//            mainCtrl.switchDashboard("LOL");
+            taskEdits.getInstance().remove(this);
+            mainCtrl.reallySwitchTaskView(currCard, boardCurr, this.stage);
         }
-        name.setText("");
-        description.setText("");
+//        name.setText("");
+//        description.setText("");
+
     }
     public Card setCard(Card card) {
         card.setName(name.getText());
@@ -96,5 +109,31 @@ public class TaskEditCtrl {
 
     public void setBoardCurr(Board boardCurr) {
         this.boardCurr = boardCurr;
+    }
+
+    @Override
+    public Card getCard() {
+        return currCard;
+    }
+
+    @Override
+    public Stage getStage() {
+        return null;
+    }
+
+    public void sendData(Scene scene, Card q, Board boardCurr) {
+        this.boardCurr = boardCurr;
+        this.currCard = q;
+        this.scene = scene;
+        renderInfo(q);
+    }
+
+
+    @Override
+    public void start(Stage primaryStage)  {
+        this.stage = primaryStage;
+        primaryStage.setTitle("Edit Task");
+        primaryStage.setScene(scene);
+
     }
 }

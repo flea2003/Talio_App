@@ -662,6 +662,7 @@ public class DashboardCtrl implements Initializable {
         idOfCurrentBoard=-1;
         hboxList.setUserData(null);
         mainCtrl.getPrimaryStage().close();
+        mainCtrl.closeStages();
         main.start(new Stage());
     }
 

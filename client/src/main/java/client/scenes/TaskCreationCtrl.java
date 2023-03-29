@@ -1,12 +1,15 @@
 package client.scenes;
 
 import client.Main;
+import client.scenes.services.CardControllerState;
+import client.scenes.services.taskCreations;
 import client.utils.ServerUtils;
 
 import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -16,10 +19,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
 import javax.inject.Inject;
 import java.util.Objects;
 
-public class TaskCreationCtrl extends Application {
+public class TaskCreationCtrl extends Application implements CardControllerState {
 
     private  ServerUtils server;
     private  MainCtrl mainCtrl;
@@ -64,6 +69,12 @@ public class TaskCreationCtrl extends Application {
         newStage.setScene(taskCreation);
         newStage.show();
 
+        newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                taskCreations.getInstance().remove(TaskCreationCtrl.this);
+            }
+        });
         taskCreation.setOnKeyPressed(e -> this.keyPressed(e));
     }
 
@@ -95,6 +106,7 @@ public class TaskCreationCtrl extends Application {
 
         taskName.setText("");
         taskDescription.setText("");
+        taskCreations.getInstance().remove(this);
         newStage.close();
     }
 
@@ -123,5 +135,15 @@ public class TaskCreationCtrl extends Application {
 
     public void setBoardId(long boardId) {
         this.boardId = boardId;
+    }
+
+    @Override
+    public Card getCard() {
+        return null;
+    }
+
+    @Override
+    public Stage getStage() {
+        return null;
     }
 }

@@ -59,7 +59,7 @@ public class TaskViewCtrl extends Application implements CardControllerState{
 
     private Stage newStage;
 
-    private ControllerArray viewTasks;
+    private taskViews viewTasks;
 
 
     @Inject
@@ -79,14 +79,16 @@ public class TaskViewCtrl extends Application implements CardControllerState{
 
     @Override
     public void start(javafx.stage.Stage primaryStage)  {
-        newStage = new Stage();
+        if(primaryStage != null)
+            newStage = primaryStage;
+        else newStage = new Stage();
         newStage.setTitle("Task View");
         newStage.setScene(taskView);
         renderInfo(currCard);
         newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                ControllerArray.getInstance().remove(TaskViewCtrl.this);
+                taskViews.getInstance().remove(TaskViewCtrl.this);
             }
         });
         newStage.show();
@@ -133,6 +135,7 @@ public class TaskViewCtrl extends Application implements CardControllerState{
             server.updateBoard(boardCurr);
             server.deleteCard(currCard.id);
             newStage.close();
+            taskViews.getInstance().remove(this);
 //            mainCtrl.switchDelete(currCard);
         }
 
