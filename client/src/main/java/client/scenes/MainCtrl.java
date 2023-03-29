@@ -15,20 +15,15 @@
  */
 package client.scenes;
 import client.scenes.services.*;
-import client.MyFXML;
-import client.MyModule;
-import client.utils.ServerUtils;
-import com.google.inject.Injector;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Pair;
-import org.glassfish.hk2.api.ServiceLocator;
-
-import java.util.ArrayList;
 
 import static client.Main.FXML;
 import static com.google.inject.Guice.createInjector;
@@ -54,8 +49,6 @@ public class MainCtrl {
     private Scene taskCreation;
     private Scene taskEdit;
     private TaskEditCtrl taskEditCtrl;
-
-    private viewTaskControllers viewTasks;
 
     private Scene server;
     private  ServerConnectCtrl serverCtrl;
@@ -100,8 +93,14 @@ public class MainCtrl {
 
 //        fetchUpdatesDashboard("");
         switchDashboard("");
-    }
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
 
+            }
+        });
+    }
+,
     public Stage getPrimaryStage() {
         return primaryStage;
     }
@@ -159,13 +158,13 @@ public class MainCtrl {
     }
 
     public void switchTaskView(Card q, Board boardCurr){
-        if(viewTaskControllers.getInstance().isOpened(q))
+        if(ControllerArray.getInstance(TaskViewCtrl.class).isOpened(q))
             return;
 
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
         taskView.getKey().start(primaryStage);
-        viewTaskControllers.getInstance().addTaskViewController(taskView.getKey());
+        ControllerArray.getInstance(TaskViewCtrl.class).add(taskView.getKey());
     }
 
     public void switchEdit(Card q, Board boardCurr){

@@ -19,7 +19,7 @@ import javafx.stage.WindowEvent;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class TaskViewCtrl extends Application {
+public class TaskViewCtrl extends Application implements CardControllerState{
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
@@ -59,14 +59,14 @@ public class TaskViewCtrl extends Application {
 
     private Stage newStage;
 
-    private viewTaskControllers viewTasks;
+    private ControllerArray viewTasks;
 
 
     @Inject
     public TaskViewCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        this.card = card;
+        this.currCard = card;
         this.viewTasks = viewTasks;
 
     }
@@ -86,7 +86,7 @@ public class TaskViewCtrl extends Application {
         newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                viewTaskControllers.getInstance().removeTaskViewController(TaskViewCtrl.this);
+                ControllerArray.getInstance().remove(TaskViewCtrl.this);
             }
         });
         newStage.show();
@@ -162,7 +162,10 @@ public class TaskViewCtrl extends Application {
         this.boardCurr = boardCurr;
     }
 
-    public Card getCurrentCard(){return currCard;}
+    @Override
+    public Card getCard() {
+        return currCard;
+    }
 
     public Stage getStage(){return newStage;}
 }
