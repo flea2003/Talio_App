@@ -1,19 +1,20 @@
 package client.scenes;
+import client.scenes.services.*;
 
 import client.utils.ServerUtils;
 import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -58,12 +59,15 @@ public class TaskViewCtrl extends Application {
 
     private Stage newStage;
 
+    private viewTaskControllers viewTasks;
+
 
     @Inject
     public TaskViewCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.card = card;
+        this.viewTasks = viewTasks;
 
     }
 
@@ -78,6 +82,13 @@ public class TaskViewCtrl extends Application {
         newStage = new Stage();
         newStage.setTitle("Task View");
         newStage.setScene(taskView);
+        renderInfo(currCard);
+        newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                viewTaskControllers.getInstance().removeTaskViewController(TaskViewCtrl.this);
+            }
+        });
         newStage.show();
 
 //        taskView.setOnKeyPressed(e -> this.keyPressed(e));
@@ -126,6 +137,7 @@ public class TaskViewCtrl extends Application {
         }
 
     }
+
 
     @FXML
     public void setDone(){

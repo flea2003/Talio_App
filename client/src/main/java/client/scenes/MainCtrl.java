@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package client.scenes;
-
+import client.scenes.services.*;
 import client.MyFXML;
 import client.MyModule;
 import client.utils.ServerUtils;
@@ -26,11 +26,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.glassfish.hk2.api.ServiceLocator;
 
 import java.util.ArrayList;
 
 import static client.Main.FXML;
 import static com.google.inject.Guice.createInjector;
+import static org.glassfish.hk2.utilities.ServiceLocatorUtilities.createAndPopulateServiceLocator;
 
 public class MainCtrl {
 
@@ -53,7 +55,7 @@ public class MainCtrl {
     private Scene taskEdit;
     private TaskEditCtrl taskEditCtrl;
 
-    private java.util.List<TaskViewCtrl> taskViews = new ArrayList<>();
+    private viewTaskControllers viewTasks;
 
     private Scene server;
     private  ServerConnectCtrl serverCtrl;
@@ -157,18 +159,13 @@ public class MainCtrl {
     }
 
     public void switchTaskView(Card q, Board boardCurr){
+        if(viewTaskControllers.getInstance().isOpened(q))
+            return;
 
-        for (TaskViewCtrl viewCtrl : taskViews) {
-            if (viewCtrl.getCurrentCard().equals(q)) {
-                viewCtrl.getStage().requestFocus();
-                return;
-            }
-
-        }
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
         taskView.getKey().start(primaryStage);
-        taskViews.add(taskView.getKey());
+        viewTaskControllers.getInstance().addTaskViewController(taskView.getKey());
     }
 
     public void switchEdit(Card q, Board boardCurr){
