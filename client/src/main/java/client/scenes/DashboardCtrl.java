@@ -74,6 +74,12 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private TextField addBoardLabel;
 
+    /**
+     * constructor
+     * @param main a reference to the main method of the client side
+     * @param server the current server
+     * @param mainCtrl a reference to the MainCtrl
+     */
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -81,6 +87,16 @@ public class DashboardCtrl implements Initializable {
         this.server = server;
     }
 
+    /**
+     *
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
@@ -113,6 +129,10 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * refreshes the dashboard with the new boards
+     * @param boards the boards to populate the dashboard
+     */
     public void refreshBoards(java.util.List<Board> boards){
         if(hboxList.getUserData()!=null){
             refreshSpecificBoard((Long) hboxList.getUserData());
@@ -219,6 +239,10 @@ public class DashboardCtrl implements Initializable {
         }
     }
 
+    /**
+     * populates the dashboard with the lists of the specific board
+     * @param id the id of the boards of which its lists will be used
+     */
     public void refreshSpecificBoard(long id) {
         hboxList.setUserData(id);
         if (hboxList.getChildren().size() > 0) {
@@ -249,6 +273,10 @@ public class DashboardCtrl implements Initializable {
         hboxList.setSpacing(30);
     }
 
+    /**
+     * deletes a board after confirming the deletion
+     * @param board the board to be deleted
+     */
     public void deleteBoard(Board board){
         //Show a confirmation message
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -277,6 +305,10 @@ public class DashboardCtrl implements Initializable {
         }
     }
 
+    /**
+     * edits the name of the board
+     * @param label the new name of the board
+     */
     public void editBoard(Label label){
         //Create pop up for editing the board
         Popup popup = new Popup();
@@ -316,6 +348,9 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * creates a new board
+     */
     public void createBoard(){
         addBoardLabel.setVisible(true);
         addBoardLabel.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -353,6 +388,11 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * responsible for adding the lists in the UI along with its buttons
+     * @param list the list to be added
+     * @param boardId the id of the board of which its lists are used
+     */
     private void addLists(java.util.List<List> list, long boardId){
         Board boardCurr=server.getBoard(boardId);
         for(List listCurr : list){
@@ -608,6 +648,11 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * creates a new list
+     * @param vboxEnd the vbox the list is in
+     * @param boardId the id of the board the list will be in
+     */
     public void createList(VBox vboxEnd, long boardId){
         if(vboxEnd.getChildren().size()>1){
             ObservableList<Node> children = vboxEnd.getChildren();
@@ -652,6 +697,12 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * adds a new card to a list
+     * @param list the list the card will be added
+     * @param vBox the vbox the list is in
+     * @param listView a listview to add the cards in
+     */
     public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
         java.util.List<Card> cardlist = list.cards;
         listView.setItems(FXCollections.observableList(cardlist));
@@ -674,6 +725,9 @@ public class DashboardCtrl implements Initializable {
                 listView.getItems().size() * 100));
     }
 
+    /**
+     * disconnects from the server
+     */
     @FXML
     public void serverDisconnect(){
         idOfCurrentBoard=-1;
@@ -683,6 +737,9 @@ public class DashboardCtrl implements Initializable {
     }
 
 
+    /**
+     * used for copying the key of a board
+     */
     @FXML
     public void openShare() {
         final ContextMenu contextMenu = new ContextMenu();
@@ -723,6 +780,9 @@ public class DashboardCtrl implements Initializable {
         shareBoard.setContextMenu(contextMenu);
     }
 
+    /**
+     * responsible for joining or creating a board
+     */
     @FXML
     public void openAddBoard() {
         Label description = new Label("Key of the board:");
