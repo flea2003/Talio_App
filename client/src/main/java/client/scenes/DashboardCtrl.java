@@ -14,7 +14,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,9 +22,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.stage.Popup;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -284,42 +282,69 @@ public class DashboardCtrl implements Initializable {
      * @param label the new name of the board
      */
     public void editBoard(Label label){
-        //Create pop up for editing the board
-        Popup popup = new Popup();
-        VBox popupVbox = new VBox(10);
-        popupVbox.setStyle("-fx-background-color: rgb(169,169,169)");
-        TextField textField = new TextField(label.getText());
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(label.getScene().getWindow());
+        stage.setTitle("Edit Board");
+
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: rgb(214,202,221)");
+
+        //create the fields of the scene
+        Board boardCurr = (Board) label.getUserData();
+        TextField textField = new TextField(boardCurr.getName());
+        textField.setStyle("-fx-background-color: rgb(230,230,250)");
         Label error = new Label("");
 
-        //Create buttons and allign them next to each other
+        //create the buttons
         Button ok = new Button("OK");
         Button cancel = new Button("Cancel");
         HBox buttons = new HBox(ok, cancel);
+        buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
 
-        Board boardCurr = (Board) label.getUserData();
-        //populate the popup and show it
-        popupVbox.getChildren().addAll(new Label("Enter new name for board '" +
-                boardCurr.getName() + "':"), textField, error,buttons);
-        popup.getContent().addAll(popupVbox);
-        popup.show(mainCtrl.getPrimaryStage());
+        //set colour for the buttons and create hovering effect
+        ok.setStyle("-fx-background-color: rgb(230,230,250)");
+        cancel.setStyle("-fx-background-color: rgb(230,230,250)");
+        ok.setOnMouseEntered(e -> {
+            ok.setStyle("-fx-background-color: rgb(178,132,190)");
+        });
+        ok.setOnMouseExited(e ->{
+            ok.setStyle("-fx-background-color: rgb(230,230,250)");
+        });
+        cancel.setOnMouseEntered(e -> {
+            cancel.setStyle("-fx-background-color: rgb(178,132,190)");
+        });
+        cancel.setOnMouseExited(e ->{
+            cancel.setStyle("-fx-background-color: rgb(230,230,250)");
+        });
 
-        //handle events
+        //add listeners
         ok.setOnAction(event -> {
-            if(textField.getText().length()>0) {
+            if (textField.getText().length() > 0) {
                 boardCurr.setName(textField.getText());
                 server.updateBoard(boardCurr);
-                popup.hide();
-            }
-            else{
-                error.setText("The name of the board can not be empty.");
+                stage.close();
+            } else {
+                error.setText("The name of the board can not be empty");
                 error.setStyle("-fx-text-fill: red");
             }
         });
 
-        cancel.setOnAction(e ->{
-            popup.hide();
+        cancel.setOnAction(e -> {
+            stage.close();
         });
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(new Label("Enter new name for board '" +
+                boardCurr.getName() + "':"), textField, error, buttons);
+
+        Scene scene = new Scene(vbox, 377, 233);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
     /**
@@ -722,7 +747,6 @@ public class DashboardCtrl implements Initializable {
         mainCtrl.getPrimaryStage().close();
         main.start(new Stage());
     }
-
 
     /**
      * used for copying the key of a board

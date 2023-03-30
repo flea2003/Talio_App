@@ -81,8 +81,6 @@ public class TaskEditCtrl {
             }
 
             server.updateBoard(boardCurr);
-//            server.updateList(currCard.getList());
-//            server.updateCard(card);
             mainCtrl.switchDashboard("LOL");
         }
         name.setText("");

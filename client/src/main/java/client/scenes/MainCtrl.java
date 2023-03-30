@@ -41,7 +41,7 @@ public class MainCtrl {
     /**
      * initializes the application with the provided parameters
      *
-     * @param primaryStage the primary stage of the application
+     * @param primaryStage
      * @param dashboard    the pair containing the DashboardCtrl and Parent
      *                     objects for the dashboard scene
      * @param board        the pair containing the CreateBoardCtrl and Parent
