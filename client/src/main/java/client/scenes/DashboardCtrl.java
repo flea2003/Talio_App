@@ -755,6 +755,14 @@ public class DashboardCtrl implements Initializable {
             public void handle(ActionEvent event) {
                 Board board = (Board) label.getUserData();
 
+                //if the board to be removed is selected remove its data from the interface
+                if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==board.getId()){
+                    hboxList.setUserData(null);
+                    hboxList.getChildren().clear();
+                }
+
+                idOfCurrentBoard=-1;
+
                 connectedBoards.remove(board);
                 serverBoards.get(server.getSERVER()).remove(board);
                 refreshBoards(connectedBoards);
