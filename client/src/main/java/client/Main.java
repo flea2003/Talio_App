@@ -63,12 +63,6 @@ public class Main extends Application {
 
         connectButton.setOnAction(e -> {
             if (serverConnectCtrl.connectToTheServer(e)) {
-                var overview = FXML.
-                        load(QuoteOverviewCtrl.class, "client", "scenes", "QuoteOverview.fxml");
-                var add = FXML.
-                        load(AddQuoteCtrl.class, "client", "scenes", "AddQuote.fxml");
-                var registration = FXML.
-                        load(RegistrationCtrl.class, "client", "scenes", "Registration.fxml");
                 var dashboard = FXML.
                         load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
                 var board = FXML.
@@ -80,9 +74,8 @@ public class Main extends Application {
                 var taskEdit = FXML.
                         load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
                 var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-                mainCtrl.initialize(primaryStage, overview, add,
-                        server, serverConnectCtrl, registration,
-                        dashboard, board, taskCreation, taskView, taskEdit);
+                mainCtrl.initialize(primaryStage, dashboard, board,
+                        taskCreation, taskView, taskEdit);
             }
         });
     }

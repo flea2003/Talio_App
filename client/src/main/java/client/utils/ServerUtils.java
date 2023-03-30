@@ -17,7 +17,6 @@ package client.utils;
 
 import commons.Board;
 import commons.Card;
-import commons.Quote;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -67,33 +66,6 @@ public class ServerUtils {
      */
     public void setServer(String server){
         this.server =server;
-    }
-
-    /**
-     * sends a get request to trigger the respective method in quoteController
-     * gets all the quotes
-     * @return a list of quotes
-     */
-    public List<Quote> getQuotes() {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/quotes") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .get(new GenericType<List<Quote>>() {});
-    }
-
-    /**
-     * sends a post request to trigger the respective method in quoteController
-     * adds a quote
-     * @param quote the quote to be added
-     * @return the added quote
-     */
-    public Quote addQuote(Quote quote) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/quotes") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
     }
 
     /**

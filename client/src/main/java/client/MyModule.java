@@ -31,9 +31,6 @@ public class MyModule implements Module {
     public void configure(Binder binder) {
         binder.bind(ServerUtils.class).in(Scopes.SINGLETON);
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(AddQuoteCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(QuoteOverviewCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(RegistrationCtrl.class).in(Scopes.SINGLETON);
         binder.bind(DashboardCtrl.class).in(Scopes.SINGLETON);
         binder.bind(TaskViewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(TaskEditCtrl.class).in(Scopes.SINGLETON);

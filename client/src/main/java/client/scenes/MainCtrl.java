@@ -25,16 +25,10 @@ import javafx.util.Pair;
 
 public class MainCtrl {
 
-    private Stage primaryStage;
-    private QuoteOverviewCtrl overviewCtrl;
-    private Scene overview;
-    private AddQuoteCtrl addCtrl;
-    private Scene add;
-    private RegistrationCtrl regCtrl;
+    private Stage primaryStage;;
     private TaskViewCtrl taskViewCtrl;
     private TaskCreationCtrl taskCreationCtrl;
     private DashboardCtrl dashboardCtrl;
-    private Scene registration;
     private CreateBoardCtrl boardCtrl;
     private Scene board;
     private Scene dashboard;
@@ -43,51 +37,29 @@ public class MainCtrl {
     private Scene taskEdit;
     private TaskEditCtrl taskEditCtrl;
 
-    private Scene server;
-    private  ServerConnectCtrl serverCtrl;
 
     /**
      * initializes the application with the provided parameters
-     * @param primaryStage the primaryStage of the application
-     * @param overview the pair containing the QuoteOverviewCtrl and Parent
-     *                  objects for the overview scene
-     * @param add the pair containing the AddQuoteCtrl and Parent
-     *                  objects for the add quote scene
-     * @param server the server scene for connecting to the server
-     * @param serverConnectCtrl the controller for the server scene
-     * @param registration the pair containing the RegistrationCtrl and Parent
-     *                  objects for the registration scene
-     * @param dashboard the pair containing the DashboardCtrl and Parent
-     *                 objects for the dashboard scene
-     * @param board the pair containing the CreateBoardCtrl and Parent
-     *                 objects for the create board scene
+     *
+     * @param primaryStage the primary stage of the application
+     * @param dashboard    the pair containing the DashboardCtrl and Parent
+     *                     objects for the dashboard scene
+     * @param board        the pair containing the CreateBoardCtrl and Parent
+     *                     objects for the create board scene
      * @param taskCreation the pair containing the TaskCreationCtrl and Parent
-     *                 objects for the task creation scene
-     * @param taskView the pair containing the TaskViewCtrl and Parent
-     *                 objects for the task view scene
-     * @param taskEdit the pair containing the TaskEditCtrl and Parent
-     *                 objects for the task edit scene
+     *                     objects for the task creation scene
+     * @param taskView     the pair containing the TaskViewCtrl and Parent
+     *                     objects for the task view scene
+     * @param taskEdit     the pair containing the TaskEditCtrl and Parent
+     *                     objects for the task edit scene
      */
-    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-                           Pair<AddQuoteCtrl, Parent> add,
-                           Scene server, ServerConnectCtrl serverConnectCtrl,
-                           Pair<RegistrationCtrl, Parent> registration,
-                           Pair<DashboardCtrl, Parent> dashboard,
+    public void initialize(Stage primaryStage, Pair<DashboardCtrl, Parent> dashboard,
                            Pair<CreateBoardCtrl, Parent> board,
                            Pair<TaskCreationCtrl, Parent>taskCreation,
                            Pair<TaskViewCtrl, Parent>taskView,
                            Pair<TaskEditCtrl, Parent>taskEdit) {
 
         this.primaryStage = primaryStage;
-        this.overviewCtrl = overview.getKey();
-        this.overview = new Scene(overview.getValue());
-
-        this.addCtrl = add.getKey();
-        this.regCtrl = registration.getKey();
-
-        this.add = new Scene(add.getValue());
-
-        this.registration = new Scene(registration.getValue());
 
         this.dashboardCtrl = dashboard.getKey();
         this.dashboard = new Scene(dashboard.getValue());
@@ -104,10 +76,6 @@ public class MainCtrl {
         this.taskCreation = new Scene(taskCreation.getValue());
         this.taskCreationCtrl = taskCreation.getKey();
 
-        this.server=server;
-        this.serverCtrl= serverCtrl;
-
-//        fetchUpdatesDashboard("");
         switchDashboard("");
     }
 
@@ -117,33 +85,6 @@ public class MainCtrl {
      */
     public Stage getPrimaryStage() {
         return primaryStage;
-    }
-
-    /**
-     * sets the scene to the overview
-     */
-    public void showOverview() {
-        primaryStage.setTitle("Quotes: Overview");
-        primaryStage.setScene(overview);
-        overviewCtrl.refresh();
-    }
-
-    /**
-     * sets the scene to the add scene
-     */
-    public void showAdd() {
-        primaryStage.setTitle("Quotes: Adding Quote");
-        primaryStage.setScene(add);
-        add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
-    }
-
-    /**
-     * sets the scene to registration
-     */
-    public void switchRegistration(){
-        primaryStage.setTitle("Registration");
-        primaryStage.setScene(registration);
-        registration.setOnKeyPressed(e -> regCtrl.keyPressed(e));
     }
 
     /**
@@ -165,20 +106,7 @@ public class MainCtrl {
      */
     public void switchDashboard(String user){
         primaryStage.setTitle("Dashboard");
-//        dashboardCtrl.refresh();
         primaryStage.setScene(dashboard);
-    }
-
-//    public void fetchUpdatesDashboard(String user){
-//        dashboardCtrl.refresh();
-//    }
-
-    /**
-     * set scene to server
-     */
-    public void switchServer(){
-        primaryStage.setTitle("Choose a server");
-        primaryStage.setScene(server);
     }
 
     /**
