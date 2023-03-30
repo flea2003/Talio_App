@@ -37,8 +37,8 @@ public class Card {
     @JsonBackReference
     private List list;
 
-    public Card(ArrayList<Subtask> subtasks, String description, String name, List list, int numberInTheList) {
-        this.subtasks = subtasks;
+    public Card(String description, String name, List list, int numberInTheList) {
+        subtasks = new ArrayList<>();
         this.description = description;
         this.name = name;
         this.list = list;
