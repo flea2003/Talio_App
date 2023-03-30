@@ -759,17 +759,42 @@ public class DashboardCtrl implements Initializable {
         contextMenu.setAutoHide(true);
         contextMenu.setHideOnEscape(true);
 
-        label.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+        int[] clickCount = {0};
+        label.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if(!newValue)
                 contextMenu.hide();
-        }));
-
-        button.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
-
         });
+
+        final int[] nrClicks = {0};
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
+                 if (event.getButton() == MouseButton.PRIMARY) {
+                     if (nrClicks[0] == 1) {
+                         contextMenu.hide();
+                         nrClicks[0] = 0;
+                     } else {
+                         contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
+                         nrClicks[0]++;
+                     }
+                 }
+             }
+         });
+
+
+//                button.setOnMouseClicked(event -> {
+//                    Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
+//                    if (event.getButton() == MouseButton.PRIMARY) {
+//                        if (clickCount[0] == 1) {
+//                            contextMenu.hide();
+//                            clickCount[0] = 0;
+//                        } else {
+//                            contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
+//                            clickCount[0]++;
+//                        }
+//                    }
+//                });
 
         return contextMenu;
     }
