@@ -253,6 +253,11 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<commons.Board>() {});
+        Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+        for(commons.List list : res.getLists()){
+            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+        }
+        return res;
     }
 
     /**
@@ -292,10 +297,17 @@ public class ServerUtils {
      * @return the updated board
      */
     public Board updateBoard(Board board){
-        int indx = 0;
+        int indxList = 0;
         for(commons.List list : board.lists){
-            ++indx;
-            list.numberInTheBoard=indx;
+            ++indxList;
+            list.numberInTheBoard = indxList;
+            if(list.getCards() != null) {
+                int indxCard = 0;
+                for (Card card : list.getCards()) {
+                    ++indxCard;
+                    card.setNumberInTheList(indxCard);
+                }
+            }
         }
 
         String endpoint = String.format("api/boards/update");

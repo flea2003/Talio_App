@@ -134,7 +134,7 @@ public class Board {
      * getter for lists
      * @return the List type of lists
      */
-    public java.util.List getLists() {
+    public java.util.List<List> getLists() {
         return this.lists;
     }
 }
