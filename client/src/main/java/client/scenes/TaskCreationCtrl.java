@@ -54,28 +54,27 @@ public class TaskCreationCtrl {
             valueName = extractValue(taskName);
             valueDes = extractValue(taskDescription);
             if (valueName.equals("")) {
-                setError("Task Name cannot be empty. Please try again1!");
+                setError("Task Name cannot be empty. Please try again!");
             } else {
-                // here we send the value to the database
+                listCurr = server.getList(listCurr.id);
+                Board boardCurr=server.getBoard(boardId);
+
+                Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
+                listCurr.cards.add(card);
+
+                for(int i=0; i<boardCurr.lists.size(); i++){
+                    if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                        boardCurr.lists.set(i,listCurr);
+                    }
+                }
+
+                server.updateBoard(boardCurr);
+
+                taskName.setText("");
+                taskDescription.setText("");
                 mainCtrl.switchDashboard("LOL");
             }
         }
-        listCurr = server.getList(listCurr.id);
-        Board boardCurr=server.getBoard(boardId);
-
-        Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
-        listCurr.cards.add(card);
-
-        for(int i=0; i<boardCurr.lists.size(); i++){
-            if(boardCurr.lists.get(i).getID()==listCurr.getID()){
-                boardCurr.lists.set(i,listCurr);
-            }
-        }
-
-        server.updateBoard(boardCurr);
-
-        taskName.setText("");
-        taskDescription.setText("");
     }
 
     public void keyPressed(KeyEvent e) {
@@ -84,7 +83,7 @@ public class TaskCreationCtrl {
             if (taskNameText.length() >= 1) {
                 addTask.fire();
             } else {
-                setError("Task Name cannot be empty. Please try again2!");
+                setError("Task Name cannot be empty. Please try again!");
             }
         }
     }

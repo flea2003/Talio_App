@@ -129,26 +129,37 @@ public class DashboardCtrl implements Initializable {
         for (Board boardCurr : boards){
             Label label = new Label(boardCurr.name);
 
+//            //create delete icon
+//            Image imgDelete =new Image("pictures/delete_icon.png");
+//            ImageView imageDelete = new ImageView(imgDelete);
+//            imageDelete.setFitWidth(20);
+//            imageDelete.setFitHeight(20);
+//            Rectangle backroundDelete = new Rectangle(20, 20);
+//            backroundDelete.setFill(Color.TRANSPARENT);
+//            Node deleteBoard = new Group(backroundDelete, imageDelete);
+//
+//            //create edit icon
+//            Image imgEdit =new Image("pictures/edit_icon.png");
+//            ImageView imageEdit = new ImageView(imgEdit);
+//            imageEdit.setFitWidth(20);
+//            imageEdit.setFitHeight(20);
+//            Rectangle backroundEdit = new Rectangle(20, 20);
+//            backroundEdit.setFill(Color.TRANSPARENT);
+//            Node editBoard = new Group(backroundEdit, imageEdit);
+
             //create delete icon
-            Image imgDelete =new Image("pictures/delete_icon.png");
-            ImageView imageDelete = new ImageView(imgDelete);
-            imageDelete.setFitWidth(20);
-            imageDelete.setFitHeight(20);
-            Rectangle backroundDelete = new Rectangle(20, 20);
-            backroundDelete.setFill(Color.TRANSPARENT);
-            Node deleteBoard = new Group(backroundDelete, imageDelete);
+            Image dots =new Image("pictures/dots.png");
+            ImageView dotsView = new ImageView(dots);
+            dotsView.setFitWidth(20);
+            dotsView.setFitHeight(20);
 
-            //create edit icon
-            Image imgEdit =new Image("pictures/edit_icon.png");
-            ImageView imageEdit = new ImageView(imgEdit);
-            imageEdit.setFitWidth(20);
-            imageEdit.setFitHeight(20);
-            Rectangle backroundEdit = new Rectangle(20, 20);
-            backroundEdit.setFill(Color.TRANSPARENT);
-            Node editBoard = new Group(backroundEdit, imageEdit);
+            Button dotsMenu = new Button();
+            dotsMenu.setGraphic(dotsView);
+            dotsMenu.setContextMenu(createThreeDotContextMenu(label, dotsMenu));
 
+//            Node dotMenu = new Group(backroundDelete, imageDelete);
 
-            HBox hBox = new HBox(label, new Region(), editBoard, deleteBoard);
+            HBox hBox = new HBox(label, new Region(), dotsMenu);
             hBox.setMaxWidth(120);
             hBox.setPrefWidth(120);//set the preferred width to the max width so the updates are noy noticeable
             hBox.setAlignment(Pos.CENTER_LEFT);
@@ -160,43 +171,6 @@ public class DashboardCtrl implements Initializable {
 
 
             //Make the icons visible only when hovering on the specific board
-            hBox.getChildren().get(3).setVisible(false);
-            hBox.getChildren().get(2).setVisible(false);
-            hBox.setOnMouseEntered(e ->{
-                hBox.getChildren().get(3).setVisible(true);
-                hBox.getChildren().get(2).setVisible(true);
-            });
-            hBox.setOnMouseExited(e ->{
-                hBox.getChildren().get(3).setVisible(false);
-                hBox.getChildren().get(2).setVisible(false);
-            });
-
-
-
-            //Make it noticable when hovering on delete icon
-            deleteBoard.setOnMouseEntered(e ->{
-                backroundDelete.setFill(Color.rgb(255,99,71));
-            });
-            deleteBoard.setOnMouseExited(e ->{
-                backroundDelete.setFill(Color.TRANSPARENT);
-            });
-
-            //Make it noticable when hovering on edit icon
-            editBoard.setOnMouseEntered(e ->{
-                backroundEdit.setFill(Color.YELLOW);
-            });
-            editBoard.setOnMouseExited(e ->{
-                backroundEdit.setFill(Color.TRANSPARENT);
-            });
-
-
-            deleteBoard.setOnMouseClicked(e ->{
-                deleteBoard((Board) label.getUserData());
-            });
-
-            editBoard.setOnMouseClicked(e ->{
-                editBoard(label);
-            });
 
             label.setUserData(boardCurr);
 
@@ -419,7 +393,7 @@ public class DashboardCtrl implements Initializable {
 
             // Delete List Button
             delete.setOnAction(e -> {
-                server.deleteList((Long) label.getUserData());
+                deleteList((Long)label.getUserData());
             });
 
             //Create a list
@@ -431,6 +405,25 @@ public class DashboardCtrl implements Initializable {
             hboxButtons.getChildren().add(edit);
 
             addCards(listCurr, vBox, listView);
+        }
+    }
+
+    private void deleteList(Long listId) {
+
+        List list = server.getList(listId);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Delete List '" + list.getName() + "'?");
+        alert.setContentText("Are you sure you want to delete list '" + list.getName() +
+                "'?\nThis will permanently delete the list from the server.");
+
+        ButtonType delete = new ButtonType("Delete");
+        ButtonType cancel = new ButtonType("Cancel");
+        alert.getButtonTypes().setAll(delete, cancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == delete) {
+            server.deleteList(listId);
         }
     }
 
@@ -473,8 +466,23 @@ public class DashboardCtrl implements Initializable {
                 else{
                     setText(q.name);
                     setOnMouseClicked(event -> {
-                        mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        if (event.getClickCount() == 2) {
+                            mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        }
                     });
+                    //if the card has a description add the description icon
+                    if(q.description != null && q.description.strip().length() != 0) {
+
+                        Image imgDescription = new Image("pictures/description_icon.png");
+                        ImageView imageDescription = new ImageView(imgDescription);
+                        imageDescription.setFitWidth(20);
+                        imageDescription.setFitHeight(20);
+
+                        StackPane stackPane = new StackPane(imageDescription);
+                        StackPane.setAlignment(imageDescription, Pos.TOP_RIGHT);
+
+                        setGraphic(stackPane);
+                    }
                 }
                 setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
                     if (getItem() == null || isEmpty()) {
@@ -690,6 +698,128 @@ public class DashboardCtrl implements Initializable {
         shareBoard.setContextMenu(contextMenu);
     }
 
+    public ContextMenu createThreeDotContextMenu(Label label, Button button) {
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem edit = new MenuItem("Rename board");
+        MenuItem remove = new MenuItem(("Leave board"));
+        MenuItem delete = new MenuItem("Delete board");
+
+
+////            hBox.getChildren().get(3).setVisible(false);
+//        hBox.getChildren().get(2).setVisible(false);
+//        hBox.setOnMouseEntered(e ->{
+//            hBox.getChildren().get(3).setVisible(true);
+//            hBox.getChildren().get(2).setVisible(true);
+//        });
+//        hBox.setOnMouseExited(e ->{
+//            hBox.getChildren().get(3).setVisible(false);
+//            hBox.getChildren().get(2).setVisible(false);
+//        });
+
+
+
+//        //Make it noticable when hovering on delete icon
+//        deleteBoard.setOnMouseEntered(e ->{
+//            backroundDelete.setFill(Color.rgb(255,99,71));
+//        });
+//        deleteBoard.setOnMouseExited(e ->{
+//            backroundDelete.setFill(Color.TRANSPARENT);
+//        });
+
+//        //Make it noticable when hovering on edit icon
+//        editBoard.setOnMouseEntered(e ->{
+//            backroundEdit.setFill(Color.YELLOW);
+//        });
+//        editBoard.setOnMouseExited(e ->{
+//            backroundEdit.setFill(Color.TRANSPARENT);
+//        });
+
+
+//        delete.setOnMouseClicked(e ->{
+//            deleteBoard((Board) label.getUserData());
+//        });
+//
+//        editBoard.setOnMouseClicked(e ->{
+//            editBoard(label);
+//        });
+
+        edit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                editBoard(label);
+            }
+        });
+
+        remove.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Board board = (Board) label.getUserData();
+
+                //if the board to be removed is selected remove its data from the interface
+                if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==board.getId()){
+                    hboxList.setUserData(null);
+                    hboxList.getChildren().clear();
+                }
+
+                idOfCurrentBoard=-1;
+
+                connectedBoards.remove(board);
+                serverBoards.get(server.getSERVER()).remove(board);
+                refreshBoards(connectedBoards);
+            }
+        });
+
+        delete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                deleteBoard((Board) label.getUserData());
+            }
+        });
+
+        contextMenu.getItems().addAll(edit, remove, delete);
+        contextMenu.setAutoHide(true);
+        contextMenu.setHideOnEscape(true);
+
+        int[] clickCount = {0};
+        label.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue)
+                contextMenu.hide();
+        });
+
+        final int[] nrClicks = {0};
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
+                 if (event.getButton() == MouseButton.PRIMARY) {
+                     if (nrClicks[0] == 1) {
+                         contextMenu.hide();
+                         nrClicks[0] = 0;
+                     } else {
+                         contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
+                         nrClicks[0]++;
+                     }
+                 }
+             }
+         });
+
+
+//                button.setOnMouseClicked(event -> {
+//                    Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
+//                    if (event.getButton() == MouseButton.PRIMARY) {
+//                        if (clickCount[0] == 1) {
+//                            contextMenu.hide();
+//                            clickCount[0] = 0;
+//                        } else {
+//                            contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
+//                            clickCount[0]++;
+//                        }
+//                    }
+//                });
+
+        return contextMenu;
+    }
+
     @FXML
     public void openAddBoard() {
         Label description = new Label("Key of the board:");
@@ -709,9 +839,14 @@ public class DashboardCtrl implements Initializable {
                 } else {
                     retrievedBoard = server.getBoardByKey(key);
                     if(retrievedBoard != null ) {
-                        if (connectedBoards.contains(retrievedBoard)) {
-                            errorMessage.setText("Board is already added");
-                        } else {
+                        boolean boardAdded = false;
+                        for(Board board : connectedBoards){
+                            if(board.id == retrievedBoard.id){
+                                errorMessage.setText("Board is already added");
+                                boardAdded = true;
+                            }
+                        }
+                        if (!boardAdded){
                             errorMessage.setText("");
                             connectedBoards.add(retrievedBoard);
                             serverBoards.get(server.getSERVER()).add(retrievedBoard);
