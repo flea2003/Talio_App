@@ -1,7 +1,6 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import com.google.errorprone.annotations.FormatMethod;
 import commons.Board;
 import commons.Card;
 import commons.List;

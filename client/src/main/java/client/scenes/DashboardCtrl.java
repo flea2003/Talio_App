@@ -3,8 +3,6 @@ package client.scenes;
 import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import com.sun.javafx.scene.control.ContextMenuContent;
-import com.sun.prism.paint.Paint;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -27,7 +25,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -35,9 +32,6 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.*;
 
-import javafx.scene.paint.Color;
-
-import static java.lang.Thread.*;
 
 public class DashboardCtrl implements Initializable {
 
@@ -65,7 +59,8 @@ public class DashboardCtrl implements Initializable {
     private ListCell<Card> draggedCard;
     private VBox draggedVbox;
     private boolean sus;
-    private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
+    private boolean done = false;
+    // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
     private long idOfCurrentBoard=-1;
     @FXML
@@ -107,7 +102,8 @@ public class DashboardCtrl implements Initializable {
         });
         refreshBoards(connectedBoards);
         server.refreshLists("/topic/updates", Boolean.class, l -> {
-            Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
+            // this method refreshes. The platform.runLater() because of thread issues.
+            Platform.runLater(() -> {
                 try{
                     refreshBoards(serverBoards.get(currentServer));
                 }catch (Exception e){
@@ -150,9 +146,11 @@ public class DashboardCtrl implements Initializable {
 
             HBox hBox = new HBox(label, new Region(), editBoard, deleteBoard);
             hBox.setMaxWidth(120);
-            hBox.setPrefWidth(120);//set the preferred width to the max width so the updates are noy noticeable
+            //set the preferred width to the max width so the updates are noy noticeable
+            hBox.setPrefWidth(120);
             hBox.setAlignment(Pos.CENTER_LEFT);
-            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS); //Set spacer to fill available space
+            //Set spacer to fill available space
+            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS);
 
 
             //Ensure that there is space for the buttons
@@ -393,7 +391,8 @@ public class DashboardCtrl implements Initializable {
                 event.acceptTransferModes(TransferMode.MOVE);
             });
 
-            listView.setOnDragDropped(event -> { // if the drag ended on a tableview I add a new card to it
+            // if the drag ended on a tableview I add a new card to it
+            listView.setOnDragDropped(event -> {
                 if (draggedCard != null) {
                     done = true; // the dragged ended succesfully
                     var sourceListView = draggedCard.getListView();
@@ -497,7 +496,8 @@ public class DashboardCtrl implements Initializable {
                         }
                     });
                 }
-                setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
+                // if we detect the drag we delete the card from the list and set the done variable
+                setOnDragDetected(event -> {
                     if (getItem() == null || isEmpty()) {
                         return;
                     }
@@ -530,17 +530,21 @@ public class DashboardCtrl implements Initializable {
 
                 });
 
-                setOnDragOver(event -> { // if there is a drag over we set the black border and find if it targets the upper cell or lower
+                // if there is a drag over we set the black border and
+                // find if it targets the upper cell or lower
+                setOnDragOver(event -> {
                     double mouseX = event.getSceneX();
                     double mouseY = event.getSceneY();
 
                     double listViewY = this.localToScene(0, 0).getY();
                     if (mouseY - listViewY >= 50) {
                         sus = false;
-                        this.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 0 0 4 0;");
+                        this.setStyle("-fx-border-color: transparent transparent black " +
+                                "transparent; -fx-border-width: 0 0 4 0;");
                     } else {
                         sus = true;
-                        this.setStyle("-fx-border-color: black transparent transparent transparent; -fx-border-width: 4 0 0 0;");
+                        this.setStyle("-fx-border-color: black transparent transparent " +
+                                "transparent;-fx-border-width: 4 0 0 0;");
                     }
                     event.acceptTransferModes(TransferMode.MOVE);
 
@@ -577,7 +581,8 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragDone(event -> {
-                    if(!done) { // if the drag ended neither on a cell nor on a table view we restore the card
+                    // if the drag ended neither on a cell nor on a table view we restore the card
+                    if(!done) {
                         List listCurr= cardDragged.getList();
                         listCurr.cards.add(cardDragged.getNumberInTheList() - 1, cardDragged);
 
@@ -624,7 +629,8 @@ public class DashboardCtrl implements Initializable {
                     String newText = textField.getText();
 
                     Board boardCurr = server.getBoard(boardId);
-                    List newList=new List(new ArrayList<Card>(), newText, boardCurr, boardCurr.lists.size() + 1);
+                    List newList=new List(new ArrayList<Card>(), newText,
+                            boardCurr, boardCurr.lists.size() + 1);
                     newList.setBoard(boardCurr);
                     boardCurr.lists.add(newList);
 
@@ -662,7 +668,10 @@ public class DashboardCtrl implements Initializable {
         double screenWidth= bounds.getWidth();
         VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
         vBox.setMaxWidth(250);
-        listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
+        // Set a default height based on the number of items
+        // (assuming each item is 24 pixels high)
+        listView.setPrefHeight(Math.min(screenHeight - screenHeight/4,
+                listView.getItems().size() * 100));
     }
 
     @FXML
@@ -697,15 +706,18 @@ public class DashboardCtrl implements Initializable {
 
 
         shareBoard.focusedProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue)
+            if(!newValue) {
                 contextMenu.hide();
+            }
         }));
 
         shareBoard.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
-
+            Point2D absoluteCoordinates = shareBoard.
+                    localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY) {
+                contextMenu.show(pane, absoluteCoordinates.getX(),
+                        absoluteCoordinates.getY() + shareBoard.getHeight());
+            }
         });
 
         shareBoard.setContextMenu(contextMenu);
@@ -764,14 +776,18 @@ public class DashboardCtrl implements Initializable {
         contextMenu.setHideOnEscape(true);
 
         addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue)
+            if(!newValue) {
                 contextMenu.hide();
+            }
         }));
 
         addBoardButton.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
+            Point2D absoluteCoordinates = addBoardButton.
+                    localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY) {
+                contextMenu.show(pane, absoluteCoordinates.getX(),
+                        absoluteCoordinates.getY() + addBoardButton.getHeight());
+            }
 
         });
 

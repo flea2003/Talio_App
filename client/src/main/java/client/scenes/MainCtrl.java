@@ -15,7 +15,6 @@
  */
 package client.scenes;
 
-import client.utils.ServerUtils;
 import commons.Board;
 import commons.Card;
 import commons.List;

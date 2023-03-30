@@ -54,9 +54,12 @@ public class QuoteOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
-        colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
-        colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));
+        colFirstName.setCellValueFactory(q ->
+                new SimpleStringProperty(q.getValue().person.firstName));
+        colLastName.setCellValueFactory(q ->
+                new SimpleStringProperty(q.getValue().person.lastName));
+        colQuote.setCellValueFactory(q ->
+                new SimpleStringProperty(q.getValue().quote));
     }
 
     public void addQuote() {
@@ -64,9 +67,12 @@ public class QuoteOverviewCtrl implements Initializable {
     }
 
     public void refresh() {
-        colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
-        colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
-        colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));
+        colFirstName.setCellValueFactory(q ->
+                new SimpleStringProperty(q.getValue().person.firstName));
+        colLastName.setCellValueFactory(q ->
+                new SimpleStringProperty(q.getValue().person.lastName));
+        colQuote.setCellValueFactory(q ->
+                new SimpleStringProperty(q.getValue().quote));
         var quotes = server.getQuotes();
         data = FXCollections.observableList(quotes);
         table.setItems(data);
