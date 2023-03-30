@@ -14,6 +14,7 @@ class ListTest {
     private Board board;
     private List list;
     private Card card;
+    private ArrayList<Subtask> subtasks;
 
     /**
      * initializes all attributes for convenience and to avoid repetition
@@ -22,9 +23,10 @@ class ListTest {
     void initialize() {
         cards = new ArrayList<>();
         lists = new ArrayList<>();
+        subtasks = new ArrayList<>();
         board = new Board(1, lists, "board");
         list = new List(1, cards, "list", board);
-        card = new Card("description", "name", list, 1);
+        card = new Card(subtasks, "description", "name", list, 1);
         cards.add(card);
         lists.add(list);
     }
