@@ -26,11 +26,21 @@ public class ServerConnectCtrl {
     @FXML
     private Text message;
 
+    /**
+     * constructor
+     * @param server the current server
+     * @param mainCtrl a reference to the MainCtrl
+     */
     @Inject
     public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
+
+    /**
+     * gets the current server
+     * @return the server
+     */
     public ServerUtils getServer() {
         return server;
     }

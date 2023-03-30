@@ -45,6 +45,29 @@ public class MainCtrl {
 
     private Scene server;
     private  ServerConnectCtrl serverCtrl;
+
+    /**
+     * initializes the application with the provided parameters
+     * @param primaryStage the primaryStage of the application
+     * @param overview the pair containing the QuoteOverviewCtrl and Parent
+     *                  objects for the overview scene
+     * @param add the pair containing the AddQuoteCtrl and Parent
+     *                  objects for the add quote scene
+     * @param server the server scene for connecting to the server
+     * @param serverConnectCtrl the controller for the server scene
+     * @param registration the pair containing the RegistrationCtrl and Parent
+     *                  objects for the registration scene
+     * @param dashboard the pair containing the DashboardCtrl and Parent
+     *                 objects for the dashboard scene
+     * @param board the pair containing the CreateBoardCtrl and Parent
+     *                 objects for the create board scene
+     * @param taskCreation the pair containing the TaskCreationCtrl and Parent
+     *                 objects for the task creation scene
+     * @param taskView the pair containing the TaskViewCtrl and Parent
+     *                 objects for the task view scene
+     * @param taskEdit the pair containing the TaskEditCtrl and Parent
+     *                 objects for the task edit scene
+     */
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
                            Pair<AddQuoteCtrl, Parent> add,
                            Scene server, ServerConnectCtrl serverConnectCtrl,
@@ -88,28 +111,46 @@ public class MainCtrl {
         switchDashboard("");
     }
 
+    /**
+     * gets the primary stage
+     * @return the primary stage
+     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }
 
+    /**
+     * sets the scene to the overview
+     */
     public void showOverview() {
         primaryStage.setTitle("Quotes: Overview");
         primaryStage.setScene(overview);
         overviewCtrl.refresh();
     }
 
+    /**
+     * sets the scene to the add scene
+     */
     public void showAdd() {
         primaryStage.setTitle("Quotes: Adding Quote");
         primaryStage.setScene(add);
         add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
     }
 
+    /**
+     * sets the scene to registration
+     */
     public void switchRegistration(){
         primaryStage.setTitle("Registration");
         primaryStage.setScene(registration);
         registration.setOnKeyPressed(e -> regCtrl.keyPressed(e));
     }
-    
+
+    /**
+     * sets the scene to taskCreation
+     * @param listCurr th list where the task will be added
+     * @param boardId the id of the board the list is in
+     */
     public void switchTaskCreation(List listCurr, long boardId){
         primaryStage.setTitle("Task Creation");
         primaryStage.setScene(taskCreation);
@@ -120,7 +161,7 @@ public class MainCtrl {
 
     /**
      * switches the scene to the dashboard
-     * @param user
+     * @param user user
      */
     public void switchDashboard(String user){
         primaryStage.setTitle("Dashboard");
@@ -132,6 +173,9 @@ public class MainCtrl {
 //        dashboardCtrl.refresh();
 //    }
 
+    /**
+     * set scene to server
+     */
     public void switchServer(){
         primaryStage.setTitle("Choose a server");
         primaryStage.setScene(server);
@@ -146,6 +190,11 @@ public class MainCtrl {
         board.setOnKeyPressed(e -> boardCtrl.keyPressed(e));
     }
 
+    /**
+     * sets the scene to taskView
+     * @param q the card to be viewed
+     * @param boardCurr the board the card is in
+     */
     public void switchTaskView(Card q, Board boardCurr){
         primaryStage.setTitle("View Task");
         primaryStage.setScene(taskView);
@@ -153,6 +202,11 @@ public class MainCtrl {
         taskViewCtrl.renderInfo(q);
     }
 
+    /**
+     * sets the scene to taskEdit
+     * @param q the card to be edited
+     * @param boardCurr the board the card is in
+     */
     public void switchEdit(Card q, Board boardCurr){
         primaryStage.setTitle("Edit Task");
         primaryStage.setScene(taskEdit);
@@ -160,6 +214,10 @@ public class MainCtrl {
         taskEditCtrl.renderInfo(q);
     }
 
+    /**
+     * sets the scene to dashboard with deleted as the user
+     * @param currCard the card that was deleted
+     */
     public void switchDelete(Card currCard) {
         switchDashboard("deleted!");
     }

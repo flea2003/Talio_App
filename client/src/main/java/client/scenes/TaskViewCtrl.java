@@ -51,6 +51,12 @@ public class TaskViewCtrl {
     private Board boardCurr;
 
 
+    /**
+     * constructor
+     * @param server the current server
+     * @param mainCtrl a reference to the MainCtrl
+     * @param card the card that is being viewed
+     */
     @Inject
     public TaskViewCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
         this.server = server;
@@ -59,6 +65,10 @@ public class TaskViewCtrl {
 
     }
 
+    /**
+     * show the information of the card in th UI
+     * @param card the card to show
+     */
     public void renderInfo(Card card){
         currCard = card;
         taskName.setText(card.name);
@@ -70,9 +80,16 @@ public class TaskViewCtrl {
         return;
     }
 
+    /**
+     * switches the scene to the taskEdit
+     */
     public void goEdit(){
         mainCtrl.switchEdit(currCard, boardCurr);
     }
+
+    /**
+     * throws a confirmation message for deleting the card and deletes the card
+     */
     public void goDelete(){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Delete Task '" + currCard.getName() + "'?");
@@ -102,6 +119,9 @@ public class TaskViewCtrl {
 
     }
 
+    /**
+     * switches the scene to dashboard
+     */
     @FXML
     public void setDone(){
         mainCtrl.switchDashboard("LOL");
@@ -115,10 +135,18 @@ public class TaskViewCtrl {
         error.setText(err);
     }
 
+    /**
+     * sets the current list to a new one
+     * @param listCurr the new list
+     */
     public void setListCurr(List listCurr) {
         this.listCurr = listCurr;
     }
 
+    /**
+     * sets the current board to a new one
+     * @param boardCurr the new board
+     */
     public void setBoardCurr(Board boardCurr) {
         this.boardCurr = boardCurr;
     }

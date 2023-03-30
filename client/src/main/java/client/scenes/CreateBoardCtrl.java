@@ -121,10 +121,18 @@ public class CreateBoardCtrl {
         return create;
     }
 
+    /**
+     * a getter for buttonCreate
+     * @return the button buttonCreate
+     */
     public Button getButtonCreate() {
         return buttonCreate;
     }
 
+    /**
+     * a getter for error
+     * @return the text error
+     */
     public Text getError() {
         return error;
     }

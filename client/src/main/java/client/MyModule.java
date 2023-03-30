@@ -23,6 +23,10 @@ import com.google.inject.Scopes;
 
 public class MyModule implements Module {
 
+    /**
+     * configures the dependency injection bindings for the application using the provided Binder
+     * @param binder the Binder to use for configuring the dependency injection bindings
+     */
     @Override
     public void configure(Binder binder) {
         binder.bind(ServerUtils.class).in(Scopes.SINGLETON);
