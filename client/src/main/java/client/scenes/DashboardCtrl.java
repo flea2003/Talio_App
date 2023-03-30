@@ -833,7 +833,7 @@ public class DashboardCtrl implements Initializable {
                 idOfCurrentBoard=-1;
 
                 connectedBoards.remove(board);
-                serverBoards.get(server.getSERVER()).remove(board);
+                serverBoards.get(server.getServer()).remove(board);
                 refreshBoards(connectedBoards);
             }
         });
