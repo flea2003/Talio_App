@@ -60,4 +60,17 @@ public  class taskViews {
             return controller;
         return null;
     }
+
+    public void checkClosed(List<commons.List> lists) {
+        for(var controller: controllers) {
+            boolean wasDeleted = true;
+            for (var list : lists)
+                for (var card : list.getCards())
+                    if(controller.getCard().id == card.id)
+                        wasDeleted = false;
+            if(wasDeleted)
+                controller.getStage().close();
+        }
+
+    }
 }

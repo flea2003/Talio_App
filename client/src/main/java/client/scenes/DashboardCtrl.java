@@ -1,6 +1,8 @@
 package client.scenes;
 
 import client.Main;
+import client.scenes.services.taskEdits;
+import client.scenes.services.taskViews;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import com.sun.javafx.scene.control.ContextMenuContent;
@@ -168,8 +170,8 @@ public class DashboardCtrl implements Initializable {
             //create delete icon
             Image dots =new Image("pictures/dots.png");
             ImageView dotsView = new ImageView(dots);
-            dotsView.setFitWidth(20);
-            dotsView.setFitHeight(20);
+            dotsView.setFitWidth(16);
+            dotsView.setFitHeight(16);
 
             Button dotsMenu = new Button();
             dotsMenu.setGraphic(dotsView);
@@ -180,7 +182,9 @@ public class DashboardCtrl implements Initializable {
             HBox hBox = new HBox(label, new Region(), dotsMenu);
             hBox.setMaxWidth(120);
             hBox.setPrefWidth(120);//set the preferred width to the max width so the updates are noy noticeable
-            hBox.setAlignment(Pos.CENTER_LEFT);
+
+            hBox.setStyle("fx-background-color: #e5e3f1; -fx-background-radius: 10px;");
+            hBox.setAlignment(Pos.CENTER);
             HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS); //Set spacer to fill available space
 
 
@@ -229,12 +233,16 @@ public class DashboardCtrl implements Initializable {
             createList(vboxEnd, id);
         });
 
-        if (server.getBoard(id).lists != null && server.getBoard(id).lists.size() > 0) {
+        var lists = server.getBoard(id).lists;
+        taskViews.getInstance().checkClosed(lists);
+        taskEdits.getInstance().checkClosed(lists);
+
+        if ( lists != null && lists.size() > 0) {
             if (hboxList.getChildren().size() > 1) {
                 hboxList.getChildren().subList(0, hboxList.getChildren().size() ).clear();
             }
 
-            addLists(server.getBoard(id).lists, id);
+            addLists(lists, id);
         } else if (hboxList.getChildren().size() > 1) {
             hboxList.getChildren().subList(0, hboxList.getChildren().size() ).clear();
         }
@@ -242,6 +250,14 @@ public class DashboardCtrl implements Initializable {
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
     }
+
+//    private void checkDeleted(java.util.List<List> lists) {
+//        for(var list: lists)
+//            for(Card card: list.getCards()){
+//                if(taskViews.getInstance().isOpened(card))
+//            }
+//
+//    }
 
     public void deleteBoard(Board board){
         //Show a confirmation message
@@ -275,7 +291,7 @@ public class DashboardCtrl implements Initializable {
         //Create pop up for editing the board
         Popup popup = new Popup();
         VBox popupVbox = new VBox(10);
-        popupVbox.setStyle("-fx-background-color: rgb(169,169,169)");
+        popupVbox.setStyle("-fx-background-color: #a29cf4");
         TextField textField = new TextField(label.getText());
         Label error = new Label("");
 
@@ -529,10 +545,10 @@ public class DashboardCtrl implements Initializable {
                     double listViewY = this.localToScene(0, 0).getY();
                     if (mouseY - listViewY >= 50) {
                         sus = false;
-                        this.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 0 0 4 0;");
+                        this.setStyle("-fx-border-color: transparent transparent #e5e3f1 transparent; -fx-border-width: 0 0 4 0;");
                     } else {
                         sus = true;
-                        this.setStyle("-fx-border-color: black transparent transparent transparent; -fx-border-width: 4 0 0 0;");
+                        this.setStyle("-fx-border-color: #e5e3f1 transparent transparent transparent; -fx-border-width: 4 0 0 0;");
                     }
                     event.acceptTransferModes(TransferMode.MOVE);
 
@@ -697,7 +713,7 @@ public class DashboardCtrl implements Initializable {
         shareBoard.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
             if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
+                contextMenu.show(pane, absoluteCoordinates.getX() - 75, absoluteCoordinates.getY() + shareBoard.getHeight() +10);
 
         });
 
@@ -786,7 +802,7 @@ public class DashboardCtrl implements Initializable {
         button.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
             if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
+                contextMenu.show(pane, absoluteCoordinates.getX() - 21, absoluteCoordinates.getY() + button.getHeight() - 33);
 
         });
 
@@ -851,7 +867,7 @@ public class DashboardCtrl implements Initializable {
         }));
 
         addBoardButton.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
+            Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX() - 35, addBoardButton.getLayoutY() + 50);
             if(event.getButton() == MouseButton.PRIMARY)
                 contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
 
