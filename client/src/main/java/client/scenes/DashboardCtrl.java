@@ -84,7 +84,7 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
-        String currentServer = server.getSERVER();
+        String currentServer = server.getServer();
         if(serverBoards ==null) {
             serverBoards = new HashMap<>();
         }
@@ -101,7 +101,7 @@ public class DashboardCtrl implements Initializable {
             createBoard();
         });
         refreshBoards(connectedBoards);
-        server.refreshLists("/topic/updates", Boolean.class, l -> {
+        server.refreshBoards("/topic/updates", Boolean.class, l -> {
             // this method refreshes. The platform.runLater() because of thread issues.
             Platform.runLater(() -> {
                 try{
@@ -272,7 +272,7 @@ public class DashboardCtrl implements Initializable {
             connectedBoards.remove(board);
             //delete board
             connectedBoards.remove(board);
-            serverBoards.get(server.getSERVER()).remove(board);
+            serverBoards.get(server.getServer()).remove(board);
             server.deleteBoard(board.getId());
         }
     }
@@ -332,7 +332,7 @@ public class DashboardCtrl implements Initializable {
 //                    boardCurr = server.getBoard(boardCurr.id);
 //                    System.out.println(boardCurr);
                     connectedBoards.add(boardCurr);
-                    serverBoards.get(server.getSERVER()).add(boardCurr);
+                    serverBoards.get(server.getServer()).add(boardCurr);
                     addBoardLabel.setText("");
                     addBoardLabel.setVisible(false);
                     refreshBoards(connectedBoards);
@@ -752,7 +752,7 @@ public class DashboardCtrl implements Initializable {
                         if (!boardAdded){
                             errorMessage.setText("");
                             connectedBoards.add(retrievedBoard);
-                            serverBoards.get(server.getSERVER()).add(retrievedBoard);
+                            serverBoards.get(server.getServer()).add(retrievedBoard);
                             refreshBoards(connectedBoards);
                             ContextMenu contextMenu = addBoardButton.getContextMenu();
                             contextMenu.setY(contextMenu.getY() + 24);

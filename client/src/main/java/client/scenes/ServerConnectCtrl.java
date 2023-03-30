@@ -48,7 +48,7 @@ public class ServerConnectCtrl {
             message.setText("Searching for the server...");
             if(serverExists(server)) {
                 message.setText("Connecting to the Server...");
-                this.server.setSERVER(server);                      //set the server
+                this.server.setServer(server);                      //set the server
                 this.server.initialiseSession(IP);                  //set the websocket session
                 return true;
             }
