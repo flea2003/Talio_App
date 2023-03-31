@@ -324,7 +324,7 @@ public class DashboardCtrl implements Initializable {
 
         //add listeners
         ok.setOnAction(event -> {
-            if (textField.getText().length() > 0) {
+            if (textField.getText().strip().length() > 0) {
                 boardCurr.setName(textField.getText());
                 server.updateBoard(boardCurr);
                 stage.close();
