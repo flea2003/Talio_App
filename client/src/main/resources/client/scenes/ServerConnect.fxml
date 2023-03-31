@@ -21,5 +21,17 @@
       <TextField fx:id="serverAddress" layoutX="234.0" layoutY="83.0" prefHeight="38.0" prefWidth="307.0" />
       <Button fx:id="connectButton" layoutX="481.0" layoutY="131.0" mnemonicParsing="false" onAction="#connectToTheServer" style="-fx-background-color: rgb(160,120,90);" text="Connect" />
       <Text fx:id="message" layoutX="34.0" layoutY="148.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter the IP address of the server you want to connect to" wrappingWidth="379.20001220703125" />
+      <Button fx:id="connectAdmin" layoutX="235.0" layoutY="330.0" mnemonicParsing="false" style="-fx-background-color: rgb(160,120,90);" text="connect as an admin " />
+      <TextField fx:id="password" layoutX="234.0" layoutY="32.0" prefHeight="38.0" prefWidth="307.0" visible="false" />
+      <TextFlow layoutX="34.0" layoutY="32.0" prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Text fx:id="passwordText" strokeType="OUTSIDE" strokeWidth="0.0" text="Password:" wrappingWidth="210.13677978515625" visible="false">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Text>
+         </children>
+      </TextFlow>
+      <Button fx:id="connectButton2" visible="false" layoutX="481.0" layoutY="131.0" mnemonicParsing="false" onAction="#connectToTheServer" style="-fx-background-color: rgb(160,120,90);" text="Connect" />
    </children>
 </AnchorPane>
