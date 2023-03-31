@@ -19,6 +19,11 @@ public class ServerConnectCtrl {
 
     @FXML
     private javafx.scene.control.TextField serverAddress;
+    @FXML
+    private javafx.scene.control.TextField password;
+
+    @FXML
+    private Text passwordText;
 
     @FXML
     private javafx.scene.control.Button connectButton;
