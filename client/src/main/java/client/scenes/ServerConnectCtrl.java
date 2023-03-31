@@ -1,11 +1,11 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import com.google.inject.Provides;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.fxml.LoadException;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
@@ -27,7 +27,7 @@ public class ServerConnectCtrl implements Initializable {
     @FXML
     private javafx.scene.control.TextField serverAddress;
     @FXML
-    private javafx.scene.control.TextField password;
+    private javafx.scene.control.PasswordField password;
 
     @FXML
     private Text passwordText;
@@ -37,7 +37,14 @@ public class ServerConnectCtrl implements Initializable {
     @FXML
     private javafx.scene.control.Button connectButton2;
 
+    @FXML
+    private ImageView seePassword;
 
+    @FXML
+    private ImageView hidePassword;
+
+    @FXML
+    private TextField showPassword;
     @FXML
     private javafx.scene.control.Button connectAdmin;
 
@@ -148,16 +155,30 @@ public class ServerConnectCtrl implements Initializable {
     }
 
 
-    public boolean openAdminConnect(javafx.event.ActionEvent event) {
+    public void openAdminConnect(javafx.event.ActionEvent event) {
         if (event.getSource() == connectAdmin) {
             System.out.println("Lol");
+            seePassword.setVisible(true);
             password.setVisible(true);
             passwordText.setVisible(true);
             connectButton2.setVisible(true);
             connectButton.setVisible(false);
-            return true;
+
+            seePassword.setOnMousePressed( e -> {
+                seePassword.setVisible(false);
+                hidePassword.setVisible(true);
+                password.setVisible(false);
+                showPassword.setVisible(true);
+                showPassword.setText(password.getText());
+            });
+
+            seePassword.setOnMouseReleased( e -> {
+                seePassword.setVisible(true);
+                hidePassword.setVisible(false);
+                password.setVisible(true);
+                showPassword.setVisible(false);
+            });
         }
-        return false;
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
