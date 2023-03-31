@@ -115,10 +115,12 @@ public class DashboardCtrl implements Initializable {
                 }
             });
         });
+        });
     }
 
     public void refreshBoards(java.util.List<Board> boards){
         if(hboxList.getUserData()!=null){
+            refreshSpecificBoard((Long) hboxList.getUserData());
             refreshSpecificBoard((Long) hboxList.getUserData());
         }
 

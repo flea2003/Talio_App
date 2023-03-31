@@ -5,15 +5,17 @@ import com.google.inject.Stage;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import commons.Subtask;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class TaskViewCtrl {
@@ -51,14 +53,17 @@ public class TaskViewCtrl {
     private Button deleteButton;
 
     private Board boardCurr;
-
+    @FXML
+    private VBox subTasks;
+    @FXML
+    private Button addSubtask;
+    private boolean hasTextField;
 
     @Inject
     public TaskViewCtrl(ServerUtils server, MainCtrl mainCtrl, Card card) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.card = card;
-
     }
 
     public void renderInfo(Card card){
@@ -69,6 +74,12 @@ public class TaskViewCtrl {
             taskNo=new Text();
         }
         taskNo.setText("Task No. " + card.getNumberInTheList());
+        for(Subtask subtask : card.getSubtasks()){
+            createSubtask(subtask);
+        }
+        addSubtask.setOnAction(e -> {
+            addSubtask();
+        });
         return;
     }
 
@@ -127,6 +138,40 @@ public class TaskViewCtrl {
 
     @FXML
     public void addSubtask(){
-//        System.out.println("HELLO WORLD");
+        TextField textField = new TextField();
+        if(hasTextField) {
+            subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
+            hasTextField = false;
+        }
+
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                textField.setText("");
+            }else{
+                if(textField.getText().strip().length()!=0) {
+                    String newText = textField.getText();
+
+                    Subtask subtask = new Subtask(newText);
+                    card.add(subtask);
+                    server.save(subtask);
+
+                    subTasks.getChildren().remove(textField);
+                }
+            }
+        });
+
+        textField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                String newText = textField.getText();
+                vboxEnd.getChildren().remove(textField);
+                vboxEnd.getChildren().remove(spacer);
+            }
+        });
+    }
+
+    public void createSubtask(Subtask subtask){
+        HBox hbox = new HBox();
+        hbox.getChildren().add(new CheckBox());
+        subTasks.getChildren().add(hbox);
     }
 }
