@@ -20,7 +20,7 @@ public class taskCreations {
         return INSTANCE;
     }
 
-    private List<TaskCreationCtrl> controllers = new ArrayList<>();
+    private final List<TaskCreationCtrl> controllers = new ArrayList<>();
 
     public void add(TaskCreationCtrl controller) {
         controllers.add(controller);
@@ -46,5 +46,9 @@ public class taskCreations {
         for(TaskCreationCtrl controller: controllers)
             controller.getStage().close();
 
+    }
+    
+    public List<TaskCreationCtrl> getArray(){
+        return controllers;
     }
 }
