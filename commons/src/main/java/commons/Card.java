@@ -90,7 +90,7 @@ public class Card {
 
     @SuppressWarnings("unused")
     public Card() {}
-
+    /**
      * checks if two cards are equal
      * @param obj the object to be checked
      * @return if the cards are equal
