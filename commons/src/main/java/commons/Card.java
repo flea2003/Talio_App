@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.@JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -88,8 +89,6 @@ public class Card {
         this.subtasks = subtasks;
     }
 
-    @SuppressWarnings("unused")
-    public Card() {}
     /**
      * checks if two cards are equal
      * @param obj the object to be checked
