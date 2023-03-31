@@ -125,4 +125,8 @@ public class TaskViewCtrl {
         this.boardCurr = boardCurr;
     }
 
+    @FXML
+    public void addSubtask(){
+//        System.out.println("HELLO WORLD");
+    }
 }

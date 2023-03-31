@@ -8,20 +8,20 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.TaskViewCtrl">
    <children>
-      <Button fx:id="edit" layoutX="16.0" layoutY="322.0" mnemonicParsing="false" onAction="#goEdit" prefHeight="25.0" prefWidth="60.0" style="-fx-border-style: none; -fx-cursor: pointer; -fx-padding: 0; -fx-margin: 0;" stylesheets="@../../CSS/stylesheet.css" text="Edit" />
+      <Button fx:id="edit" layoutX="16.0" layoutY="361.0" mnemonicParsing="false" onAction="#goEdit" prefHeight="25.0" prefWidth="60.0" style="-fx-border-style: none; -fx-cursor: pointer; -fx-padding: 0; -fx-margin: 0;" stylesheets="@../../CSS/stylesheet.css" text="Edit" />
       <Text layoutX="26.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="122.13672256469727">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <Button fx:id="done" layoutX="87.0" layoutY="322.0" mnemonicParsing="false" onAction="#setDone" prefHeight="25.0" prefWidth="60.0" style="-fx-cursor: pointer;" stylesheets="@../../CSS/stylesheet.css" text="Done" />
+      <Button fx:id="done" layoutX="87.0" layoutY="361.0" mnemonicParsing="false" onAction="#setDone" prefHeight="25.0" prefWidth="60.0" style="-fx-cursor: pointer;" stylesheets="@../../CSS/stylesheet.css" text="Done" />
       <Text fx:id="taskName" layoutX="29.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Task Name" textAlignment="CENTER" wrappingWidth="542.1367988586426">
          <font>
             <Font size="24.0" />
          </font>
       </Text>
       <Text fx:id="error" fill="RED" layoutX="286.0" layoutY="339.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-      <Button id="edit-button" fx:id="delete" layoutX="519.0" layoutY="322.0" mnemonicParsing="false" onAction="#goDelete" prefHeight="25.0" prefWidth="60.0" stylesheets="@../../CSS/stylesheet.css" text="Delete" />
+      <Button id="edit-button" fx:id="delete" layoutX="518.0" layoutY="361.0" mnemonicParsing="false" onAction="#goDelete" prefHeight="25.0" prefWidth="60.0" stylesheets="@../../CSS/stylesheet.css" text="Delete" />
       <Pane layoutX="16.0" layoutY="108.0" prefHeight="194.0" prefWidth="567.0" style="-fx-background-color: #d3d3d3; -fx-padding: 10px; -fx-border-radius: 10px;">
          <children>
             <Text fx:id="taskDescription" layoutX="5.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." wrappingWidth="557.4701118469238">
@@ -32,5 +32,11 @@
          </children>
       </Pane>
       <Text fx:id="taskNo" layoutX="502.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Task no. " />
+      <Text layoutX="23.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nested Task List">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
+      <Button layoutX="164.0" layoutY="315.0" mnemonicParsing="false" onAction="#addSubtask" text="Add" />
    </children>
 </AnchorPane>

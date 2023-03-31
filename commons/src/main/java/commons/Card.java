@@ -17,16 +17,16 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
-
     public String description;
-
     public String name;
     public int numberInTheList;
-
     @ManyToOne
     @JoinColumn(name = "list_id")
     @JsonBackReference
     private List list;
+    @Transient
+    public java.util.List<String>subtasks;
+
 
     public Card(String description, String name, List list, int numberInTheList) {
         this.description = description;
