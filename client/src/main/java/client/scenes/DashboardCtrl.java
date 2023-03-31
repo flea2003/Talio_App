@@ -31,6 +31,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -289,42 +290,62 @@ public class DashboardCtrl implements Initializable {
     }
 
     public void editBoard(Label label){
-        //Create pop up for editing the board
-        Popup popup = new Popup();
-        VBox popupVbox = new VBox(10);
-        popupVbox.setStyle("-fx-background-color: #a29cf4");
-        TextField textField = new TextField(label.getText());
+        Board boardCurr = (Board) label.getUserData();
+
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(label.getScene().getWindow());
+        stage.setTitle("Edit Board '" + boardCurr.getName() + "'");
+
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
+
+        //create the fields of the scene
+        TextField textField = new TextField(boardCurr.getName());
+        textField.setStyle("-fx-background-color: rgb(204,204,255)");
         Label error = new Label("");
 
-        //Create buttons and allign them next to each other
+        //create the buttons
         Button ok = new Button("OK");
         Button cancel = new Button("Cancel");
         HBox buttons = new HBox(ok, cancel);
+        buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
 
-        Board boardCurr = (Board) label.getUserData();
-        //populate the popup and show it
-        popupVbox.getChildren().addAll(new Label("Enter new name for board '" +
-                boardCurr.getName() + "':"), textField, error,buttons);
-        popup.getContent().addAll(popupVbox);
-        popup.show(mainCtrl.getPrimaryStage());
+        //set colour for the buttons and create hovering effect
+        ok.getStyleClass().add("connectButton");
+        ok.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
 
-        //handle events
+        //add listeners
         ok.setOnAction(event -> {
-            if(textField.getText().length()>0) {
+            if (textField.getText().strip().length() > 0) {
                 boardCurr.setName(textField.getText());
                 server.updateBoard(boardCurr);
-                popup.hide();
-            }
-            else{
-                error.setText("The name of the board can not be empty.");
+                stage.close();
+            } else {
+                error.setText("The name of the board can not be empty");
                 error.setStyle("-fx-text-fill: red");
             }
         });
 
-        cancel.setOnAction(e ->{
-            popup.hide();
+        cancel.setOnAction(e -> {
+            stage.close();
         });
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(new Label("Enter new name for board '" +
+                boardCurr.getName() + "':"), textField, error, buttons);
+
+        Scene scene = new Scene(vbox, 377, 233);
+        stage.setScene(scene);
+        stage.showAndWait();
+
     }
 
     public void createBoard(){
