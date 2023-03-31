@@ -16,16 +16,15 @@
          <children>
             <AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #e5e3f1;">
                <children>
-                  <Button layoutX="16.0" layoutY="322.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" style="-fx-border-style: none; -fx-background-color: #d3d3d3; -fx-cursor: pointer; -fx-underline: false; -fx-padding: 0; -fx-margin: 0;" stylesheets="@../../CSS/stylesheet.css" text="Edit" />
+                  <Button layoutX="16.0" layoutY="322.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" style="-fx-border-style: none; -fx-background-color: #d3d3d3; -fx-cursor: pointer; -fx-underline: false; -fx-padding: 0; -fx-margin: 0;" stylesheets="/CSS/stylesheet.css" text="Edit" />
                   <Text fill="#5c5a5b" layoutX="26.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="122.13672256469727">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Text>
-                  <Button id="done" layoutX="87.0" layoutY="322.0" mnemonicParsing="false" onAction="#setDone" prefHeight="25.0" prefWidth="60.0" styleClass="connectButton" text="Done" textFill="#e5e3f1">
+                  <Button id="done" layoutX="87.0" layoutY="322.0" mnemonicParsing="false" onAction="#setDone" prefHeight="25.0" prefWidth="60.0" styleClass="connectButton" stylesheets="/CSS/button.css" text="Done" textFill="#e5e3f1">
                      <stylesheets>
                         <URL value="@../../CSS/stylesheet.css" />
-                        <URL value="@../../CSS/button.css" />
                      </stylesheets>
                   </Button>
                   <Text fx:id="error" fill="RED" layoutX="210.0" layoutY="339.0" strokeType="OUTSIDE" strokeWidth="0.0" />

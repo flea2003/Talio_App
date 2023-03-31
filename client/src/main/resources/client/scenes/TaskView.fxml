@@ -16,10 +16,9 @@
          <children>
             <AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #e5e3f1;">
                <children>
-                  <Button fx:id="edit" layoutX="16.0" layoutY="322.0" mnemonicParsing="false" onAction="#goEdit" prefHeight="25.0" prefWidth="60.0" style="-fx-border-style: none; -fx-cursor: pointer; -fx-padding: 0; -fx-margin: 0;" styleClass="connectButton" text="Edit" textFill="#e5e3f1">
+                  <Button fx:id="edit" layoutX="16.0" layoutY="322.0" mnemonicParsing="false" onAction="#goEdit" prefHeight="25.0" prefWidth="60.0" style="-fx-border-style: none; -fx-cursor: pointer; -fx-padding: 0; -fx-margin: 0;" styleClass="connectButton"  stylesheets="/CSS/button.css" text="Edit" textFill="#e5e3f1">
                      <stylesheets>
                         <URL value="@../CSS/stylesheet.css" />
-                        <URL value="@../../CSS/button.css" />
                      </stylesheets>
                   </Button>
                   <Text fill="#5c5a5b" layoutX="26.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="122.13672256469727">
@@ -27,10 +26,9 @@
                         <Font size="18.0" />
                      </font>
                   </Text>
-                  <Button fx:id="done" layoutX="87.0" layoutY="322.0" mnemonicParsing="false" onAction="#setDone" prefHeight="25.0" prefWidth="60.0" style="-fx-cursor: pointer;" styleClass="connectButton" text="Done" textFill="#e5e3f1">
+                  <Button fx:id="done" layoutX="87.0" layoutY="322.0" mnemonicParsing="false" onAction="#setDone" prefHeight="25.0" prefWidth="60.0" style="-fx-cursor: pointer;" styleClass="connectButton" stylesheets="/CSS/button.css" text="Done" textFill="#e5e3f1">
                      <stylesheets>
                         <URL value="@../CSS/stylesheet.css" />
-                        <URL value="@../../CSS/button.css" />
                      </stylesheets>
                   </Button>
                   <Text fx:id="taskName" fill="#5c5a5b" layoutX="29.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Task Name" textAlignment="CENTER" wrappingWidth="542.1367988586426">
@@ -39,10 +37,9 @@
                      </font>
                   </Text>
                   <Text fx:id="error" fill="RED" layoutX="286.0" layoutY="339.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-                  <Button id="edit-button" fx:id="delete" layoutX="519.0" layoutY="322.0" mnemonicParsing="false" onAction="#goDelete" prefHeight="25.0" prefWidth="60.0" styleClass="connectButton" text="Delete" textFill="#e5e3f1">
+                  <Button id="edit-button" fx:id="delete" layoutX="519.0" layoutY="322.0" mnemonicParsing="false" onAction="#goDelete" prefHeight="25.0" prefWidth="60.0" styleClass="connectButton" stylesheets="/CSS/button.css" text="Delete" textFill="#e5e3f1">
                      <stylesheets>
                         <URL value="@../CSS/stylesheet.css" />
-                        <URL value="@../../CSS/button.css" />
                      </stylesheets>
                   </Button>
                   <Pane layoutX="16.0" layoutY="108.0" prefHeight="194.0" prefWidth="567.0" style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-border-radius: 10px;">

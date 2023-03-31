@@ -15,7 +15,7 @@
          <children>
             <TextFlow layoutX="34.0" layoutY="81.0" prefHeight="50.0" prefWidth="200.0" />
             <TextField fx:id="serverAddress" layoutX="220.0" layoutY="47.0" prefHeight="38.0" prefWidth="307.0" style="-fx-border-radius: 10px; -fx-border-color: #544e50; -fx-border-width: 2px; -fx-background-radius: 10px;" />
-            <Button id="connectButton" fx:id="connectButton" layoutX="458.0" layoutY="93.0" mnemonicParsing="false" onAction="#connectToTheServer" styleClass="connectButton" stylesheets="@../../CSS/button.css" text="Connect" textFill="#dad8d9" />
+            <Button id="connectButton" fx:id="connectButton" layoutX="458.0" layoutY="93.0" mnemonicParsing="false" onAction="#connectToTheServer" styleClass="connectButton" stylesheets="/CSS/button.css" text="Connect" textFill="#dad8d9" />
             <Text fx:id="message" fill="#544e50" layoutX="30.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter the IP address of the server you want to connect to" wrappingWidth="379.20001220703125" />
             <Text fill="#544e50" layoutX="29.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP Address:" wrappingWidth="210.13677978515625">
                <font>

@@ -22,6 +22,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -367,13 +368,18 @@ public class DashboardCtrl implements Initializable {
         Board boardCurr=server.getBoard(boardId);
         for(List listCurr : list){
             VBox vBox = new VBox();
+            vBox.getStylesheets().add("/CSS/button.css");
             Label label = new Label(listCurr.name);
 
             label.setUserData(listCurr.getID()); // set the list id as the label's UserData
 
             HBox hboxButtons = new HBox();
             Button delete = new Button("Delete List");
+            delete.getStyleClass().add("connectButton");
+            delete.setStyle("-fx-text-fill: rgb(250,240,230)");
             Button edit=new Button("Edit List");
+            edit.setStyle("-fx-text-fill: rgb(250,240,230)");
+            edit.getStyleClass().add("connectButton");
 
             //edit list using double-click
             label.setOnMouseClicked(e ->{
@@ -390,6 +396,8 @@ public class DashboardCtrl implements Initializable {
             // Add Card Button
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
+            addTaskButton.getStyleClass().add("connectButton");
+            addTaskButton.setStyle("-fx-text-fill: rgb(250,240,230)");
 
             addTaskButton.setOnAction(e -> {
                 mainCtrl.switchTaskCreation(listCurr, boardId);
@@ -434,9 +442,9 @@ public class DashboardCtrl implements Initializable {
             vBox.getChildren().add(label);
             vBox.getChildren().add(listView);
             vBox.getChildren().add(hboxButtons);
-            hboxButtons.getChildren().add(addTaskButton);
-            hboxButtons.getChildren().add(delete);
-            hboxButtons.getChildren().add(edit);
+            HBox buttons = new HBox(addTaskButton, delete, edit);
+            buttons.setSpacing(5);
+            hboxButtons.getChildren().add(buttons);
 
             addCards(listCurr, vBox, listView);
         }
@@ -716,7 +724,6 @@ public class DashboardCtrl implements Initializable {
                 contextMenu.show(pane, absoluteCoordinates.getX() - 75, absoluteCoordinates.getY() + shareBoard.getHeight() +10);
 
         });
-
         shareBoard.setContextMenu(contextMenu);
     }
 

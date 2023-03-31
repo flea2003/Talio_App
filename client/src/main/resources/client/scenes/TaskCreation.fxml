@@ -31,7 +31,7 @@
                   <Insets left="100.0" right="100.0" />
                </VBox.margin>
             </TextField>
-            <Button fx:id="addTask" alignment="CENTER" mnemonicParsing="false" onAction="#processClick" styleClass="connectButton" stylesheets="@../../CSS/button.css" text="Add Task" textAlignment="CENTER" textFill="#e5e3f1">
+            <Button fx:id="addTask" alignment="CENTER" mnemonicParsing="false" onAction="#processClick" styleClass="connectButton" stylesheets="/CSS/button.css" text="Add Task" textAlignment="CENTER" textFill="#e5e3f1">
                <VBox.margin>
                   <Insets left="265.0" top="20.0" />
                </VBox.margin>
