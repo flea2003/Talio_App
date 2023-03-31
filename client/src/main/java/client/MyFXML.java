@@ -33,13 +33,25 @@ public class MyFXML {
 
     private final Injector injector;
 
+    /**
+     * constructor
+     * @param injector the Injector to use for dependency injection in the FXML controller
+     */
     public MyFXML(Injector injector) {
         this.injector = injector;
     }
 
+    /**
+     * loads an FXML view and returns a pair of the loaded parent and controller objects
+     * @param c the class of the controller object to be injected with dependencies
+     * @param parts an array of strings that specify the path to the FXML file to be loaded
+     * @return a Pair object containing the loaded parent and controller objects
+     * @param <T> the type of the controller object to be injected with dependencies
+     */
     public <T> Pair<T, Parent> load(Class<T> c, String... parts) {
         try {
-            var loader = new FXMLLoader(getLocation(parts), null, null, new MyFactory(), StandardCharsets.UTF_8);
+            var loader = new FXMLLoader(getLocation(parts),
+                    null, null, new MyFactory(), StandardCharsets.UTF_8);
             Parent parent = loader.load();
             T ctrl = loader.getController();
             return new Pair<>(ctrl, parent);

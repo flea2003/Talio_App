@@ -18,16 +18,30 @@ public class BoardController {
     @Autowired
     BoardRepository repo;
 
+    /**
+     * constructor
+     * @param messagingTemplate the messagingTemplate used to trigger the websocket
+     * @param repo the board repository
+     */
     public BoardController(SimpMessagingTemplate messagingTemplate, BoardRepository repo) {
         this.messagingTemplate = messagingTemplate;
         this.repo = repo;
     }
 
+    /**
+     * gets all the boards
+     * @return th list of boards
+     */
     @GetMapping(path = { "", "/" })
     public List<Board> getAll() {
         return repo.findAll();
     }
 
+    /**
+     * get a board by its id
+     * @param id the id of the board
+     * @return a response (bad request or ok)
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Board> getById(@PathVariable("id") long id) {
         if (id < 0 || !repo.existsById(id)) {
@@ -36,15 +50,26 @@ public class BoardController {
         return ResponseEntity.ok(repo.findById(id).get());
     }
 
+    /**
+     * get the board by its key
+     * @param key the key of the board
+     * @return a response (bad request or ok)
+     */
     @GetMapping("/key/{key}")
     public ResponseEntity<Board> getByKey(@PathVariable("key") String key) {
         Optional<Board> board = repo.findBoardByKey(key);
-        if(board.isEmpty())
+        if(board.isEmpty()) {
             return ResponseEntity.ok(null);
+        }
         return ResponseEntity.ok(board.get());
 
     }
 
+    /**
+     * adds a board
+     * @param board the board to be added
+     * @return a response (bad request or ok)
+     */
     @PostMapping(path = { "", "/" })
     public ResponseEntity<Board> add(@RequestBody Board board) {
 
@@ -56,6 +81,11 @@ public class BoardController {
         return ResponseEntity.ok(saved);
     }
 
+    /**
+     * deletes a board
+     * @param id the id of the board to be deleted
+     * @return a response (bad request or ok)
+     */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
 
@@ -68,6 +98,12 @@ public class BoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * changes the name of a board
+     * @param id the id of the board to be changed
+     * @param name the new name of the board
+     * @return a response (bad request or ok)
+     */
     @PostMapping("/changeName/{id}")
     public ResponseEntity<Board> changeName(@PathVariable("id") long id,@RequestBody String name){
         if (id < 0 || !repo.existsById(id)) {
@@ -79,6 +115,11 @@ public class BoardController {
         return ResponseEntity.ok(board);
     }
 
+    /**
+     * updates a board
+     * @param board the board to be updated
+     * @return a response (bad request or ok)
+     */
     @PostMapping("/update")
     public ResponseEntity<Board> updateBoard(@RequestBody Board board){
         repo.save(board);

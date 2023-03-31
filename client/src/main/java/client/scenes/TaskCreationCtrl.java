@@ -1,6 +1,5 @@
 package client.scenes;
 
-import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -39,12 +38,21 @@ public class TaskCreationCtrl {
 
     private long boardId;
 
+    /**
+     * constructor
+     * @param server the current server
+     * @param mainCtrl a reference to the MainCtrl
+     */
     @Inject
     public TaskCreationCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
 
+    /**
+     * processes the click of the addTask button
+     * @param event the click of the addTask button
+     */
     @FXML
     public void processClick(javafx.event.ActionEvent event){
         String valueName = "";
@@ -77,6 +85,10 @@ public class TaskCreationCtrl {
         }
     }
 
+    /**
+     * responsible for enabling 'enter' to act as a fire for the button
+     * @param e an event from the keyboard
+     */
     public void keyPressed(KeyEvent e) {
         if (Objects.requireNonNull(e.getCode()) == KeyCode.ENTER) {
             String taskNameText = extractValue(taskName);
@@ -96,10 +108,18 @@ public class TaskCreationCtrl {
         error.setText(err);
     }
 
+    /**
+     * sets the current list
+     * @param listCurr the current list
+     */
     public void setListCurr(List listCurr) {
         this.listCurr = listCurr;
     }
 
+    /**
+     * sets the board id
+     * @param boardId the id of the board
+     */
     public void setBoardId(long boardId) {
         this.boardId = boardId;
     }
