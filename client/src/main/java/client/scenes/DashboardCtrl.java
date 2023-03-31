@@ -3,8 +3,6 @@ package client.scenes;
 import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import com.sun.javafx.scene.control.ContextMenuContent;
-import com.sun.prism.paint.Paint;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -16,7 +14,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -25,19 +22,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.stage.Popup;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
 
-import javafx.scene.paint.Color;
-
-import static java.lang.Thread.*;
 
 public class DashboardCtrl implements Initializable {
 
@@ -65,7 +57,8 @@ public class DashboardCtrl implements Initializable {
     private ListCell<Card> draggedCard;
     private VBox draggedVbox;
     private boolean sus;
-    private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
+    private boolean done = false;
+    // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
     private long idOfCurrentBoard=-1;
     @FXML
@@ -79,6 +72,12 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private TextField addBoardLabel;
 
+    /**
+     * constructor
+     * @param main a reference to the main method of the client side
+     * @param server the current server
+     * @param mainCtrl a reference to the MainCtrl
+     */
     @Inject
     public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
@@ -86,10 +85,20 @@ public class DashboardCtrl implements Initializable {
         this.server = server;
     }
 
+    /**
+     *
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
-        String currentServer = server.getSERVER();
+        String currentServer = server.getServer();
         if(serverBoards ==null) {
             serverBoards = new HashMap<>();
         }
@@ -106,8 +115,9 @@ public class DashboardCtrl implements Initializable {
             createBoard();
         });
         refreshBoards(connectedBoards);
-        server.refreshLists("/topic/updates", Boolean.class, l -> {
-            Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
+        server.refreshBoards("/topic/updates", Boolean.class, l -> {
+            // this method refreshes. The platform.runLater() because of thread issues.
+            Platform.runLater(() -> {
                 try{
                     refreshBoards(serverBoards.get(currentServer));
                 }catch (Exception e){
@@ -117,6 +127,10 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * refreshes the dashboard with the new boards
+     * @param boards the boards to populate the dashboard
+     */
     public void refreshBoards(java.util.List<Board> boards){
         if(hboxList.getUserData()!=null){
             refreshSpecificBoard((Long) hboxList.getUserData());
@@ -129,30 +143,43 @@ public class DashboardCtrl implements Initializable {
         for (Board boardCurr : boards){
             Label label = new Label(boardCurr.name);
 
+//            //create delete icon
+//            Image imgDelete =new Image("pictures/delete_icon.png");
+//            ImageView imageDelete = new ImageView(imgDelete);
+//            imageDelete.setFitWidth(20);
+//            imageDelete.setFitHeight(20);
+//            Rectangle backroundDelete = new Rectangle(20, 20);
+//            backroundDelete.setFill(Color.TRANSPARENT);
+//            Node deleteBoard = new Group(backroundDelete, imageDelete);
+//
+//            //create edit icon
+//            Image imgEdit =new Image("pictures/edit_icon.png");
+//            ImageView imageEdit = new ImageView(imgEdit);
+//            imageEdit.setFitWidth(20);
+//            imageEdit.setFitHeight(20);
+//            Rectangle backroundEdit = new Rectangle(20, 20);
+//            backroundEdit.setFill(Color.TRANSPARENT);
+//            Node editBoard = new Group(backroundEdit, imageEdit);
+
             //create delete icon
-            Image imgDelete =new Image("pictures/delete_icon.png");
-            ImageView imageDelete = new ImageView(imgDelete);
-            imageDelete.setFitWidth(20);
-            imageDelete.setFitHeight(20);
-            Rectangle backroundDelete = new Rectangle(20, 20);
-            backroundDelete.setFill(Color.TRANSPARENT);
-            Node deleteBoard = new Group(backroundDelete, imageDelete);
+            Image dots =new Image("pictures/dots.png");
+            ImageView dotsView = new ImageView(dots);
+            dotsView.setFitWidth(20);
+            dotsView.setFitHeight(20);
 
-            //create edit icon
-            Image imgEdit =new Image("pictures/edit_icon.png");
-            ImageView imageEdit = new ImageView(imgEdit);
-            imageEdit.setFitWidth(20);
-            imageEdit.setFitHeight(20);
-            Rectangle backroundEdit = new Rectangle(20, 20);
-            backroundEdit.setFill(Color.TRANSPARENT);
-            Node editBoard = new Group(backroundEdit, imageEdit);
+            Button dotsMenu = new Button();
+            dotsMenu.setGraphic(dotsView);
+            dotsMenu.setContextMenu(createThreeDotContextMenu(label, dotsMenu));
 
+//            Node dotMenu = new Group(backroundDelete, imageDelete);
 
-            HBox hBox = new HBox(label, new Region(), editBoard, deleteBoard);
+            HBox hBox = new HBox(label, new Region(), dotsMenu);
             hBox.setMaxWidth(120);
-            hBox.setPrefWidth(120);//set the preferred width to the max width so the updates are noy noticeable
+            //set the preferred width to the max width so the updates are noy noticeable
+            hBox.setPrefWidth(120);
             hBox.setAlignment(Pos.CENTER_LEFT);
-            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS); //Set spacer to fill available space
+            //Set spacer to fill available space
+            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS);
 
 
             //Ensure that there is space for the buttons
@@ -160,43 +187,6 @@ public class DashboardCtrl implements Initializable {
 
 
             //Make the icons visible only when hovering on the specific board
-            hBox.getChildren().get(3).setVisible(false);
-            hBox.getChildren().get(2).setVisible(false);
-            hBox.setOnMouseEntered(e ->{
-                hBox.getChildren().get(3).setVisible(true);
-                hBox.getChildren().get(2).setVisible(true);
-            });
-            hBox.setOnMouseExited(e ->{
-                hBox.getChildren().get(3).setVisible(false);
-                hBox.getChildren().get(2).setVisible(false);
-            });
-
-
-
-            //Make it noticable when hovering on delete icon
-            deleteBoard.setOnMouseEntered(e ->{
-                backroundDelete.setFill(Color.rgb(255,99,71));
-            });
-            deleteBoard.setOnMouseExited(e ->{
-                backroundDelete.setFill(Color.TRANSPARENT);
-            });
-
-            //Make it noticable when hovering on edit icon
-            editBoard.setOnMouseEntered(e ->{
-                backroundEdit.setFill(Color.YELLOW);
-            });
-            editBoard.setOnMouseExited(e ->{
-                backroundEdit.setFill(Color.TRANSPARENT);
-            });
-
-
-            deleteBoard.setOnMouseClicked(e ->{
-                deleteBoard((Board) label.getUserData());
-            });
-
-            editBoard.setOnMouseClicked(e ->{
-                editBoard(label);
-            });
 
             label.setUserData(boardCurr);
 
@@ -221,6 +211,10 @@ public class DashboardCtrl implements Initializable {
         }
     }
 
+    /**
+     * populates the dashboard with the lists of the specific board
+     * @param id the id of the boards of which its lists will be used
+     */
     public void refreshSpecificBoard(long id) {
         hboxList.setUserData(id);
         if (hboxList.getChildren().size() > 0) {
@@ -251,6 +245,10 @@ public class DashboardCtrl implements Initializable {
         hboxList.setSpacing(30);
     }
 
+    /**
+     * deletes a board after confirming the deletion
+     * @param board the board to be deleted
+     */
     public void deleteBoard(Board board){
         //Show a confirmation message
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -274,50 +272,84 @@ public class DashboardCtrl implements Initializable {
             connectedBoards.remove(board);
             //delete board
             connectedBoards.remove(board);
-            serverBoards.get(server.getSERVER()).remove(board);
+            serverBoards.get(server.getServer()).remove(board);
             server.deleteBoard(board.getId());
         }
     }
 
+    /**
+     * edits the name of the board
+     * @param label the new name of the board
+     */
     public void editBoard(Label label){
-        //Create pop up for editing the board
-        Popup popup = new Popup();
-        VBox popupVbox = new VBox(10);
-        popupVbox.setStyle("-fx-background-color: rgb(169,169,169)");
-        TextField textField = new TextField(label.getText());
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(label.getScene().getWindow());
+        stage.setTitle("Edit Board");
+
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: rgb(214,202,221)");
+
+        //create the fields of the scene
+        Board boardCurr = (Board) label.getUserData();
+        TextField textField = new TextField(boardCurr.getName());
+        textField.setStyle("-fx-background-color: rgb(230,230,250)");
         Label error = new Label("");
 
-        //Create buttons and allign them next to each other
+        //create the buttons
         Button ok = new Button("OK");
         Button cancel = new Button("Cancel");
         HBox buttons = new HBox(ok, cancel);
+        buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(10);
 
-        Board boardCurr = (Board) label.getUserData();
-        //populate the popup and show it
-        popupVbox.getChildren().addAll(new Label("Enter new name for board '" +
-                boardCurr.getName() + "':"), textField, error,buttons);
-        popup.getContent().addAll(popupVbox);
-        popup.show(mainCtrl.getPrimaryStage());
+        //set colour for the buttons and create hovering effect
+        ok.setStyle("-fx-background-color: rgb(230,230,250)");
+        cancel.setStyle("-fx-background-color: rgb(230,230,250)");
+        ok.setOnMouseEntered(e -> {
+            ok.setStyle("-fx-background-color: rgb(178,132,190)");
+        });
+        ok.setOnMouseExited(e ->{
+            ok.setStyle("-fx-background-color: rgb(230,230,250)");
+        });
+        cancel.setOnMouseEntered(e -> {
+            cancel.setStyle("-fx-background-color: rgb(178,132,190)");
+        });
+        cancel.setOnMouseExited(e ->{
+            cancel.setStyle("-fx-background-color: rgb(230,230,250)");
+        });
 
-        //handle events
+        //add listeners
         ok.setOnAction(event -> {
-            if(textField.getText().length()>0) {
+            if (textField.getText().strip().length() > 0) {
                 boardCurr.setName(textField.getText());
                 server.updateBoard(boardCurr);
-                popup.hide();
-            }
-            else{
-                error.setText("The name of the board can not be empty.");
+                stage.close();
+            } else {
+                error.setText("The name of the board can not be empty");
                 error.setStyle("-fx-text-fill: red");
             }
         });
 
-        cancel.setOnAction(e ->{
-            popup.hide();
+        cancel.setOnAction(e -> {
+            stage.close();
         });
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(new Label("Enter new name for board '" +
+                boardCurr.getName() + "':"), textField, error, buttons);
+
+        Scene scene = new Scene(vbox, 377, 233);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
+    /**
+     * creates a new board
+     */
     public void createBoard(){
         addBoardLabel.setVisible(true);
         addBoardLabel.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -334,7 +366,7 @@ public class DashboardCtrl implements Initializable {
 //                    boardCurr = server.getBoard(boardCurr.id);
 //                    System.out.println(boardCurr);
                     connectedBoards.add(boardCurr);
-                    serverBoards.get(server.getSERVER()).add(boardCurr);
+                    serverBoards.get(server.getServer()).add(boardCurr);
                     addBoardLabel.setText("");
                     addBoardLabel.setVisible(false);
                     refreshBoards(connectedBoards);
@@ -355,6 +387,11 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * responsible for adding the lists in the UI along with its buttons
+     * @param list the list to be added
+     * @param boardId the id of the board of which its lists are used
+     */
     private void addLists(java.util.List<List> list, long boardId){
         Board boardCurr=server.getBoard(boardId);
         for(List listCurr : list){
@@ -393,7 +430,8 @@ public class DashboardCtrl implements Initializable {
                 event.acceptTransferModes(TransferMode.MOVE);
             });
 
-            listView.setOnDragDropped(event -> { // if the drag ended on a tableview I add a new card to it
+            // if the drag ended on a tableview I add a new card to it
+            listView.setOnDragDropped(event -> {
                 if (draggedCard != null) {
                     done = true; // the dragged ended succesfully
                     var sourceListView = draggedCard.getListView();
@@ -419,7 +457,7 @@ public class DashboardCtrl implements Initializable {
 
             // Delete List Button
             delete.setOnAction(e -> {
-                server.deleteList((Long) label.getUserData());
+                deleteList((Long)label.getUserData());
             });
 
             //Create a list
@@ -431,6 +469,25 @@ public class DashboardCtrl implements Initializable {
             hboxButtons.getChildren().add(edit);
 
             addCards(listCurr, vBox, listView);
+        }
+    }
+
+    private void deleteList(Long listId) {
+
+        List list = server.getList(listId);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Delete List '" + list.getName() + "'?");
+        alert.setContentText("Are you sure you want to delete list '" + list.getName() +
+                "'?\nThis will permanently delete the list from the server.");
+
+        ButtonType delete = new ButtonType("Delete");
+        ButtonType cancel = new ButtonType("Cancel");
+        alert.getButtonTypes().setAll(delete, cancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == delete) {
+            server.deleteList(listId);
         }
     }
 
@@ -473,10 +530,26 @@ public class DashboardCtrl implements Initializable {
                 else{
                     setText(q.name);
                     setOnMouseClicked(event -> {
-                        mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        if (event.getClickCount() == 2) {
+                            mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        }
                     });
+                    //if the card has a description add the description icon
+                    if(q.description != null && q.description.strip().length() != 0) {
+
+                        Image imgDescription = new Image("pictures/description_icon.png");
+                        ImageView imageDescription = new ImageView(imgDescription);
+                        imageDescription.setFitWidth(20);
+                        imageDescription.setFitHeight(20);
+
+                        StackPane stackPane = new StackPane(imageDescription);
+                        StackPane.setAlignment(imageDescription, Pos.TOP_RIGHT);
+
+                        setGraphic(stackPane);
+                    }
                 }
-                setOnDragDetected(event -> { // if we detect the drag we delete the card from the list and set the done variable
+                // if we detect the drag we delete the card from the list and set the done variable
+                setOnDragDetected(event -> {
                     if (getItem() == null || isEmpty()) {
                         return;
                     }
@@ -509,17 +582,21 @@ public class DashboardCtrl implements Initializable {
 
                 });
 
-                setOnDragOver(event -> { // if there is a drag over we set the black border and find if it targets the upper cell or lower
+                // if there is a drag over we set the black border and
+                // find if it targets the upper cell or lower
+                setOnDragOver(event -> {
                     double mouseX = event.getSceneX();
                     double mouseY = event.getSceneY();
 
                     double listViewY = this.localToScene(0, 0).getY();
                     if (mouseY - listViewY >= 50) {
                         sus = false;
-                        this.setStyle("-fx-border-color: transparent transparent black transparent; -fx-border-width: 0 0 4 0;");
+                        this.setStyle("-fx-border-color: transparent transparent black " +
+                                "transparent; -fx-border-width: 0 0 4 0;");
                     } else {
                         sus = true;
-                        this.setStyle("-fx-border-color: black transparent transparent transparent; -fx-border-width: 4 0 0 0;");
+                        this.setStyle("-fx-border-color: black transparent transparent " +
+                                "transparent;-fx-border-width: 4 0 0 0;");
                     }
                     event.acceptTransferModes(TransferMode.MOVE);
 
@@ -556,7 +633,8 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragDone(event -> {
-                    if(!done) { // if the drag ended neither on a cell nor on a table view we restore the card
+                    // if the drag ended neither on a cell nor on a table view we restore the card
+                    if(!done) {
                         List listCurr= cardDragged.getList();
                         listCurr.cards.add(cardDragged.getNumberInTheList() - 1, cardDragged);
 
@@ -582,6 +660,11 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * creates a new list
+     * @param vboxEnd the vbox the list is in
+     * @param boardId the id of the board the list will be in
+     */
     public void createList(VBox vboxEnd, long boardId){
         if(vboxEnd.getChildren().size()>1){
             ObservableList<Node> children = vboxEnd.getChildren();
@@ -603,7 +686,8 @@ public class DashboardCtrl implements Initializable {
                     String newText = textField.getText();
 
                     Board boardCurr = server.getBoard(boardId);
-                    List newList=new List(new ArrayList<Card>(), newText, boardCurr, boardCurr.lists.size() + 1);
+                    List newList=new List(new ArrayList<Card>(), newText,
+                            boardCurr, boardCurr.lists.size() + 1);
                     newList.setBoard(boardCurr);
                     boardCurr.lists.add(newList);
 
@@ -625,6 +709,12 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    /**
+     * adds a new card to a list
+     * @param list the list the card will be added
+     * @param vBox the vbox the list is in
+     * @param listView a listview to add the cards in
+     */
     public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
         java.util.List<Card> cardlist = list.cards;
         listView.setItems(FXCollections.observableList(cardlist));
@@ -641,9 +731,15 @@ public class DashboardCtrl implements Initializable {
         double screenWidth= bounds.getWidth();
         VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
         vBox.setMaxWidth(250);
-        listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
+        // Set a default height based on the number of items
+        // (assuming each item is 24 pixels high)
+        listView.setPrefHeight(Math.min(screenHeight - screenHeight/4,
+                listView.getItems().size() * 100));
     }
 
+    /**
+     * disconnects from the server
+     */
     @FXML
     public void serverDisconnect(){
         idOfCurrentBoard=-1;
@@ -652,7 +748,9 @@ public class DashboardCtrl implements Initializable {
         main.start(new Stage());
     }
 
-
+    /**
+     * used for copying the key of a board
+     */
     @FXML
     public void openShare() {
         final ContextMenu contextMenu = new ContextMenu();
@@ -676,18 +774,143 @@ public class DashboardCtrl implements Initializable {
 
 
         shareBoard.focusedProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue)
+            if(!newValue) {
                 contextMenu.hide();
+            }
         }));
 
         shareBoard.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
-
+            Point2D absoluteCoordinates = shareBoard.
+                    localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY) {
+                contextMenu.show(pane, absoluteCoordinates.getX(),
+                        absoluteCoordinates.getY() + shareBoard.getHeight());
+            }
         });
 
         shareBoard.setContextMenu(contextMenu);
+    }
+
+    public ContextMenu createThreeDotContextMenu(Label label, Button button) {
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem edit = new MenuItem("Rename board");
+        MenuItem remove = new MenuItem(("Leave board"));
+        MenuItem delete = new MenuItem("Delete board");
+
+
+////            hBox.getChildren().get(3).setVisible(false);
+//        hBox.getChildren().get(2).setVisible(false);
+//        hBox.setOnMouseEntered(e ->{
+//            hBox.getChildren().get(3).setVisible(true);
+//            hBox.getChildren().get(2).setVisible(true);
+//        });
+//        hBox.setOnMouseExited(e ->{
+//            hBox.getChildren().get(3).setVisible(false);
+//            hBox.getChildren().get(2).setVisible(false);
+//        });
+
+
+
+//        //Make it noticable when hovering on delete icon
+//        deleteBoard.setOnMouseEntered(e ->{
+//            backroundDelete.setFill(Color.rgb(255,99,71));
+//        });
+//        deleteBoard.setOnMouseExited(e ->{
+//            backroundDelete.setFill(Color.TRANSPARENT);
+//        });
+
+//        //Make it noticable when hovering on edit icon
+//        editBoard.setOnMouseEntered(e ->{
+//            backroundEdit.setFill(Color.YELLOW);
+//        });
+//        editBoard.setOnMouseExited(e ->{
+//            backroundEdit.setFill(Color.TRANSPARENT);
+//        });
+
+
+//        delete.setOnMouseClicked(e ->{
+//            deleteBoard((Board) label.getUserData());
+//        });
+//
+//        editBoard.setOnMouseClicked(e ->{
+//            editBoard(label);
+//        });
+
+        edit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                editBoard(label);
+            }
+        });
+
+        remove.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Board board = (Board) label.getUserData();
+
+                //if the board to be removed is selected remove its data from the interface
+                if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==board.getId()){
+                    hboxList.setUserData(null);
+                    hboxList.getChildren().clear();
+                }
+
+                idOfCurrentBoard=-1;
+
+                connectedBoards.remove(board);
+                serverBoards.get(server.getServer()).remove(board);
+                refreshBoards(connectedBoards);
+            }
+        });
+
+        delete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                deleteBoard((Board) label.getUserData());
+            }
+        });
+
+        contextMenu.getItems().addAll(edit, remove, delete);
+        contextMenu.setAutoHide(true);
+        contextMenu.setHideOnEscape(true);
+
+        int[] clickCount = {0};
+        label.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue)
+                contextMenu.hide();
+        });
+
+        final int[] nrClicks = {0};
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
+                 if (event.getButton() == MouseButton.PRIMARY) {
+                     if (nrClicks[0] == 1) {
+                         contextMenu.hide();
+                         nrClicks[0] = 0;
+                     } else {
+                         contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
+                         nrClicks[0]++;
+                     }
+                 }
+             }
+         });
+
+
+//                button.setOnMouseClicked(event -> {
+//                    Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
+//                    if (event.getButton() == MouseButton.PRIMARY) {
+//                        if (clickCount[0] == 1) {
+//                            contextMenu.hide();
+//                            clickCount[0] = 0;
+//                        } else {
+//                            contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
+//                            clickCount[0]++;
+//                        }
+//                    }
+//                });
+
+        return contextMenu;
     }
 
     @FXML
@@ -709,12 +932,17 @@ public class DashboardCtrl implements Initializable {
                 } else {
                     retrievedBoard = server.getBoardByKey(key);
                     if(retrievedBoard != null ) {
-                        if (connectedBoards.contains(retrievedBoard)) {
-                            errorMessage.setText("Board is already added");
-                        } else {
+                        boolean boardAdded = false;
+                        for(Board board : connectedBoards){
+                            if(board.id == retrievedBoard.id){
+                                errorMessage.setText("Board is already added");
+                                boardAdded = true;
+                            }
+                        }
+                        if (!boardAdded){
                             errorMessage.setText("");
                             connectedBoards.add(retrievedBoard);
-                            serverBoards.get(server.getSERVER()).add(retrievedBoard);
+                            serverBoards.get(server.getServer()).add(retrievedBoard);
                             refreshBoards(connectedBoards);
                             ContextMenu contextMenu = addBoardButton.getContextMenu();
                             contextMenu.setY(contextMenu.getY() + 24);
@@ -738,14 +966,18 @@ public class DashboardCtrl implements Initializable {
         contextMenu.setHideOnEscape(true);
 
         addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue)
+            if(!newValue) {
                 contextMenu.hide();
+            }
         }));
 
         addBoardButton.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
+            Point2D absoluteCoordinates = addBoardButton.
+                    localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY) {
+                contextMenu.show(pane, absoluteCoordinates.getX(),
+                        absoluteCoordinates.getY() + addBoardButton.getHeight());
+            }
 
         });
 

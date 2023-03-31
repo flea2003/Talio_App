@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class List {
@@ -29,15 +28,29 @@ public class List {
 
     public int numberInTheBoard;
 
+    /**
+     * constructor used for testing
+     */
     @SuppressWarnings("unused")
     public List() {
         // for object mapper
     }
 
+    /**
+     * constructor
+     * @param name the name of the list
+     */
     public List(String name){
         this.name=name;
     }
 
+    /**
+     * constructor
+     * @param id the id of the list
+     * @param cards the cards of the list
+     * @param name the name of the list
+     * @param board the board the list is in
+     */
     public List(long id, ArrayList<Card>  cards, String name, Board board) {
         this.id = id;
         this.name = name;
@@ -45,11 +58,23 @@ public class List {
         this.board=board;
     }
 
+    /**
+     * constructor
+     * @param name the name of the list
+     * @param board the board the list is in
+     */
     public List(String name,Board board){
         this.name = name;
         this.board = board;
     }
 
+    /**
+     * constructor
+     * @param cards the cards of the list
+     * @param name the name of the list
+     * @param board the board the list is in
+     * @param numberInTheBoard the number of the list in the board
+     */
     public List(java.util.List<Card> cards, String name, Board board, int numberInTheBoard) {
         this.cards = cards;
         this.name = name;
@@ -57,19 +82,31 @@ public class List {
         this.numberInTheBoard = numberInTheBoard;
     }
 
+    /**
+     * gets the number of the list in the board
+     * @return the number of the list in the board
+     */
     public int getNumberInTheBoard() {
         return numberInTheBoard;
     }
 
+    /**
+     * sets the number of the list in the board
+     * @param numberInTheBoard the number to be set
+     */
     public void setNumberInTheBoard(int numberInTheBoard) {
         this.numberInTheBoard = numberInTheBoard;
     }
 
+    /**
+     * checks if two lists are equal
+     * @param obj the object to be checked
+     * @return if the two lists are equal
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
-
 
     /**
      * getter for cards
@@ -78,7 +115,6 @@ public class List {
     public java.util.List<Card> getCards() {
         return cards;
     }
-
 
     /**
      * creates a hashcode based on the list's fields
@@ -103,6 +139,10 @@ public class List {
                 '}';
     }
 
+    /**
+     * sets the cards of the list
+     * @param cards the cards to be set
+     */
     public void setCards(ArrayList<Card> cards) {
         this.cards = cards;
     }
@@ -111,23 +151,38 @@ public class List {
      * getter for the List's name
      * @return the string name
      */
-    public String getName() { return this.name; }
+    public String getName() {
+        return this.name;
+    }
 
     /**
      * setter for the List's name
+     * @param name the name of the list
      */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * gets the id of the list
+     * @return the id of the list
+     */
     public Object getID() {
         return id;
     }
 
+    /**
+     * sets the board the list is in
+     * @param board the board to be set
+     */
     public void setBoard(Board board) {
         this.board = board;
     }
 
+    /**
+     * gets the board the list is in
+     * @return the board the list is in
+     */
     public Board getBoard() {
         return board;
     }

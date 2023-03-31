@@ -15,18 +15,11 @@
  */
 package client.utils;
 
-import client.scenes.MainCtrl;
-import client.scenes.ServerConnectCtrl;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.inject.Provides;
 import commons.Board;
 import commons.Card;
-import commons.Quote;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
-import org.apache.logging.log4j.util.PropertySource;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -37,12 +30,7 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import javax.inject.Inject;
-import java.io.*;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -53,76 +41,100 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
 
-    private String SERVER;
+    private String server;
 
-    public String getSERVER() {
-        return SERVER;
+    /**
+     * gets the current server
+     * @return the current server
+     */
+    public String getServer() {
+        return server;
     }
 
+    /**
+     * constructor
+     * @param server the current server
+     */
     @Inject
     public ServerUtils(String server){
-        SERVER=server;
+        this.server =server;
     }
 
-    public void setSERVER(String server){
-        SERVER=server;
+    /**
+     * sets the current server
+     * @param server the server to be set
+     */
+    public void setServer(String server){
+        this.server =server;
     }
 
-    public List<Quote> getQuotes() {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/quotes") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .get(new GenericType<List<Quote>>() {});
-    }
-
-    public Quote addQuote(Quote quote) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/quotes") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
-    }
-
+    /**
+     * sends a get request to trigger the respective method in cardController
+     * gets all the cards from the database
+     * @return the cards
+     */
     public List<Card> getCards(){
         String endpoint = String.format("api/cards");
         return  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<Card>>() {});
     }
 
+    /**
+     * sends a post request to trigger the respective method in cardController
+     * adds a card
+     * @param card the card to be added
+     * @return the added card
+     */
     public Card addCard(Card card){
         String endpoint = String.format("api/cards", card.id);
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON).accept(APPLICATION_JSON)
                 .post(Entity.entity(card, APPLICATION_JSON), Card.class);
     }
 
+    /**
+     * sends a post request to trigger the respective method in cardController
+     * updates a card with a new one
+     * @param card the new card
+     * @return the updated card
+     */
     public Card updateCard(Card card){
         String endpoint = String.format("api/cards");
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(card, APPLICATION_JSON), Card.class);
     }
 
+    /**
+     * sends a delete request to trigger the respective method in cardController
+     * deletes a card
+     * @param id the id of the card to be deleted
+     * @return the deleted card
+     */
     public Card deleteCard(long id){
         String endpoint = String.format("api/cards/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .delete(new GenericType<Card>() {});
     }
 
+    /**
+     * sends a get request to trigger the respective method in listController
+     * gets all the lists in the database
+     * @return the lists
+     */
     public List<commons.List> getLists(){
         String endpoint = String.format("api/lists");
         List<commons.List>res =  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.List>>() {});
@@ -133,24 +145,42 @@ public class ServerUtils {
         return res;
     }
 
+    /**
+     * sends a get request to trigger the respective method in listController
+     * gets a list from the database
+     * @param id the id of the list to be gotten
+     * @return the gotten list
+     */
     public commons.List getList(long id){
         String endpoint = String.format("api/lists/%d", id);
         return  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<commons.List>() {});
     }
 
+    /**
+     * sends a post request to trigger the respective method in listController
+     * adds a list in the database
+     * @param list the list to be added
+     * @return the added list
+     */
     public commons.List addList(commons.List list){
         String endpoint = String.format("api/lists");
         return  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
     }
 
+    /**
+     * sends a post request to trigger the respective method in listController
+     * updates a list with a new one
+     * @param list the new list
+     * @return the updated list
+     */
     public commons.List updateList(commons.List list){
         int indx = 0;
         for(Card card : list.cards){
@@ -159,116 +189,160 @@ public class ServerUtils {
         }
         String endpoint = String.format("api/lists/update");
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(list, APPLICATION_JSON), commons.List.class);
 
     }
 
-//    public commons.List updateListName(commons.List list,String name){
-//        String endpoint = String.format("api/lists/changeName/%d", list.id);
-//        return ClientBuilder.newClient(new ClientConfig())
-//                .target(SERVER).path(endpoint)
-//                .request(APPLICATION_JSON)
-//                .accept(APPLICATION_JSON)
-//                .post(Entity.entity(name, APPLICATION_JSON), commons.List.class);
-//    }
-
+    /**
+     * sends a get request to trigger the respective method in listController
+     * gets a specific list from the database
+     * @param id the id of the list to be gotten
+     * @return the gotten list
+     */
     public commons.List getListById(long id){
         String endpoint = String.format("/api/lists/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(commons.List.class);
     }
 
-
+    /**
+     * sends a delete request to trigger the respective method in listController
+     * deletes a list
+     * @param id the id of the list to be deleted
+     * @return the deleted list
+     */
     public commons.List deleteList(long id){
         String endpoint = String.format("api/lists/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .delete(new GenericType<commons.List>() {});
     }
 
+    /**
+     * sends a get request to trigger the respective method in boardController
+     * gets all the boards from the database
+     * @return the boards
+     */
     public List<commons.Board> getBoards(){
         String endpoint = String.format("api/boards");
         return  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.Board>>() {});
     }
 
+    /**
+     * sends a get request to trigger the respective method in boardController
+     * gets a specific board from the database
+     * @param id the id of the board to be gotten
+     * @return the gotten board
+     */
     public commons.Board getBoard(long id){
         String endpoint = String.format("api/boards/%2d", id);
-        return  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+        var res = ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<commons.Board>() {});
+        Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+        for(commons.List list : res.getLists()){
+            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+        }
+        return res;
     }
 
-
+    /**
+     * sends a get request to trigger the respective method in boardController
+     * gets a specific board using its key
+     * @param key the key of the board to be gotten
+     * @return the gotten board
+     */
     public commons.Board getBoardByKey(String key){
         String endpoint = String.format("api/boards/key/%s", key);
         return  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<commons.Board>() {});
     }
 
+    /**
+     * sends a post request to trigger the respective method in boardController
+     * adds a board to the database
+     * @param board the board to be added
+     * @return the added board
+     */
     public commons.Board addList(commons.Board board){
         String endpoint = String.format("api/boards");
         return  ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(board, APPLICATION_JSON), commons.Board.class);
     }
 
-
-//    public commons.Board updateBoard(commons.Board board){
-//        String endpoint = String.format("api/lists/changeName/%2d", board.id);
-//        return ClientBuilder.newClient(new ClientConfig())
-//                .target(SERVER).path(endpoint)
-//                .request(APPLICATION_JSON)
-//                .accept(APPLICATION_JSON)
-//                .post(Entity.entity(board, APPLICATION_JSON), commons.Board.class);
-//    }
-
+    /**
+     * sends a post request to trigger the respective method in boardController
+     * updates a board with a new one
+     * @param board the new board
+     * @return the updated board
+     */
     public Board updateBoard(Board board){
-        int indx = 0;
+        int indxList = 0;
         for(commons.List list : board.lists){
-            ++indx;
-            list.numberInTheBoard=indx;
+            ++indxList;
+            list.numberInTheBoard = indxList;
+            if(list.getCards() != null) {
+                int indxCard = 0;
+                for (Card card : list.getCards()) {
+                    ++indxCard;
+                    card.setNumberInTheList(indxCard);
+                }
+            }
         }
 
         String endpoint = String.format("api/boards/update");
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(board, APPLICATION_JSON), Board.class);
     }
 
+    /**
+     * sends a delete request to trigger the respective method in boardController
+     * deletes a specific board
+     * @param id the id of the board to be deleted
+     * @return the deleted board
+     */
     public commons.Board deleteBoard(long id){
         String endpoint = String.format("api/boards/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .delete(new GenericType<commons.Board>() {});
     }
 
+    /**
+     * sends a post request to trigger the respective method in boardController
+     * adds a board to the database
+     * @param board the board to be added
+     * @return the added board
+     */
     public commons.Board addBoard(Board board){
         String endpoint = String.format("api/boards/", board);
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path(endpoint)
+                .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(board, APPLICATION_JSON), Board.class);
@@ -311,7 +385,7 @@ public class ServerUtils {
      * @param consumer a consumer of objects of type "type"
      * @param <T> a general object enabling the generalization of the method to any type
      */
-    public <T> void refreshLists(String destination,Type type, Consumer<T> consumer){
+    public <T> void refreshBoards(String destination, Type type, Consumer<T> consumer){
         session.subscribe(destination, new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
@@ -325,6 +399,11 @@ public class ServerUtils {
         });
     }
 
+    /**
+     * sends an object to a specific destiantion
+     * @param destination the destination where the object will be sent
+     * @param o the object to be sent
+     */
     public void send(String destination,Object o){
         session.send(destination, o);
     }

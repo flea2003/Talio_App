@@ -1,9 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import com.google.inject.Provides;
 import javafx.fxml.FXML;
-import javafx.fxml.LoadException;
 import javafx.scene.text.Text;
 
 import java.io.BufferedReader;
@@ -12,7 +10,6 @@ import java.io.InputStreamReader;
 import java.net.*;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 
 public class ServerConnectCtrl {
@@ -29,11 +26,21 @@ public class ServerConnectCtrl {
     @FXML
     private Text message;
 
+    /**
+     * constructor
+     * @param server the current server
+     * @param mainCtrl a reference to the MainCtrl
+     */
     @Inject
     public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
+
+    /**
+     * gets the current server
+     * @return the server
+     */
     public ServerUtils getServer() {
         return server;
     }
@@ -51,7 +58,7 @@ public class ServerConnectCtrl {
             message.setText("Searching for the server...");
             if(serverExists(server)) {
                 message.setText("Connecting to the Server...");
-                this.server.setSERVER(server);                      //set the server
+                this.server.setServer(server);                      //set the server
                 this.server.initialiseSession(IP);                  //set the websocket session
                 return true;
             }
@@ -73,7 +80,8 @@ public class ServerConnectCtrl {
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
 
-                BufferedReader reader=new BufferedReader(new InputStreamReader(con.getInputStream()));
+                BufferedReader reader=
+                        new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String response="";
                 String nextline=reader.readLine();
 
@@ -84,7 +92,7 @@ public class ServerConnectCtrl {
 
                 reader.close();
 
-                if(response.contains("Talio app")){
+                if(response.contains("Talio app-74")){
                     return true;
                 }else{
                     message.setText("This server does not belong to a Talio app");
