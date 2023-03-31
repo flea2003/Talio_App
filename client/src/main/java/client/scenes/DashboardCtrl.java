@@ -67,7 +67,7 @@ public class DashboardCtrl implements Initializable {
     private boolean sus;
     private boolean done = false; // this variable checks if the drag ended on a listcell or tableview
     private Card cardDragged; // this sets the dragged card
-    private long idOfCurrentBoard=-1;
+    private long idOfCurrentBoard = -1;
     @FXML
     private BorderPane innerBoardsPane;
     private java.util.List<commons.Board> localBoards;
@@ -80,7 +80,7 @@ public class DashboardCtrl implements Initializable {
     private TextField addBoardLabel;
 
     @Inject
-    public DashboardCtrl(Main main,ServerUtils server, MainCtrl mainCtrl) {
+    public DashboardCtrl(Main main, ServerUtils server, MainCtrl mainCtrl) {
         this.main = main;
         this.mainCtrl = mainCtrl;
         this.server = server;
@@ -90,10 +90,10 @@ public class DashboardCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 //        innerBoardsPane.set
         String currentServer = server.getSERVER();
-        if(serverBoards ==null) {
+        if (serverBoards == null) {
             serverBoards = new HashMap<>();
         }
-        if(serverBoards.get(currentServer) == null){
+        if (serverBoards.get(currentServer) == null) {
             java.util.List<Board> boards = new ArrayList<>();
             serverBoards.put(currentServer, boards);
         }
@@ -108,17 +108,17 @@ public class DashboardCtrl implements Initializable {
         refreshBoards(connectedBoards);
         server.refreshLists("/topic/updates", Boolean.class, l -> {
             Platform.runLater(() -> { // this method refreshes. The platform.runLater() because of thread issues.
-                try{
+                try {
                     refreshBoards(serverBoards.get(currentServer));
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         });
     }
 
-    public void refreshBoards(java.util.List<Board> boards){
-        if(hboxList.getUserData()!=null){
+    public void refreshBoards(java.util.List<Board> boards) {
+        if (hboxList.getUserData() != null) {
             refreshSpecificBoard((Long) hboxList.getUserData());
         }
 
@@ -126,7 +126,7 @@ public class DashboardCtrl implements Initializable {
             boardsVBox.getChildren().subList(0, boardsVBox.getChildren().size()).clear();
         }
 
-        for (Board boardCurr : boards){
+        for (Board boardCurr : boards) {
             Label label = new Label(boardCurr.name);
 
 //            //create delete icon
@@ -148,7 +148,7 @@ public class DashboardCtrl implements Initializable {
 //            Node editBoard = new Group(backroundEdit, imageEdit);
 
             //create delete icon
-            Image dots =new Image("pictures/dots.png");
+            Image dots = new Image("pictures/dots.png");
             ImageView dotsView = new ImageView(dots);
             dotsView.setFitWidth(20);
             dotsView.setFitHeight(20);
@@ -174,13 +174,13 @@ public class DashboardCtrl implements Initializable {
 
             label.setUserData(boardCurr);
 
-            if(idOfCurrentBoard != -1 && idOfCurrentBoard==boardCurr.id){
+            if (idOfCurrentBoard != -1 && idOfCurrentBoard == boardCurr.id) {
                 label.setStyle("-fx-font-size: 18px;");
             }
 
             //populate the interface with the clicked board
             label.setOnMouseClicked(e -> {
-                for(Node child : boardsVBox.getChildren()) {
+                for (Node child : boardsVBox.getChildren()) {
                     ((HBox) child).getChildren().get(0).setStyle("");
                 }
                 focusedBoard = (Board) label.getUserData();
@@ -213,23 +213,23 @@ public class DashboardCtrl implements Initializable {
 
         if (server.getBoard(id).lists != null && server.getBoard(id).lists.size() > 0) {
             if (hboxList.getChildren().size() > 1) {
-                hboxList.getChildren().subList(0, hboxList.getChildren().size() ).clear();
+                hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
             }
 
             addLists(server.getBoard(id).lists, id);
         } else if (hboxList.getChildren().size() > 1) {
-            hboxList.getChildren().subList(0, hboxList.getChildren().size() ).clear();
+            hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
         }
 
         hboxList.setPadding(new Insets(30, 30, 30, 30));
         hboxList.setSpacing(30);
     }
 
-    public void deleteBoard(Board board){
+    public void deleteBoard(Board board) {
         //Show a confirmation message
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete board '"+board.getName()+"'?");
-        alert.setContentText("Are you sure you want to delete board '"+board.getName()+
+        alert.setHeaderText("Delete board '" + board.getName() + "'?");
+        alert.setContentText("Are you sure you want to delete board '" + board.getName() +
                 "'?\nThis will permanently delete the board from the server.");
 
         ButtonType delete = new ButtonType("Delete");
@@ -238,9 +238,9 @@ public class DashboardCtrl implements Initializable {
 
         Optional<ButtonType> result = alert.showAndWait();
 
-        if (result.get() == delete){
+        if (result.get() == delete) {
             //if the board to be deleted is selected remove its data from the interface
-            if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==board.getId()){
+            if (hboxList.getUserData() != null && (long) hboxList.getUserData() == board.getId()) {
                 hboxList.setUserData(null);
                 hboxList.getChildren().clear();
             }
@@ -253,7 +253,7 @@ public class DashboardCtrl implements Initializable {
         }
     }
 
-    public void editBoard(Label label){
+    public void editBoard(Label label) {
         //Create pop up for editing the board
         Popup popup = new Popup();
         VBox popupVbox = new VBox(10);
@@ -270,35 +270,34 @@ public class DashboardCtrl implements Initializable {
         Board boardCurr = (Board) label.getUserData();
         //populate the popup and show it
         popupVbox.getChildren().addAll(new Label("Enter new name for board '" +
-                boardCurr.getName() + "':"), textField, error,buttons);
+                boardCurr.getName() + "':"), textField, error, buttons);
         popup.getContent().addAll(popupVbox);
         popup.show(mainCtrl.getPrimaryStage());
 
         //handle events
         ok.setOnAction(event -> {
-            if(textField.getText().length()>0) {
+            if (textField.getText().length() > 0) {
                 boardCurr.setName(textField.getText());
                 server.updateBoard(boardCurr);
                 popup.hide();
-            }
-            else{
+            } else {
                 error.setText("The name of the board can not be empty.");
                 error.setStyle("-fx-text-fill: red");
             }
         });
 
-        cancel.setOnAction(e ->{
+        cancel.setOnAction(e -> {
             popup.hide();
         });
     }
 
-    public void createBoard(){
+    public void createBoard() {
         addBoardLabel.setVisible(true);
         addBoardLabel.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 addBoardLabel.setText("");
-            }else{
-                if(addBoardLabel.getText().strip().length() != 0) {
+            } else {
+                if (addBoardLabel.getText().strip().length() != 0) {
                     String newText = addBoardLabel.getText();
 
                     Board boardCurr = new Board(newText);
@@ -329,9 +328,9 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
-    private void addLists(java.util.List<List> list, long boardId){
-        Board boardCurr=server.getBoard(boardId);
-        for(List listCurr : list){
+    private void addLists(java.util.List<List> list, long boardId) {
+        Board boardCurr = server.getBoard(boardId);
+        for (List listCurr : list) {
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
 
@@ -339,17 +338,17 @@ public class DashboardCtrl implements Initializable {
 
             HBox hboxButtons = new HBox();
             Button delete = new Button("Delete List");
-            Button edit=new Button("Edit List");
+            Button edit = new Button("Edit List");
 
             //edit list using double-click
-            label.setOnMouseClicked(e ->{
+            label.setOnMouseClicked(e -> {
                 if (e.getClickCount() == 2) {
-                    editList(vBox,label, boardId);
+                    editList(vBox, label, boardId);
                 }
             });
 
             //edit list using edit button
-            edit.setOnAction(e->{
+            edit.setOnAction(e -> {
                 editList(vBox, label, boardId);
             });
 
@@ -361,7 +360,7 @@ public class DashboardCtrl implements Initializable {
                 mainCtrl.switchTaskCreation(listCurr, boardId);
             });
 
-            ListView<Card>listView = new ListView<>();
+            ListView<Card> listView = new ListView<>();
 
             listView.setOnDragOver(event -> {
                 event.acceptTransferModes(TransferMode.MOVE);
@@ -376,9 +375,9 @@ public class DashboardCtrl implements Initializable {
 
                     listCurr.cards.add(cardDragged); // update with the card dropped
 
-                    for(int i=0; i<boardCurr.lists.size(); i++){
-                        if(boardCurr.lists.get(i).getID()==listCurr.getID()){
-                            boardCurr.lists.set(i,listCurr);
+                    for (int i = 0; i < boardCurr.lists.size(); i++) {
+                        if (boardCurr.lists.get(i).getID() == listCurr.getID()) {
+                            boardCurr.lists.set(i, listCurr);
                         }
                     }
 
@@ -393,7 +392,7 @@ public class DashboardCtrl implements Initializable {
 
             // Delete List Button
             delete.setOnAction(e -> {
-                deleteList((Long)label.getUserData());
+                deleteList((Long) label.getUserData());
             });
 
             //Create a list
@@ -436,15 +435,15 @@ public class DashboardCtrl implements Initializable {
 
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                String txt=textField.getText();
-                List newList=server.getListById((Long) label.getUserData());
+                String txt = textField.getText();
+                List newList = server.getListById((Long) label.getUserData());
                 Board boardCurr = server.getBoard(boardId);
                 newList.setName(txt);
                 newList.setBoard(boardCurr);
 
-                for(int i=0; i<boardCurr.lists.size(); i++){
-                    if(boardCurr.lists.get(i).getID()==newList.getID()){
-                        boardCurr.lists.set(i,newList);
+                for (int i = 0; i < boardCurr.lists.size(); i++) {
+                    if (boardCurr.lists.get(i).getID() == newList.getID()) {
+                        boardCurr.lists.set(i, newList);
                     }
                 }
 
@@ -454,7 +453,7 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
-    private void setFactory(ListView list, long boardId){
+    private void setFactory(ListView list, long boardId) {
         Board boardCurr = server.getBoard(boardId);
         list.setCellFactory(q -> new ListCell<Card>() {
             @Override
@@ -462,8 +461,7 @@ public class DashboardCtrl implements Initializable {
                 super.updateItem(q, empty);
                 if (empty) {
                     setText("");
-                }
-                else{
+                } else {
                     setText(q.name);
                     setOnMouseClicked(event -> {
                         if (event.getClickCount() == 2) {
@@ -471,7 +469,7 @@ public class DashboardCtrl implements Initializable {
                         }
                     });
                     //if the card has a description add the description icon
-                    if(q.description != null && q.description.strip().length() != 0) {
+                    if (q.description != null && q.description.strip().length() != 0) {
 
                         Image imgDescription = new Image("pictures/description_icon.png");
                         ImageView imageDescription = new ImageView(imgDescription);
@@ -491,12 +489,12 @@ public class DashboardCtrl implements Initializable {
 
                     draggedCard = this;
                     cardDragged = getItem(); // store the Card object in a local variable
-                    List listCurr=cardDragged.getList();
+                    List listCurr = cardDragged.getList();
                     listCurr.cards.remove(cardDragged); // remove the card from the list
 
-                    for(int i=0; i<boardCurr.lists.size(); i++){
-                        if(boardCurr.lists.get(i).getID()==listCurr.getID()){
-                            boardCurr.lists.set(i,listCurr);
+                    for (int i = 0; i < boardCurr.lists.size(); i++) {
+                        if (boardCurr.lists.get(i).getID() == listCurr.getID()) {
+                            boardCurr.lists.set(i, listCurr);
                         }
                     }
 
@@ -547,13 +545,13 @@ public class DashboardCtrl implements Initializable {
                         var sourceListView = draggedCard.getListView();
                         int sourceIndex = draggedCard.getIndex();
                         int dropIndex = this.getIndex() + (!sus ? 1 : 0);
-                        List listCurr=this.getItem().getList();
+                        List listCurr = this.getItem().getList();
                         listCurr.cards.add(dropIndex, cardDragged);
                         cardDragged.setList(this.getItem().getList());
 
-                        for(int i=0; i<boardCurr.lists.size(); i++){
-                            if(boardCurr.lists.get(i).getID()==listCurr.getID()){
-                                boardCurr.lists.set(i,listCurr);
+                        for (int i = 0; i < boardCurr.lists.size(); i++) {
+                            if (boardCurr.lists.get(i).getID() == listCurr.getID()) {
+                                boardCurr.lists.set(i, listCurr);
                             }
                         }
 
@@ -564,13 +562,13 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragDone(event -> {
-                    if(!done) { // if the drag ended neither on a cell nor on a table view we restore the card
-                        List listCurr= cardDragged.getList();
+                    if (!done) { // if the drag ended neither on a cell nor on a table view we restore the card
+                        List listCurr = cardDragged.getList();
                         listCurr.cards.add(cardDragged.getNumberInTheList() - 1, cardDragged);
 
-                        for(int i=0; i<boardCurr.lists.size(); i++){
-                            if(boardCurr.lists.get(i).getID()==listCurr.getID()){
-                                boardCurr.lists.set(i,listCurr);
+                        for (int i = 0; i < boardCurr.lists.size(); i++) {
+                            if (boardCurr.lists.get(i).getID() == listCurr.getID()) {
+                                boardCurr.lists.set(i, listCurr);
                             }
                         }
 
@@ -590,8 +588,8 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
-    public void createList(VBox vboxEnd, long boardId){
-        if(vboxEnd.getChildren().size()>1){
+    public void createList(VBox vboxEnd, long boardId) {
+        if (vboxEnd.getChildren().size() > 1) {
             ObservableList<Node> children = vboxEnd.getChildren();
             int numChildren = children.size();
             children.remove(numChildren - 1);
@@ -606,12 +604,12 @@ public class DashboardCtrl implements Initializable {
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 textField.setText("");
-            }else{
-                if(textField.getText().strip().length()!=0) {
+            } else {
+                if (textField.getText().strip().length() != 0) {
                     String newText = textField.getText();
 
                     Board boardCurr = server.getBoard(boardId);
-                    List newList=new List(new ArrayList<Card>(), newText, boardCurr, boardCurr.lists.size() + 1);
+                    List newList = new List(new ArrayList<Card>(), newText, boardCurr, boardCurr.lists.size() + 1);
                     newList.setBoard(boardCurr);
                     boardCurr.lists.add(newList);
 
@@ -633,11 +631,11 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
-    public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
+    public void addCards(List list, VBox vBox, ListView listView) {// Set the card in our lists
         java.util.List<Card> cardlist = list.cards;
         listView.setItems(FXCollections.observableList(cardlist));
         int index = 0;
-        if(hboxList.getChildren().size()>0){
+        if (hboxList.getChildren().size() > 0) {
             index = hboxList.getChildren().size() - 1;
         }
         hboxList.getChildren().add(index, vBox);
@@ -646,15 +644,15 @@ public class DashboardCtrl implements Initializable {
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
         double screenHeight = bounds.getHeight();
-        double screenWidth= bounds.getWidth();
+        double screenWidth = bounds.getWidth();
         VBox.setMargin(vBox, new Insets(10, 10, 10, 10));
         vBox.setMaxWidth(250);
-        listView.setPrefHeight(Math.min(screenHeight - screenHeight/4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
+        listView.setPrefHeight(Math.min(screenHeight - screenHeight / 4, listView.getItems().size() * 100)); // Set a default height based on the number of items (assuming each item is 24 pixels high)
     }
 
     @FXML
-    public void serverDisconnect(){
-        idOfCurrentBoard=-1;
+    public void serverDisconnect() {
+        idOfCurrentBoard = -1;
         hboxList.setUserData(null);
         mainCtrl.getPrimaryStage().close();
         main.start(new Stage());
@@ -684,13 +682,13 @@ public class DashboardCtrl implements Initializable {
 
 
         shareBoard.focusedProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue)
+            if (!newValue)
                 contextMenu.hide();
         }));
 
         shareBoard.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
+            if (event.getButton() == MouseButton.PRIMARY)
                 contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + shareBoard.getHeight());
 
         });
@@ -715,7 +713,6 @@ public class DashboardCtrl implements Initializable {
 //            hBox.getChildren().get(3).setVisible(false);
 //            hBox.getChildren().get(2).setVisible(false);
 //        });
-
 
 
 //        //Make it noticable when hovering on delete icon
@@ -756,12 +753,12 @@ public class DashboardCtrl implements Initializable {
                 Board board = (Board) label.getUserData();
 
                 //if the board to be removed is selected remove its data from the interface
-                if(hboxList.getUserData()!=null && (long)hboxList.getUserData()==board.getId()){
+                if (hboxList.getUserData() != null && (long) hboxList.getUserData() == board.getId()) {
                     hboxList.setUserData(null);
                     hboxList.getChildren().clear();
                 }
 
-                idOfCurrentBoard=-1;
+                idOfCurrentBoard = -1;
 
                 connectedBoards.remove(board);
                 serverBoards.get(server.getSERVER()).remove(board);
@@ -782,26 +779,26 @@ public class DashboardCtrl implements Initializable {
 
         int[] clickCount = {0};
         label.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue)
+            if (!newValue)
                 contextMenu.hide();
         });
 
         final int[] nrClicks = {0};
         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-             @Override
-             public void handle(MouseEvent event) {
-                 Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
-                 if (event.getButton() == MouseButton.PRIMARY) {
-                     if (nrClicks[0] == 1) {
-                         contextMenu.hide();
-                         nrClicks[0] = 0;
-                     } else {
-                         contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
-                         nrClicks[0]++;
-                     }
-                 }
-             }
-         });
+            @Override
+            public void handle(MouseEvent event) {
+                Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    if (nrClicks[0] == 1) {
+                        contextMenu.hide();
+                        nrClicks[0] = 0;
+                    } else {
+                        contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
+                        nrClicks[0]++;
+                    }
+                }
+            }
+        });
 
 
 //                button.setOnMouseClicked(event -> {
@@ -834,19 +831,19 @@ public class DashboardCtrl implements Initializable {
                 String key = input.getText();
                 Board retrievedBoard;
 
-                if(input.getText().isEmpty()) {
+                if (input.getText().isEmpty()) {
                     errorMessage.setText("The key that you have entered is empty");
                 } else {
                     retrievedBoard = server.getBoardByKey(key);
-                    if(retrievedBoard != null ) {
+                    if (retrievedBoard != null) {
                         boolean boardAdded = false;
-                        for(Board board : connectedBoards){
-                            if(board.id == retrievedBoard.id){
+                        for (Board board : connectedBoards) {
+                            if (board.id == retrievedBoard.id) {
                                 errorMessage.setText("Board is already added");
                                 boardAdded = true;
                             }
                         }
-                        if (!boardAdded){
+                        if (!boardAdded) {
                             errorMessage.setText("");
                             connectedBoards.add(retrievedBoard);
                             serverBoards.get(server.getSERVER()).add(retrievedBoard);
@@ -864,7 +861,7 @@ public class DashboardCtrl implements Initializable {
 
         VBox container = new VBox();
         container.getChildren().addAll(description, errorMessage, input, submit);
-        CustomMenuItem popUpMenu= new CustomMenuItem(container);
+        CustomMenuItem popUpMenu = new CustomMenuItem(container);
         popUpMenu.setHideOnClick(false);
 
         final ContextMenu contextMenu = new ContextMenu();
@@ -873,13 +870,13 @@ public class DashboardCtrl implements Initializable {
         contextMenu.setHideOnEscape(true);
 
         addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue)
+            if (!newValue)
                 contextMenu.hide();
         }));
 
         addBoardButton.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
+            if (event.getButton() == MouseButton.PRIMARY)
                 contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
 
         });

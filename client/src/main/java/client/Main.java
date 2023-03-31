@@ -48,7 +48,7 @@ public class Main extends Application {
         primaryStage.setScene(server);
         primaryStage.show();
         Button connectButton = (Button) serverConnect.getValue().lookup("#connectButton");
-
+        Button connectAdmin = (Button) serverConnect.getValue().lookup("#connectAdmin");
         connectButton.setOnAction(e -> {
             if (serverConnectCtrl.connectToTheServer(e)) {
                 var overview = FXML.load(QuoteOverviewCtrl.class, "client", "scenes", "QuoteOverview.fxml");
@@ -63,7 +63,41 @@ public class Main extends Application {
                 mainCtrl.initialize(primaryStage, overview, add, server, serverConnectCtrl, registration,
                         dashboard, board, taskCreation, taskView, taskEdit);
             }
+
         });
+        connectAdmin.setOnAction(e -> {
+            if (serverConnectCtrl.openAdminConnect(e)) {
+                var overview = FXML.load(QuoteOverviewCtrl.class, "client", "scenes", "QuoteOverview.fxml");
+                var add = FXML.load(AddQuoteCtrl.class, "client", "scenes", "AddQuote.fxml");
+                var registration = FXML.load(RegistrationCtrl.class, "client", "scenes", "Registration.fxml");
+                var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
+                var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
+                var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
+                var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+                var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
+                var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
+                mainCtrl.initialize(primaryStage, overview, add, server, serverConnectCtrl, registration,
+                        dashboard, board, taskCreation, taskView, taskEdit);
+            }
+        });
+        Button connectButton2 = (Button) serverConnect.getValue().lookup("#connectButton2");
+        connectButton2.setOnAction(e -> {
+            if (serverConnectCtrl.checkPassword(e)) {
+                var overview = FXML.load(QuoteOverviewCtrl.class, "client", "scenes", "QuoteOverview.fxml");
+                var add = FXML.load(AddQuoteCtrl.class, "client", "scenes", "AddQuote.fxml");
+                var registration = FXML.load(RegistrationCtrl.class, "client", "scenes", "Registration.fxml");
+                var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
+                var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
+                var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
+                var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+                var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
+                var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
+                mainCtrl.initialize(primaryStage, overview, add, server, serverConnectCtrl, registration,
+                        dashboard, board, taskCreation, taskView, taskEdit);
+            }
+
+        });
+
     }
 
 
