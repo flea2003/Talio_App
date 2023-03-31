@@ -23,6 +23,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -397,6 +398,8 @@ public class DashboardCtrl implements Initializable {
         for(List listCurr : list){
             VBox vBox = new VBox();
             Label label = new Label(listCurr.name);
+            VBox addTask = new VBox();
+            addTask.setVisible(false);
 
             label.setUserData(listCurr.getID()); // set the list id as the label's UserData
 
@@ -421,7 +424,7 @@ public class DashboardCtrl implements Initializable {
             Button addTaskButton = new Button("Add Task");
 
             addTaskButton.setOnAction(e -> {
-                mainCtrl.switchTaskCreation(listCurr, boardId);
+                createTask(listCurr, addTask, boardId);
             });
 
             ListView<Card>listView = new ListView<>();
@@ -467,6 +470,7 @@ public class DashboardCtrl implements Initializable {
             hboxButtons.getChildren().add(addTaskButton);
             hboxButtons.getChildren().add(delete);
             hboxButtons.getChildren().add(edit);
+            vBox.getChildren().add(addTask);
 
             addCards(listCurr, vBox, listView);
         }
@@ -982,6 +986,61 @@ public class DashboardCtrl implements Initializable {
         });
 
         addBoardButton.setContextMenu(contextMenu);
+    }
+
+    public void createTask(List list, VBox vboxEnd, long boardId){
+        vboxEnd.setVisible(true);
+
+        if(vboxEnd.getChildren().size()>1){
+            ObservableList<Node> children = vboxEnd.getChildren();
+            int numChildren = children.size();
+            children.remove(numChildren - 1);
+            children.remove(numChildren - 2);
+        }
+        TextField textField = new TextField("Enter Task Name");
+        Region spacer = new Region();
+        spacer.setPrefHeight(10);
+        vboxEnd.getChildren().add(spacer);
+        vboxEnd.getChildren().add(textField);
+
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                textField.setText("");
+            }else{
+                if (textField.getText().strip().length() == 0) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Can not create a task with no name");
+                    alert.showAndWait();
+                    vboxEnd.setVisible(false);
+                } else {
+                    String taskName = textField.getText();
+                    Board boardCurr=server.getBoard(boardId);
+
+                    Card card = new Card();
+                    card.setName(taskName);
+                    list.cards.add(card);
+
+                    for(int i=0; i<boardCurr.lists.size(); i++){
+                        if(boardCurr.lists.get(i).getID()==list.getID()){
+                            boardCurr.lists.set(i,list);
+                        }
+                    }
+
+                    server.updateBoard(boardCurr);
+
+                }
+            }
+        });
+
+        textField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                Scene scene = textField.getScene();
+                scene.getRoot().requestFocus(); // take the focus away from the textlabel
+                textField.setText("");
+                textField.setVisible(false);
+            }
+        });
+
     }
 }
 

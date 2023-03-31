@@ -92,13 +92,13 @@ public class MainCtrl {
      * @param listCurr th list where the task will be added
      * @param boardId the id of the board the list is in
      */
-    public void switchTaskCreation(List listCurr, long boardId){
-        primaryStage.setTitle("Task Creation");
-        primaryStage.setScene(taskCreation);
-        taskCreationCtrl.setListCurr(listCurr);
-        taskCreationCtrl.setBoardId(boardId);
-        taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
-    }
+//    public void switchTaskCreation(List listCurr, long boardId){
+//        primaryStage.setTitle("Task Creation");
+//        primaryStage.setScene(taskCreation);
+//        taskCreationCtrl.setListCurr(listCurr);
+//        taskCreationCtrl.setBoardId(boardId);
+//        taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
+//    }
 
     /**
      * switches the scene to the dashboard
