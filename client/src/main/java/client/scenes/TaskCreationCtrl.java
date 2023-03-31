@@ -61,7 +61,7 @@ public class TaskCreationCtrl {
         if(event.getSource() == addTask) {
             valueName = extractValue(taskName);
             valueDes = extractValue(taskDescription);
-            if (valueName.equals("")) {
+            if (valueName.strip().length() == 0) {
                 setError("Task Name cannot be empty. Please try again!");
             } else {
                 listCurr = server.getList(listCurr.id);

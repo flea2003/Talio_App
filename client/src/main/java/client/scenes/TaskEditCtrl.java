@@ -64,7 +64,7 @@ public class TaskEditCtrl {
         String valueDes = "";
         valueName = extractValue(name);
         valueDes = extractValue(description);
-        if (valueName.equals("")) {
+        if (valueName.strip().length() == 0) {
             setError("Task Name cannot be empty. Please try again!");
         } else {
 //            server.updateCard(setCard(card));
