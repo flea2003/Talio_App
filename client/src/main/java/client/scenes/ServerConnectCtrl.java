@@ -1,18 +1,25 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import com.google.inject.Provides;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.fxml.LoadException;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 
 
-public class ServerConnectCtrl {
+public class ServerConnectCtrl implements Initializable {
     private final ServerUtils server;
 
     private final MainCtrl mainCtrl;
@@ -66,10 +73,13 @@ public class ServerConnectCtrl {
      * @return if it managed to connect the client to the server
      */
     public boolean connectToTheServer(javafx.event.ActionEvent event) {
-        if (event.getSource() == connectButton) {
-            System.out.println("here");
-            String IP = serverAddress.getText();
-            String server = "http://" + IP + ":8080";
+        if(event.getSource() == connectButton) {
+            String IP=serverAddress.getText();
+            if (IP.isEmpty()) {
+                message.setText("This field can not be left empty");
+                return false;
+            }
+            String server="http://"+IP+":8080";
             message.setText("Searching for the server...");
             if (serverExists(server)) {
                 System.out.print("exists");
@@ -148,5 +158,15 @@ public class ServerConnectCtrl {
             return true;
         }
         return false;
+    }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        serverAddress.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode() == KeyCode.ENTER)
+                    connectButton.fire();
+            }
+        });
     }
 }
