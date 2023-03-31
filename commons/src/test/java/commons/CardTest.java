@@ -22,6 +22,7 @@ class CardTest {
     void initialize() {
         cards = new ArrayList<>();
         lists = new ArrayList<>();
+
         board = new Board(1, lists, "board");
         list = new List(1, cards, "list", board);
         card = new Card("description", "name", list, 1);

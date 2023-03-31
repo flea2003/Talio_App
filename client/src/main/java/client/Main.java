@@ -24,7 +24,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.inject.Guice.createInjector;
 
@@ -33,10 +32,23 @@ public class Main extends Application {
     private static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
+    /**
+     * the main method of the client
+     * @param args an array of command-line arguments that are passed to the application
+     * @throws URISyntaxException if there is an error when constructing a URI
+     * @throws IOException if there is an error with input/output or network connection
+     */
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch();
     }
 
+    /**
+     *
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     */
     @Override
     public void start(Stage primaryStage) {
 
@@ -48,22 +60,52 @@ public class Main extends Application {
         primaryStage.setScene(server);
         primaryStage.show();
         Button connectButton = (Button) serverConnect.getValue().lookup("#connectButton");
-
+        Button connectAdmin = (Button) serverConnect.getValue().lookup("#connectAdmin");
         connectButton.setOnAction(e -> {
             if (serverConnectCtrl.connectToTheServer(e)) {
-                var overview = FXML.load(QuoteOverviewCtrl.class, "client", "scenes", "QuoteOverview.fxml");
-                var add = FXML.load(AddQuoteCtrl.class, "client", "scenes", "AddQuote.fxml");
-                var registration = FXML.load(RegistrationCtrl.class, "client", "scenes", "Registration.fxml");
+                var dashboard = FXML.
+                        load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
+                var board = FXML.
+                        load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
+                var taskCreation = FXML.
+                        load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
+                var taskView = FXML.
+                        load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+                var taskEdit = FXML.
+                        load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
+                var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
+                mainCtrl.initialize(primaryStage, dashboard, board,
+                        taskCreation, taskView, taskEdit);
+            }
+
+        });
+        connectAdmin.setOnAction(e -> {
+            if (serverConnectCtrl.openAdminConnect(e)) {
                 var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
                 var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
                 var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
                 var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
                 var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
                 var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-                mainCtrl.initialize(primaryStage, overview, add, server, serverConnectCtrl, registration,
+                mainCtrl.initialize(primaryStage,
                         dashboard, board, taskCreation, taskView, taskEdit);
             }
         });
+        Button connectButton2 = (Button) serverConnect.getValue().lookup("#connectButton2");
+        connectButton2.setOnAction(e -> {
+            if (serverConnectCtrl.checkPassword(e)) {
+                var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
+                var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
+                var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
+                var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+                var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
+                var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
+                mainCtrl.initialize(primaryStage,
+                        dashboard, board, taskCreation, taskView, taskEdit);
+            }
+
+        });
+
     }
 
 

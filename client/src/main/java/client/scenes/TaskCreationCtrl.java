@@ -1,11 +1,11 @@
 package client.scenes;
 
-import client.Main;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import commons.Subtask;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -13,6 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class TaskCreationCtrl {
@@ -39,12 +40,21 @@ public class TaskCreationCtrl {
 
     private long boardId;
 
+    /**
+     * constructor
+     * @param server the current server
+     * @param mainCtrl a reference to the MainCtrl
+     */
     @Inject
     public TaskCreationCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
 
+    /**
+     * processes the click of the addTask button
+     * @param event the click of the addTask button
+     */
     @FXML
     public void processClick(javafx.event.ActionEvent event){
         String valueName = "";
@@ -53,7 +63,7 @@ public class TaskCreationCtrl {
         if(event.getSource() == addTask) {
             valueName = extractValue(taskName);
             valueDes = extractValue(taskDescription);
-            if (valueName.equals("")) {
+            if (valueName.strip().length() == 0) {
                 setError("Task Name cannot be empty. Please try again!");
             } else {
                 listCurr = server.getList(listCurr.id);
@@ -77,6 +87,10 @@ public class TaskCreationCtrl {
         }
     }
 
+    /**
+     * responsible for enabling 'enter' to act as a fire for the button
+     * @param e an event from the keyboard
+     */
     public void keyPressed(KeyEvent e) {
         if (Objects.requireNonNull(e.getCode()) == KeyCode.ENTER) {
             String taskNameText = extractValue(taskName);
@@ -96,10 +110,18 @@ public class TaskCreationCtrl {
         error.setText(err);
     }
 
+    /**
+     * sets the current list
+     * @param listCurr the current list
+     */
     public void setListCurr(List listCurr) {
         this.listCurr = listCurr;
     }
 
+    /**
+     * sets the board id
+     * @param boardId the id of the board
+     */
     public void setBoardId(long boardId) {
         this.boardId = boardId;
     }
