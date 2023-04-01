@@ -14,18 +14,30 @@
  * limitations under the License.
  */
 package client.scenes;
-
+import client.scenes.services.*;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Pair;
+
+import java.io.IOException;
+
+import static client.Main.FXML;
+import static com.google.inject.Guice.createInjector;
+import static org.glassfish.hk2.utilities.ServiceLocatorUtilities.createAndPopulateServiceLocator;
 
 public class MainCtrl {
 
-    private Stage primaryStage;;
+
+    private Stage primaryStage;
+    private Scene overview;
+    private Scene add;
     private TaskViewCtrl taskViewCtrl;
     private TaskCreationCtrl taskCreationCtrl;
     private DashboardCtrl dashboardCtrl;
@@ -77,6 +89,12 @@ public class MainCtrl {
         this.taskCreationCtrl = taskCreation.getKey();
 
         switchDashboard("");
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+
+            }
+        });
     }
 
     /**
@@ -92,13 +110,11 @@ public class MainCtrl {
      * @param listCurr th list where the task will be added
      * @param boardId the id of the board the list is in
      */
-//    public void switchTaskCreation(List listCurr, long boardId){
-//        primaryStage.setTitle("Task Creation");
-//        primaryStage.setScene(taskCreation);
-//        taskCreationCtrl.setListCurr(listCurr);
-//        taskCreationCtrl.setBoardId(boardId);
-//        taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
-//    }
+    public void switchTaskCreation(List listCurr, long boardId){
+        var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
+        taskCreation.getKey().sendData(new Scene(taskCreation.getValue()), boardId, listCurr);
+        taskCreation.getKey().start(primaryStage);
+    }
 
     /**
      * switches the scene to the dashboard
@@ -124,10 +140,27 @@ public class MainCtrl {
      * @param boardCurr the board the card is in
      */
     public void switchTaskView(Card q, Board boardCurr){
-        primaryStage.setTitle("View Task");
-        primaryStage.setScene(taskView);
-        taskViewCtrl.setBoardCurr(boardCurr);
-        taskViewCtrl.renderInfo(q);
+        if(taskViews.getInstance().isOpened(q))
+            return;
+
+
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("client/src/main/resources/client/scenes/TaskView.fxml"));
+//        Parent root = null;
+//        try {
+//            root = loader.load();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        TaskViewCtrl controller = loader.getController();
+//
+//        controller.sendData(new Scene(root), q, boardCurr);
+//        controller.start(null);
+//        taskViews.getInstance().add(controller);
+
+        var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+        taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
+        taskView.getKey().start(null);
+        taskViews.getInstance().add(taskView.getKey());
     }
 
     /**
@@ -136,10 +169,15 @@ public class MainCtrl {
      * @param boardCurr the board the card is in
      */
     public void switchEdit(Card q, Board boardCurr){
-        primaryStage.setTitle("Edit Task");
-        primaryStage.setScene(taskEdit);
-        taskEditCtrl.setBoardCurr(boardCurr);
-        taskEditCtrl.renderInfo(q);
+        TaskViewCtrl controller = taskViews.getInstance().getCotroller(q);
+        Stage viewStage = controller.getStage();
+        if(viewStage == null)
+            return;
+        taskViews.getInstance().remove(controller);
+        var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
+        taskEdit.getKey().sendData(new Scene(taskEdit.getValue()), q, boardCurr);
+        taskEdit.getKey().start(viewStage);
+        taskEdits.getInstance().add(taskEdit.getKey());
     }
 
     /**
@@ -150,4 +188,19 @@ public class MainCtrl {
         switchDashboard("deleted!");
     }
 
+    public void reallySwitchTaskView(Card q, Board boardCurr, Stage stage) {
+        if(taskViews.getInstance().isOpened(q))
+        return;
+
+        var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+        taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
+        taskView.getKey().start(stage);
+        taskViews.getInstance().add(taskView.getKey());
+    }
+
+    public void closeStages() {
+        taskCreations.getInstance().closeAll();
+        taskViews.getInstance().closeAll();
+        taskEdits.getInstance().closeAll();
+    }
 }

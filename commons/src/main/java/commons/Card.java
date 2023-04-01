@@ -5,9 +5,12 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.ArrayList;
 
 @Entity
 public class Card {
@@ -15,6 +18,13 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
+
+    /**
+     * link the card to its subtasks
+     */
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    public java.util.List<Subtask> subtasks;
 
     public String description;
 
@@ -34,6 +44,7 @@ public class Card {
      * @param numberInTheList the number of the card in the list
      */
     public Card(String description, String name, List list, int numberInTheList) {
+        subtasks = new ArrayList<>();
         this.description = description;
         this.name = name;
         this.list = list;
@@ -60,6 +71,22 @@ public class Card {
      */
     public void setList(List list) {
         this.list = list;
+    }
+
+    /**
+     * a getter for the list of subtasks
+     * @return the subtasks
+     */
+    public java.util.List<Subtask> getSubtasks() {
+        return subtasks;
+    }
+
+    /**
+     * a setter for the list of subtasks
+     * @param subtasks the tasks of a card
+     */
+    public void setSubtasks(java.util.List<Subtask> subtasks) {
+        this.subtasks = subtasks;
     }
 
     /**
