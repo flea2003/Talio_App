@@ -22,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Pair;
@@ -111,9 +112,13 @@ public class MainCtrl {
      * @param boardId the id of the board the list is in
      */
     public void switchTaskCreation(List listCurr, long boardId){
-        var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
-        taskCreation.getKey().sendData(new Scene(taskCreation.getValue()), boardId, listCurr);
-        taskCreation.getKey().start(primaryStage);
+        Stage stage = new Stage();
+        taskCreationCtrl.sendData(stage, taskCreation, boardId, listCurr);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(primaryStage.getScene().getWindow());
+        stage.setTitle("Create a Task");
+        stage.setScene(taskCreation);
+        stage.showAndWait();
     }
 
     /**
