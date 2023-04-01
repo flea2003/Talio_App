@@ -122,7 +122,6 @@ public class BoardController {
      */
     @PostMapping("/update")
     public ResponseEntity<Board> updateBoard(@RequestBody Board board){
-        System.out.println(board);
         repo.save(board);
         messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(board);

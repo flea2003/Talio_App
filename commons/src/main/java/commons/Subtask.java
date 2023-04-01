@@ -25,10 +25,13 @@ public class Subtask {
     /**
      * to link the subtask to a specific card
      */
+
     @ManyToOne
     @JoinColumn(name = "card_id")
     @JsonBackReference
     private Card card;
+
+    public Subtask() {}
 
     /**
      * A subtask's constructor
@@ -46,10 +49,11 @@ public class Subtask {
         this.card = card;
     }
 
-    public Subtask(String name, int numberInTheCard, Card card) {
+    public Subtask(String name, String description, int numberInTheCard, Card card) {
         this.name = name;
         this.numberInTheCard = numberInTheCard;
         this.card = card;
+        this.description = description;
     }
 
     /**

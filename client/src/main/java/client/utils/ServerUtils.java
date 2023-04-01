@@ -104,6 +104,7 @@ public class ServerUtils {
      */
     public Card updateCard(Card card){
         String endpoint = String.format("api/cards");
+
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -309,9 +310,6 @@ public class ServerUtils {
                 }
             }
         }
-        System.out.println(board);
-        System.out.println();
-        System.out.println();
         String endpoint = String.format("api/boards/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)

@@ -84,6 +84,9 @@ public class TaskViewCtrl {
      * @param card the card to show
      */
     public void renderInfo(Card card){
+        while(subTasks.getChildren().size() >= 2){
+            subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
+        }
         currCard = card;
         taskName.setText(card.name);
         taskDescription.setText(card.description);
@@ -94,20 +97,24 @@ public class TaskViewCtrl {
         for(Subtask subtask : card.getSubtasks()){
             createSubtask(subtask);
         }
-        addSubtask.setOnAction(e -> {
-            addSubtask();
-        });
-        System.out.println("MATA1");
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
             @Override
             public void processData(String data) {
-                card.addSubtask(new Subtask(data, subTasks.getChildren().size(), card));
-                server.updateCard(card);
+                //System.out.println(data);
+                currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), card));
+                //System.out.println(currCard);
+                server.updateBoard(currCard.getList().board);
             }
 
             @Override
             public void addLabel(Pane node) {
-                node.getChildren().add(this.textField);
+                System.out.println("HAHA");
+                if(node.getChildren().get(node.getChildren().size() - 1) instanceof TextField){
+                    return;
+                }
+                else{
+                    node.getChildren().add(this.textField);
+                }
             }
 
             @Override
@@ -117,11 +124,12 @@ public class TaskViewCtrl {
 
             @Override
             public Pane addButton() {
-                subTasks.getChildren().add(this);
+                if(!(taskListHBox.getChildren().get(taskListHBox.getChildren().size() - 1) instanceof ButtonTalio)){
+                    taskListHBox.getChildren().add(this);
+                }
                 return subTasks;
             }
         };
-        System.out.println("MATA2");
 
         return;
     }
@@ -213,7 +221,7 @@ public class TaskViewCtrl {
                     if(textField.getText().strip().length()!=0) {
                         String newText = textField.getText();
 
-                        Subtask subtask = new Subtask(newText, 1, card);
+                        Subtask subtask = new Subtask(newText, "", 1, card);
                         card.addSubtask(subtask);
                         server.addCard(card);
                         hasTextField = false;
@@ -234,7 +242,7 @@ public class TaskViewCtrl {
 
     public void createSubtask(Subtask subtask){
         HBox hbox = new HBox();
-        hbox.getChildren().add(new CheckBox());
+        hbox.getChildren().add(new CheckBox(subtask.getName()));
         subTasks.getChildren().add(hbox);
     }
 }

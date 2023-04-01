@@ -1,23 +1,17 @@
 package client.services;
 
-import commons.Board;
-import commons.Card;
-import commons.List;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 
 public abstract class ButtonTalio extends Button {
     public TextField textField;
+
+    /**
+     * Constructs a button with no text on it
+     * @param textLabel name of the prompt of the label
+     */
     public ButtonTalio(String textLabel) {
         super();
         Pane node = addButton();
@@ -26,6 +20,12 @@ public abstract class ButtonTalio extends Button {
         });
     }
 
+    /**
+     * Constructor which sets the name of the button to textButton
+     * and the name of the placeholder label to textLabel
+     * @param textButton name of the button
+     * @param textLabel name of the prompt of the label
+     */
     public ButtonTalio(String textButton, String textLabel) {
         super(textButton);
         Pane node = addButton();
@@ -34,6 +34,12 @@ public abstract class ButtonTalio extends Button {
         });
     }
 
+    /**
+     * generates a textfield which takes input from user and
+     * dissapears when enter is pressed or it gets unfocused
+     * @param textLabel prompt of the label
+     * @param node the pane where the textlabel is located
+     */
     public void generateTextField(String textLabel, Pane node){
         textField = new TextField();
         textField.setPromptText(textLabel);
@@ -44,7 +50,6 @@ public abstract class ButtonTalio extends Button {
             } else {
                 if (textField.getText().strip().length() != 0) {
                     String data = textField.getText();
-                    System.out.println(data);
                     processData(data);
                     deleteLabel(node);
                 }
@@ -58,9 +63,29 @@ public abstract class ButtonTalio extends Button {
         });
     }
 
+    /**
+     * provide an implimentation on
+     * what to do with the data
+     * @param data the string that should be sent to the database
+     */
     public abstract void processData(String data);
+
+    /**
+     * provide an implimentation on where to add the label
+     * @param node the structure where the node is added
+     */
     public abstract void addLabel(Pane node);
+
+    /**
+     * provide an implimentation on how to delete the label
+     * @param node pane where the label is right now
+     */
     public abstract void deleteLabel(Pane node);
+
+    /**
+     * provide an implimentation on how to add the button
+     * @return the pane where the label is added so we can use it further
+     */
     public abstract Pane addButton();
 
 
