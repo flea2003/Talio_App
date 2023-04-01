@@ -309,7 +309,9 @@ public class ServerUtils {
                 }
             }
         }
-
+        System.out.println(board);
+        System.out.println();
+        System.out.println();
         String endpoint = String.format("api/boards/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)

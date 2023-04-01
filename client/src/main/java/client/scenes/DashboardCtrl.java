@@ -98,9 +98,8 @@ public class DashboardCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        innerBoardsPane.set
         String currentServer = server.getServer();
-        if(serverBoards ==null) {
+        if(serverBoards == null) {
             serverBoards = new HashMap<>();
         }
         if (serverBoards.get(currentServer) == null) {
@@ -144,24 +143,6 @@ public class DashboardCtrl implements Initializable {
 
         for (Board boardCurr : boards) {
             Label label = new Label(boardCurr.name);
-
-//            //create delete icon
-//            Image imgDelete =new Image("pictures/delete_icon.png");
-//            ImageView imageDelete = new ImageView(imgDelete);
-//            imageDelete.setFitWidth(20);
-//            imageDelete.setFitHeight(20);
-//            Rectangle backroundDelete = new Rectangle(20, 20);
-//            backroundDelete.setFill(Color.TRANSPARENT);
-//            Node deleteBoard = new Group(backroundDelete, imageDelete);
-//
-//            //create edit icon
-//            Image imgEdit =new Image("pictures/edit_icon.png");
-//            ImageView imageEdit = new ImageView(imgEdit);
-//            imageEdit.setFitWidth(20);
-//            imageEdit.setFitHeight(20);
-//            Rectangle backroundEdit = new Rectangle(20, 20);
-//            backroundEdit.setFill(Color.TRANSPARENT);
-//            Node editBoard = new Group(backroundEdit, imageEdit);
 
             //create delete icon
             Image dots = new Image("pictures/dots.png");
@@ -242,7 +223,6 @@ public class DashboardCtrl implements Initializable {
                     children.remove(numChildren - 1);
                     children.remove(numChildren - 2);
                 }
-                TextField textField = new TextField("Enter List Name");
                 Region spacer = new Region();
                 spacer.setPrefHeight(10);
                 vboxEnd.getChildren().add(spacer);
@@ -709,48 +689,48 @@ public class DashboardCtrl implements Initializable {
      * @param vboxEnd the vbox the list is in
      * @param boardId the id of the board the list will be in
      */
-    public void createList(VBox vboxEnd, long boardId){
-        if(vboxEnd.getChildren().size()>1){
-            ObservableList<Node> children = vboxEnd.getChildren();
-            int numChildren = children.size();
-            children.remove(numChildren - 1);
-            children.remove(numChildren - 2);
-        }
-        TextField textField = new TextField("Enter List Name");
-        Region spacer = new Region();
-        spacer.setPrefHeight(10);
-        vboxEnd.getChildren().add(spacer);
-        vboxEnd.getChildren().add(textField);
-
-        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                textField.setText("");
-            } else {
-                if (textField.getText().strip().length() != 0) {
-                    String newText = textField.getText();
-
-                    Board boardCurr = server.getBoard(boardId);
-                    List newList=new List(new ArrayList<Card>(), newText,
-                            boardCurr, boardCurr.lists.size() + 1);
-                    newList.setBoard(boardCurr);
-                    boardCurr.lists.add(newList);
-
-                    server.updateBoard(boardCurr);//send the text to the database
-
-
-                    vboxEnd.getChildren().remove(textField);
-                    vboxEnd.getChildren().remove(spacer);
-                }
-            }
-        });
-
-        textField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                vboxEnd.getChildren().remove(textField);
-                vboxEnd.getChildren().remove(spacer);
-            }
-        });
-    }
+//    public void createList(VBox vboxEnd, long boardId){
+//        if(vboxEnd.getChildren().size()>1){
+//            ObservableList<Node> children = vboxEnd.getChildren();
+//            int numChildren = children.size();
+//            children.remove(numChildren - 1);
+//            children.remove(numChildren - 2);
+//        }
+//        TextField textField = new TextField("Enter List Name");
+//        Region spacer = new Region();
+//        spacer.setPrefHeight(10);
+//        vboxEnd.getChildren().add(spacer);
+//        vboxEnd.getChildren().add(textField);
+//
+//        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+//            if (newValue) {
+//                textField.setText("");
+//            } else {
+//                if (textField.getText().strip().length() != 0) {
+//                    String newText = textField.getText();
+//
+//                    Board boardCurr = server.getBoard(boardId);
+//                    List newList=new List(new ArrayList<Card>(), newText,
+//                            boardCurr, boardCurr.lists.size() + 1);
+//                    newList.setBoard(boardCurr);
+//                    boardCurr.lists.add(newList);
+//
+//                    server.updateBoard(boardCurr);//send the text to the database
+//
+//
+//                    vboxEnd.getChildren().remove(textField);
+//                    vboxEnd.getChildren().remove(spacer);
+//                }
+//            }
+//        });
+//
+//        textField.setOnKeyPressed(event -> {
+//            if (event.getCode() == KeyCode.ENTER) {
+//                vboxEnd.getChildren().remove(textField);
+//                vboxEnd.getChildren().remove(spacer);
+//            }
+//        });
+//    }
 
     /**
      * adds a new card to a list

@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -29,16 +30,14 @@ public abstract class ButtonTalio extends Button {
         super(textButton);
         Pane node = addButton();
         setOnAction(e -> {
-            System.out.println("HAHAHHAHAH");
             generateTextField(textLabel, node);
         });
     }
 
     public void generateTextField(String textLabel, Pane node){
-        TextField textField = new TextField();
-        //textField.setPromptText(textLabel);
+        textField = new TextField();
+        textField.setPromptText(textLabel);
         addLabel(node);
-        System.out.println("MATA BLEADI");
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 textField.setText("");

@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.services.ButtonTalio;
 import client.utils.ServerUtils;
 import commons.Board;
 import commons.Card;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -61,6 +63,9 @@ public class TaskViewCtrl {
     private Button addSubtask;
     private boolean hasTextField = false;
 
+    @FXML
+    HBox taskListHBox;
+
     /**
      * constructor
      * @param server the current server
@@ -92,6 +97,32 @@ public class TaskViewCtrl {
         addSubtask.setOnAction(e -> {
             addSubtask();
         });
+        System.out.println("MATA1");
+        ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
+            @Override
+            public void processData(String data) {
+                card.addSubtask(new Subtask(data, subTasks.getChildren().size(), card));
+                server.updateCard(card);
+            }
+
+            @Override
+            public void addLabel(Pane node) {
+                node.getChildren().add(this.textField);
+            }
+
+            @Override
+            public void deleteLabel(Pane node) {
+                node.getChildren().remove(this.textField);
+            }
+
+            @Override
+            public Pane addButton() {
+                subTasks.getChildren().add(this);
+                return subTasks;
+            }
+        };
+        System.out.println("MATA2");
+
         return;
     }
 

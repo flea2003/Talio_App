@@ -70,13 +70,20 @@ public class TaskCreationCtrl {
                 Board boardCurr=server.getBoard(boardId);
 
                 Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
+
+                System.out.println(listCurr);
+                System.out.println("INAINTE");
                 listCurr.cards.add(card);
+                System.out.println(listCurr);
+                System.out.println("DUPA");
 
                 for(int i=0; i<boardCurr.lists.size(); i++){
                     if(boardCurr.lists.get(i).getID()==listCurr.getID()){
                         boardCurr.lists.set(i,listCurr);
                     }
                 }
+
+                System.out.println(boardCurr);
 
                 server.updateBoard(boardCurr);
 
