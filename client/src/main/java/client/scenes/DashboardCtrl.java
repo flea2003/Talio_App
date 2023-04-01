@@ -434,8 +434,12 @@ public class DashboardCtrl implements Initializable {
             addTaskButton.getStyleClass().add("connectButton");
             addTaskButton.setStyle("-fx-text-fill: rgb(250,240,230)");
 
-            addTaskButton.setOnAction(e -> {
-                createTask(listCurr, addTask, boardId);
+            addTaskButton.setOnMouseClicked(e -> {
+                if( e.getClickCount() == 2){
+                    mainCtrl.switchTaskCreation(listCurr, boardId);
+                } else {
+                    createTask(listCurr, addTask, boardId);
+                }
             });
 
             ListView<Card> listView = new ListView<>();
@@ -478,6 +482,7 @@ public class DashboardCtrl implements Initializable {
             vBox.getChildren().add(label);
             vBox.getChildren().add(listView);
             vBox.getChildren().add(hboxButtons);
+            vBox.getChildren().add(addTask);
             HBox buttons = new HBox(addTaskButton, delete, edit);
             buttons.setSpacing(5);
             hboxButtons.getChildren().add(buttons);
