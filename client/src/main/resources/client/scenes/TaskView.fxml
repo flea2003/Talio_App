@@ -58,7 +58,7 @@
                <children>
                   <HBox>
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nested Task List">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Task List">
                            <font>
                               <Font size="18.0" />
                            </font>

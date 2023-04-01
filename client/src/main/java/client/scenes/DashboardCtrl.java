@@ -125,7 +125,6 @@ public class DashboardCtrl implements Initializable {
                 }
             });
         });
-        });
     }
 
     /**

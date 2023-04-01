@@ -247,7 +247,7 @@ public class ServerUtils {
      * @return the gotten board
      */
     public commons.Board getBoard(long id){
-        String endpoint = String.format("api/boards/%2d", id);
+        String endpoint = String.format("api/boards/%d", id);
         var res = ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)

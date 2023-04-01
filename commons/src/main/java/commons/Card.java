@@ -164,4 +164,12 @@ public class Card {
     public String getName() {
         return this.name;
     }
+
+    /**
+     * adds a new subtask to the list of subtasks
+     * @param subtask
+     */
+    public void addSubtask(Subtask subtask){
+        subtasks.add(subtask);
+    }
 }

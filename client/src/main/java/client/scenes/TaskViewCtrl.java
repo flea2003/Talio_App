@@ -59,7 +59,7 @@ public class TaskViewCtrl {
     private VBox subTasks;
     @FXML
     private Button addSubtask;
-    private boolean hasTextField;
+    private boolean hasTextField = false;
 
     /**
      * constructor
@@ -168,35 +168,37 @@ public class TaskViewCtrl {
 
     @FXML
     public void addSubtask(){
-        TextField textField = new TextField();
-        if(hasTextField) {
-            subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
-            hasTextField = false;
+        if(hasTextField){
+           return;
         }
+        else{
+            hasTextField = true;
+            TextField textField = new TextField();
+            subTasks.getChildren().add(textField);
+            textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    textField.setText("");
+                }else{
+                    if(textField.getText().strip().length()!=0) {
+                        String newText = textField.getText();
 
-        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                textField.setText("");
-            }else{
-                if(textField.getText().strip().length()!=0) {
+                        Subtask subtask = new Subtask(newText, 1, card);
+                        card.addSubtask(subtask);
+                        server.addCard(card);
+                        hasTextField = false;
+                        subTasks.getChildren().remove(textField);
+                    }
+                }
+            });
+            textField.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
                     String newText = textField.getText();
-
-                    Subtask subtask = new Subtask(newText);
-                    card.add(subtask);
-                    server.save(subtask);
-
+                    hasTextField = false;
                     subTasks.getChildren().remove(textField);
                 }
-            }
-        });
+            });
+        }
 
-        textField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                String newText = textField.getText();
-                vboxEnd.getChildren().remove(textField);
-                vboxEnd.getChildren().remove(spacer);
-            }
-        });
     }
 
     public void createSubtask(Subtask subtask){

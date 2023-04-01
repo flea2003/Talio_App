@@ -46,6 +46,12 @@ public class Subtask {
         this.card = card;
     }
 
+    public Subtask(String name, int numberInTheCard, Card card) {
+        this.name = name;
+        this.numberInTheCard = numberInTheCard;
+        this.card = card;
+    }
+
     /**
      * a getter for the id
      * @return the long id
