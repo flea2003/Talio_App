@@ -51,4 +51,11 @@
          </BorderPane.margin>
 </AnchorPane>
    </center>
+   <top>
+      <ImageView fitHeight="76.0" fitWidth="200.0" BorderPane.alignment="CENTER">
+         <image>
+            <Image url="/pictures/talio.png" />
+         </image>
+      </ImageView>
+   </top>
 </BorderPane>
