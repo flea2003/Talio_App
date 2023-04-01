@@ -148,8 +148,8 @@ public class ServerConnectCtrl implements Initializable {
                 message.setText("Incorrect Password");
             } else {
                 connectButton.fire();
+                return true;
             }
-            return true;
         }
         return false;
     }

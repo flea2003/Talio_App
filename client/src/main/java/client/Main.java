@@ -81,7 +81,7 @@ public class Main extends Application {
         });
         Button connectButton2 = (Button) serverConnect.getValue().lookup("#connectButton2");
         connectButton2.setOnAction(e -> {
-            if (serverConnectCtrl.checkPassword(e)) {
+            if (serverConnectCtrl.checkPassword(e) && serverConnectCtrl.connectToTheServer(e)) {
                 var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
                 var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
                 var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
