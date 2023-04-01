@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.Main;
+import client.services.ButtonTalio;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -222,15 +223,58 @@ public class DashboardCtrl implements Initializable {
             hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
         }
 
-        Button addListButton = new Button("Create List");
+        ButtonTalio addListButton = new ButtonTalio("Create List", "Add List Name") {
+            @Override
+            public void processData(String data) {
+                Board boardCurr = server.getBoard(id);
+                List newList=new List(new ArrayList<Card>(), data,
+                        boardCurr, boardCurr.lists.size() + 1);
+                newList.setBoard(boardCurr);
+                boardCurr.lists.add(newList);
+                server.updateBoard(boardCurr);
+            }
 
-        VBox vboxEnd = new VBox();
-        vboxEnd.getChildren().add(addListButton);
-        hboxList.getChildren().add(vboxEnd);
+            @Override
+            public void addLabel(Pane vboxEnd) {
+                if(vboxEnd.getChildren().size()>1){
+                    ObservableList<Node> children = vboxEnd.getChildren();
+                    int numChildren = children.size();
+                    children.remove(numChildren - 1);
+                    children.remove(numChildren - 2);
+                }
+                TextField textField = new TextField("Enter List Name");
+                Region spacer = new Region();
+                spacer.setPrefHeight(10);
+                vboxEnd.getChildren().add(spacer);
+                vboxEnd.getChildren().add(textField);
+            }
 
-        addListButton.setOnAction(e -> {
-            createList(vboxEnd, id);
-        });
+            @Override
+            public void deleteLabel(Pane vboxEnd) {
+                vboxEnd.getChildren().remove(textField);
+                Region spacer = new Region();
+                spacer.setPrefHeight(10);
+                vboxEnd.getChildren().remove(spacer);
+            }
+
+            @Override
+            public Pane addButton() {
+                VBox vboxEnd = new VBox();
+                vboxEnd.getChildren().add(this);
+                hboxList.getChildren().add(vboxEnd);
+                return vboxEnd;
+            }
+        };
+
+//        Button addListButton = new Button("Create List");
+//
+//        VBox vboxEnd = new VBox();
+//        vboxEnd.getChildren().add(addListButton);
+//        hboxList.getChildren().add(vboxEnd);
+
+//        addListButton.setOnAction(e -> {
+//            createList(vboxEnd, id);
+//        });
 
         if (server.getBoard(id).lists != null && server.getBoard(id).lists.size() > 0) {
             if (hboxList.getChildren().size() > 1) {
@@ -702,7 +746,6 @@ public class DashboardCtrl implements Initializable {
 
         textField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                String newText = textField.getText();
                 vboxEnd.getChildren().remove(textField);
                 vboxEnd.getChildren().remove(spacer);
             }
