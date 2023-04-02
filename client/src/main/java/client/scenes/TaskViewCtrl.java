@@ -94,21 +94,21 @@ public class TaskViewCtrl {
             taskNo=new Text();
         }
         taskNo.setText("Task No. " + card.getNumberInTheList());
-        for(Subtask subtask : card.getSubtasks()){
+        for(Subtask subtask : currCard.getSubtasks()){
+            System.out.println(subtask);
             createSubtask(subtask);
         }
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
             @Override
             public void processData(String data) {
                 //System.out.println(data);
-                currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), card));
+                currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), card, 0));
                 //System.out.println(currCard);
                 server.updateBoard(currCard.getList().board);
             }
 
             @Override
             public void addLabel(Pane node) {
-                System.out.println("HAHA");
                 if(node.getChildren().get(node.getChildren().size() - 1) instanceof TextField){
                     return;
                 }
@@ -124,8 +124,13 @@ public class TaskViewCtrl {
 
             @Override
             public Pane addButton() {
-                if(!(taskListHBox.getChildren().get(taskListHBox.getChildren().size() - 1) instanceof ButtonTalio)){
+                if(!(taskListHBox.getChildren().size() >= 5 && taskListHBox.getChildren().get(taskListHBox.getChildren().size() - 5) instanceof ButtonTalio)){
                     taskListHBox.getChildren().add(this);
+                    taskListHBox.getChildren().add(new Button("EDIT"));
+                    taskListHBox.getChildren().add(new Button("DELETE"));
+                    taskListHBox.getChildren().add(new Button("MOVE UP"));
+                    taskListHBox.getChildren().add(new Button("MOVE DOWN"));
+
                 }
                 return subTasks;
             }
@@ -221,7 +226,7 @@ public class TaskViewCtrl {
                     if(textField.getText().strip().length()!=0) {
                         String newText = textField.getText();
 
-                        Subtask subtask = new Subtask(newText, "", 1, card);
+                        Subtask subtask = new Subtask(newText, "", 1, card, 0);
                         card.addSubtask(subtask);
                         server.addCard(card);
                         hasTextField = false;
@@ -242,7 +247,16 @@ public class TaskViewCtrl {
 
     public void createSubtask(Subtask subtask){
         HBox hbox = new HBox();
-        hbox.getChildren().add(new CheckBox(subtask.getName()));
+        CheckBox checkBox = new CheckBox(subtask.getName());
+        checkBox.setSelected(subtask.isCompleted() != 0);
+        hbox.getChildren().add(checkBox);
+        checkBox.setOnAction(e -> {
+            System.out.println(subtask.isCompleted());
+            subtask.switchState();
+            System.out.println(subtask.isCompleted());
+
+            server.updateBoard(currCard.getList().board);
+        });
         subTasks.getChildren().add(hbox);
     }
 }

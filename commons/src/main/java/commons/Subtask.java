@@ -31,6 +31,8 @@ public class Subtask {
     @JsonBackReference
     private Card card;
 
+    public Integer completed;
+
     public Subtask() {}
 
     /**
@@ -41,19 +43,21 @@ public class Subtask {
      * @param numberInTheCard its order in the card
      * @param card the card it is linked to
      */
-    public Subtask(long id, String name, String description, int numberInTheCard, Card card) {
+    public Subtask(long id, String name, String description, int numberInTheCard, Card card, int completed) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.numberInTheCard = numberInTheCard;
         this.card = card;
+        this.completed = 0;
     }
 
-    public Subtask(String name, String description, int numberInTheCard, Card card) {
+    public Subtask(String name, String description, int numberInTheCard, Card card, int completed) {
         this.name = name;
         this.numberInTheCard = numberInTheCard;
         this.card = card;
         this.description = description;
+        this.completed = 0;
     }
 
     /**
@@ -162,5 +166,17 @@ public class Subtask {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public void switchState(){
+        completed = 1 - completed;
+    }
+
+    public int isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(int completed) {
+        this.completed = completed;
     }
 }
