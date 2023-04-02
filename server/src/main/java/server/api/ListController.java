@@ -46,7 +46,7 @@ public class ListController {
      * @return a response (bad request or ok)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<commons.List> getById(@PathVariable("id") long id) {
+    public ResponseEntity<commons.List> getById(@PathVariable("id") Long id) {
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
@@ -74,7 +74,7 @@ public class ListController {
      * @return a response (bad request or ok)
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }

@@ -9951,3 +9951,12 @@ select subtasks0_.card_id as card_id6_3_0_, subtasks0_.id as id1_3_0_, subtasks0
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:1589)
+2023-04-02 18:24:56 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "BOARD" not found; SQL statement:
+select count(*) as col_0_0_ from board board0_ where board0_.id=? [42102-200]
+2023-04-02 18:24:57 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "BOARD" not found; SQL statement:
+select count(*) as col_0_0_ from board board0_ where board0_.id=? [42102-200]
+2023-04-02 18:24:58 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "BOARD" not found; SQL statement:
+select count(*) as col_0_0_ from board board0_ where board0_.id=? [42102-200]

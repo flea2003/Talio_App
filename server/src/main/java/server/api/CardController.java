@@ -33,7 +33,7 @@ public class CardController {
      * @param list_id the list where the cards are at
      * @return a list of the cards
      */
-    public  List<Card> getAllFromList(long list_id){
+    public  List<Card> getAllFromList(Long list_id){
         var optList = repo.findAllByListId(list_id);
         return optList.orElse(null);
     }
@@ -53,7 +53,7 @@ public class CardController {
      * @return a response (bad request or ok)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Card> getById (@PathVariable long id){
+    public ResponseEntity<Card> getById (@PathVariable Long id){
         if(id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
@@ -66,7 +66,7 @@ public class CardController {
      * @return a response (bad request or ok)
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Card> delete(@PathVariable long id){
+    public ResponseEntity<Card> delete(@PathVariable Long id){
         if(id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }

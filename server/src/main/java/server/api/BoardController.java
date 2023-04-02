@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.Board;
+import commons.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class BoardController {
      * @return a response (bad request or ok)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Board> getById(@PathVariable("id") long id) {
+    public ResponseEntity<Board> getById(@PathVariable("id") Long id) {
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
@@ -87,7 +88,7 @@ public class BoardController {
      * @return a response (bad request or ok)
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
 
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
@@ -105,7 +106,7 @@ public class BoardController {
      * @return a response (bad request or ok)
      */
     @PostMapping("/changeName/{id}")
-    public ResponseEntity<Board> changeName(@PathVariable("id") long id,@RequestBody String name){
+    public ResponseEntity<Board> changeName(@PathVariable("id") Long id,@RequestBody String name){
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
@@ -122,6 +123,11 @@ public class BoardController {
      */
     @PostMapping("/update")
     public ResponseEntity<Board> updateBoard(@RequestBody Board board){
+        for(commons.List list : board.getLists()){
+            for(Card card : list.getCards()){
+                System.out.println(card);
+            }
+        }
         repo.save(board);
         messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(board);

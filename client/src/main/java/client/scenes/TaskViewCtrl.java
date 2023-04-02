@@ -7,11 +7,15 @@ import commons.Card;
 import commons.List;
 import commons.Subtask;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -21,6 +25,7 @@ import javafx.scene.text.Text;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class TaskViewCtrl {
 
@@ -62,7 +67,8 @@ public class TaskViewCtrl {
     @FXML
     private Button addSubtask;
     private boolean hasTextField = false;
-
+    @FXML
+    private Text description;
     @FXML
     HBox taskListHBox;
 
@@ -89,7 +95,53 @@ public class TaskViewCtrl {
         }
         currCard = card;
         taskName.setText(card.name);
+
+        addEditFunctionality((Pane)taskName.getParent(), taskName, taskName, e -> {
+            TextField textField = new TextField(taskName.getText());
+            ((Pane) taskName.getParent()).getChildren().set(((Pane) taskName.getParent()).getChildren().indexOf(taskName), textField);
+            textField.setStyle(taskName.getStyle());
+            textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                } else {
+                    if (textField.getText().strip().length() != 0) {
+                        String data = textField.getText();
+                        currCard.name = data;
+                        server.updateBoard(currCard.getList().getBoard());
+                        ((Pane) textField.getParent()).getChildren().set(((Pane) textField.getParent()).getChildren().indexOf(textField), taskName);
+                    }
+                }
+            });
+
+            textField.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    ((Pane) textField.getParent()).getChildren().set(((Pane) textField.getParent()).getChildren().indexOf(textField), taskName);
+                }
+            });
+        });
+
         taskDescription.setText(card.description);
+        addEditFunctionality((Pane)description.getParent(), description, taskDescription, e -> {
+            TextField textField = new TextField(taskDescription.getText());
+            ((Pane) taskDescription.getParent()).getChildren().set(((Pane) taskDescription.getParent()).getChildren().indexOf(taskDescription), textField);
+            textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                } else {
+                    if (textField.getText().strip().length() != 0) {
+                        String data = textField.getText();
+                        currCard.description = data;
+                        server.updateBoard(currCard.getList().getBoard());
+                        ((Pane) textField.getParent()).getChildren().set(((Pane) textField.getParent()).getChildren().indexOf(textField), taskDescription);
+                    }
+                }
+            });
+
+            textField.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    ((Pane) textField.getParent()).getChildren().set(((Pane) textField.getParent()).getChildren().indexOf(textField), taskDescription);
+                }
+            });
+        });
+
         if(taskNo==null){
             taskNo=new Text();
         }
@@ -124,18 +176,19 @@ public class TaskViewCtrl {
 
             @Override
             public Pane addButton() {
-                if(!(taskListHBox.getChildren().size() >= 5 && taskListHBox.getChildren().get(taskListHBox.getChildren().size() - 5) instanceof ButtonTalio)){
+                if(!(taskListHBox.getChildren().size() >= 1 && taskListHBox.getChildren().get(taskListHBox.getChildren().size() - 1) instanceof ButtonTalio)){
                     taskListHBox.getChildren().add(this);
-                    taskListHBox.getChildren().add(new Button("EDIT"));
-                    taskListHBox.getChildren().add(new Button("DELETE"));
-                    taskListHBox.getChildren().add(new Button("MOVE UP"));
-                    taskListHBox.getChildren().add(new Button("MOVE DOWN"));
-
                 }
                 return subTasks;
             }
         };
-
+        addSubtask.setStyle("-fx-background-color: transparent;");
+        addSubtask.setOnMouseEntered(e -> {
+            addSubtask.setStyle("-fx-background-color: #e0e0e0;");
+        });
+        addSubtask.setOnMouseExited(e -> {
+            addSubtask.setStyle("-fx-background-color: transparent;");
+        });
         return;
     }
 
@@ -250,6 +303,26 @@ public class TaskViewCtrl {
         CheckBox checkBox = new CheckBox(subtask.getName());
         checkBox.setSelected(subtask.isCompleted() != 0);
         hbox.getChildren().add(checkBox);
+        ImageView imageView = new ImageView(new Image("pictures/edit_icon.png"));
+        imageView.setFitWidth(15);
+        imageView.setFitHeight(15);
+        StackPane container = new StackPane(imageView);
+        hbox.getChildren().add(container);
+        imageView = new ImageView(new Image("pictures/down_arrow.png"));
+        imageView.setFitWidth(15);
+        imageView.setFitHeight(15);
+        container = new StackPane(imageView);
+        hbox.getChildren().add(container);
+        imageView = new ImageView(new Image("pictures/up_arrow.png"));
+        imageView.setFitWidth(15);
+        imageView.setFitHeight(15);
+        container = new StackPane(imageView);
+        hbox.getChildren().add(container);
+        imageView = new ImageView(new Image("pictures/delete_icon.png"));
+        imageView.setFitWidth(15);
+        imageView.setFitHeight(15);
+        container = new StackPane(imageView);
+        hbox.getChildren().add(container);
         checkBox.setOnAction(e -> {
             System.out.println(subtask.isCompleted());
             subtask.switchState();
@@ -258,5 +331,37 @@ public class TaskViewCtrl {
             server.updateBoard(currCard.getList().board);
         });
         subTasks.getChildren().add(hbox);
+
+    }
+
+    /**
+     * This method takes
+     * @param pane
+     * @param control
+     * @param consumer
+     */
+    void addEditFunctionality(Pane pane, Node afterWhat, Node control, Consumer consumer){
+        Image edit = new Image("pictures/edit_icon.png");
+        ImageView editView = new ImageView(edit);
+        editView.setFitWidth(12);
+        editView.setFitHeight(12);
+        StackPane container = new StackPane(editView);
+        editView.setPickOnBounds(true);
+        container.setStyle("-fx-background-color: transparent;");
+        container.setOnMouseEntered(e -> {
+            container.setStyle("-fx-background-color: #e0e0e0;");
+        });
+        container.setOnMouseExited(e -> {
+            container.setStyle("-fx-background-color: transparent;");
+        });
+        container.setPickOnBounds(true); // set pickOnBounds to true
+        if(pane.getChildren().size() == pane.getChildren().indexOf(afterWhat) + 1){
+            pane.getChildren().add(container);
+        }
+        if(pane.getChildren().get(pane.getChildren().indexOf(afterWhat) + 1) instanceof StackPane){
+            return;
+        }
+        pane.getChildren().add(pane.getChildren().indexOf(afterWhat) + 1, container);
+        editView.setOnMouseClicked(consumer::accept);
     }
 }

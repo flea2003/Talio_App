@@ -74,11 +74,10 @@ public class TaskCreationCtrl {
                 listCurr.cards.add(card);
 
                 for(int i=0; i<boardCurr.lists.size(); i++){
-                    if(boardCurr.lists.get(i).getID()==listCurr.getID()){
+                    if(Objects.equals(boardCurr.lists.get(i).getID(), listCurr.getID())){
                         boardCurr.lists.set(i,listCurr);
                     }
                 }
-
                 server.updateBoard(boardCurr);
 
                 taskName.setText("");

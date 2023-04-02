@@ -37,14 +37,18 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </HBox>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="122.13672256469727">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Text>
-            <Pane style="-fx-background-color: #d3d3d3; -fx-padding: 10px; -fx-border-radius: 10px;">
+            <HBox>
                <children>
-                  <Text fx:id="taskDescription" layoutX="5.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." wrappingWidth="557.4701118469238">
+                  <Text fx:id="description" strokeType="OUTSIDE" strokeWidth="0.0" text="Description">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
+            <Pane prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #d3d3d3; -fx-padding: 10px; -fx-border-radius: 10px;">
+               <children>
+                  <Text fx:id="taskDescription" layoutX="5.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -65,14 +69,13 @@
                         </Text>
                      </children>
                      <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" top="10.0" />
                      </padding>
                   </HBox>
                </children>
             </VBox>
             <HBox>
                <children>
-                  <Button fx:id="edit1" mnemonicParsing="false" onAction="#goEdit" prefHeight="25.0" prefWidth="60.0" style="-fx-border-style: none; -fx-cursor: pointer; -fx-padding: 0; -fx-margin: 0;" stylesheets="@../../CSS/stylesheet.css" text="Edit" />
                   <Button fx:id="done1" mnemonicParsing="false" onAction="#setDone" prefHeight="25.0" prefWidth="60.0" style="-fx-cursor: pointer;" stylesheets="@../../CSS/stylesheet.css" text="Done" />
                   <Region HBox.hgrow="ALWAYS" />
                   <Text fx:id="error1" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" />

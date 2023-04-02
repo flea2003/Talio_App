@@ -112,9 +112,33 @@ public class DashboardCtrl implements Initializable {
         connectedBoards.addAll(serverBoards.get(currentServer));
         openShare();
         openAddBoard();
+
+//        ButtonTalio addBoard = new ButtonTalio("Create Board", "Enter Board Name") {
+//            @Override
+//            public void processData(String data) {
+//
+//            }
+//
+//            @Override
+//            public void addLabel(Pane node) {
+//
+//            }
+//
+//            @Override
+//            public void deleteLabel(Pane node) {
+//
+//            }
+//
+//            @Override
+//            public Pane addButton() {
+//                return null;
+//            }
+//        }
+
         addBoard.setOnAction(e -> {
             createBoard();
         });
+
         refreshBoards(connectedBoards);
         server.refreshBoards("/topic/updates", Boolean.class, l -> {
             // this method refreshes. The platform.runLater() because of thread issues.
