@@ -36,7 +36,7 @@
             <Region style="-fx-background-color: #a29cf4;" HBox.hgrow="ALWAYS" />
             <HBox style="-fx-background-color: #a29cf4;">
                <children>
-                  <Button fx:id="shareBoard" mnemonicParsing="false" style="-fx-background-color: #00000000;" text="Share">
+                  <Button fx:id="shareBoard" mnemonicParsing="false" style="-fx-background-color: #00000000;" text="Share Key" visible="false">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>

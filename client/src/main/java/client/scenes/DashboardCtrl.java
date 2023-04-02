@@ -15,11 +15,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -223,6 +225,7 @@ public class DashboardCtrl implements Initializable {
      * @param id the id of the boards of which its lists will be used
      */
     public void refreshSpecificBoard(long id) {
+        shareBoard.setVisible(true);
         hboxList.setUserData(id);
         if (hboxList.getChildren().size() > 0) {
             hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
@@ -276,6 +279,7 @@ public class DashboardCtrl implements Initializable {
         if (result.get() == delete) {
             //if the board to be deleted is selected remove its data from the interface
             if (hboxList.getUserData() != null && (long) hboxList.getUserData() == board.getId()) {
+                shareBoard.setVisible(false);
                 hboxList.setUserData(null);
                 hboxList.getChildren().clear();
             }
@@ -958,6 +962,7 @@ public class DashboardCtrl implements Initializable {
         contextMenu.setAutoHide(true);
         contextMenu.setHideOnEscape(true);
 
+
         addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
             if(!newValue) {
                 contextMenu.hide();
@@ -965,7 +970,9 @@ public class DashboardCtrl implements Initializable {
         }));
 
         addBoardButton.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = addBoardButton.localToScreen(addBoardButton.getLayoutX() - 35, addBoardButton.getLayoutY() + 50);
+            Point2D absoluteCoordinates = addBoardButton.
+                    localToScreen(boardsVBox.getBoundsInLocal().getMinX() + 150,
+                            addBoardLabel.getBoundsInLocal().getMaxY() - 68);
             if(event.getButton() == MouseButton.PRIMARY)
                 contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
 
