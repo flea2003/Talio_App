@@ -518,17 +518,21 @@ public class DashboardCtrl implements Initializable {
                 String txt = textField.getText();
                 List newList = server.getListById((Long) label.getUserData());
                 Board boardCurr = server.getBoard(boardId);
-                newList.setName(txt);
-                newList.setBoard(boardCurr);
+                
+                if (txt.strip().length() == 0) {
+                    textField.setText(label.getText());
+                } else {
+                    newList.setName(txt);
+                    newList.setBoard(boardCurr);
 
-                for (int i = 0; i < boardCurr.lists.size(); i++) {
-                    if (boardCurr.lists.get(i).getID() == newList.getID()) {
-                        boardCurr.lists.set(i, newList);
+                    for (int i = 0; i < boardCurr.lists.size(); i++) {
+                        if (boardCurr.lists.get(i).getID() == newList.getID()) {
+                            boardCurr.lists.set(i, newList);
+                        }
                     }
+
+                    server.updateBoard(boardCurr);//send the text to the database
                 }
-
-                server.updateBoard(boardCurr);//send the text to the database
-
             }
         });
     }
