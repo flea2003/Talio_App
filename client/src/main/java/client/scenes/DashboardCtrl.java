@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import commons.Subtask;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -570,6 +571,15 @@ public class DashboardCtrl implements Initializable {
                         StackPane.setAlignment(imageDescription, Pos.TOP_RIGHT);
 
                         setGraphic(stackPane);
+                    }
+
+                    if(q.subtasks.size() >= 1){
+                        int total = q.subtasks.size();
+                        int done = 0;
+                        for(Subtask subtask : q.getSubtasks()){
+                            if(subtask.isCompleted() == 1) done++;
+                        }
+                        setText(this.getText() + " done: " + done + "/" + total);
                     }
                 }
                 // if we detect the drag we delete the card from the list and set the done variable
