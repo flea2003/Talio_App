@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 public class CreateBoardCtrl {
@@ -119,10 +118,18 @@ public class CreateBoardCtrl {
         return create;
     }
 
+    /**
+     * a getter for buttonCreate
+     * @return the button buttonCreate
+     */
     public Button getButtonCreate() {
         return buttonCreate;
     }
 
+    /**
+     * a getter for error
+     * @return the text error
+     */
     public Text getError() {
         return error;
     }

@@ -9,9 +9,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/")
 public class SomeController {
 
+    /**
+     * sets the body of the url page to "Talio app-74"
+     * used for checking if the server is for this app
+     * @return the body
+     */
     @GetMapping("/")
     @ResponseBody
     public String index() {
-        return "Talio app";
+        return "Talio app-74";
     }
 }
