@@ -4,19 +4,20 @@ import client.utils.ServerUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ResourceBundle;
-
-import javax.inject.Inject;
 
 
 public class ServerConnectCtrl implements Initializable {
@@ -48,7 +49,8 @@ public class ServerConnectCtrl implements Initializable {
     @FXML
     private javafx.scene.control.Button connectAdmin;
 
-
+    @FXML
+    Button connectUser;
     @FXML
     private Text message;
 
@@ -163,6 +165,8 @@ public class ServerConnectCtrl implements Initializable {
             passwordText.setVisible(true);
             connectButton2.setVisible(true);
             connectButton.setVisible(false);
+            connectUser.setVisible(true);
+            connectAdmin.setVisible(false);
 
             seePassword.setOnMousePressed( e -> {
                 seePassword.setVisible(false);
@@ -178,6 +182,18 @@ public class ServerConnectCtrl implements Initializable {
                 password.setVisible(true);
                 showPassword.setVisible(false);
             });
+        }
+    }
+
+    public void openUserConnect(javafx.event.ActionEvent event){
+        if (event.getSource() == connectUser) {
+            seePassword.setVisible(false);
+            password.setVisible(false);
+            passwordText.setVisible(false);
+            connectButton2.setVisible(false);
+            connectButton.setVisible(true);
+            connectUser.setVisible(false);
+            connectAdmin.setVisible(true);
         }
     }
     @Override
