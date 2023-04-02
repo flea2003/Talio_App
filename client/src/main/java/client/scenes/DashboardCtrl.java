@@ -518,7 +518,7 @@ public class DashboardCtrl implements Initializable {
                 String txt = textField.getText();
                 List newList = server.getListById((Long) label.getUserData());
                 Board boardCurr = server.getBoard(boardId);
-                
+
                 if (txt.strip().length() == 0) {
                     textField.setText(label.getText());
                 } else {

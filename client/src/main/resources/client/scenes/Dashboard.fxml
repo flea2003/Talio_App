@@ -55,7 +55,7 @@
    <center>
       <ScrollPane fx:id="pane" nodeOrientation="LEFT_TO_RIGHT" prefHeight="360.0" prefWidth="447.0" style="-fx-border-width: 2 0 0 0; -fx-blend-mode: multiply;" BorderPane.alignment="TOP_CENTER">
          <content>
-            <HBox fx:id="hboxList" style="-fx-blend-mode: mulltiply;" />
+            <HBox fx:id="hboxList"  />
          </content>
       </ScrollPane>
    </center>

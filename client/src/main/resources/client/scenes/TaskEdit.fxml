@@ -23,9 +23,6 @@
                      </font>
                   </Text>
                   <Button id="done" layoutX="87.0" layoutY="322.0" mnemonicParsing="false" onAction="#setDone" prefHeight="25.0" prefWidth="60.0" styleClass="connectButton" stylesheets="/CSS/button.css" text="Done" textFill="#e5e3f1">
-                     <stylesheets>
-                        <URL value="@../../CSS/stylesheet.css" />
-                     </stylesheets>
                   </Button>
                   <Text fx:id="error" fill="RED" layoutX="210.0" layoutY="339.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                   <Pane layoutX="16.0" layoutY="108.0" prefHeight="194.0" prefWidth="567.0" style="-fx-background-color: #d3d3d3; -fx-padding: 10px; -fx-border-radius: 10px;">
