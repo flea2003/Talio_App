@@ -7,3 +7,15 @@
 .connectButton:hover {
     -fx-background-color: #000000;
 }
+
+.serverButton {
+    cursor: pointer;  /*seems like Cursor.HAND*/
+    -fx-background-color: rgb(123,104,238);
+    -fx-text-fill: white;
+    -fx-background-radius:  10px;
+}
+
+.serverButton:hover {
+    -fx-background-color: #000000;
+}
+
