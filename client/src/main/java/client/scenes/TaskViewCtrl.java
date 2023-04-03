@@ -8,6 +8,7 @@ import commons.List;
 import commons.Subtask;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -21,6 +22,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -71,6 +73,8 @@ public class TaskViewCtrl {
     private Text description;
     @FXML
     HBox taskListHBox;
+    @FXML
+    TextFlow descriptionPane;
 
     /**
      * constructor
@@ -120,9 +124,15 @@ public class TaskViewCtrl {
         });
 
         taskDescription.setText(card.description);
+        taskDescription.setWrappingWidth(400);
         addEditFunctionality((Pane)description.getParent(), description, taskDescription, e -> {
             TextField textField = new TextField(taskDescription.getText());
-            ((Pane) taskDescription.getParent()).getChildren().set(((Pane) taskDescription.getParent()).getChildren().indexOf(taskDescription), textField);
+            textField.setPrefWidth(400);
+            textField.setMinWidth(400);
+            textField.setMaxWidth(400);
+            int index = descriptionPane.getParent().getChildrenUnmodifiable().indexOf(descriptionPane);
+            VBox vBox = (VBox) descriptionPane.getParent();
+            vBox.getChildren().set(index, textField);
             textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue) {
                 } else {
@@ -130,14 +140,17 @@ public class TaskViewCtrl {
                         String data = textField.getText();
                         currCard.description = data;
                         server.updateBoard(currCard.getList().getBoard());
-                        ((Pane) textField.getParent()).getChildren().set(((Pane) textField.getParent()).getChildren().indexOf(textField), taskDescription);
+                        vBox.getChildren().set(index, descriptionPane);
+                        taskDescription.setText(data);
                     }
                 }
             });
 
             textField.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
-                    ((Pane) textField.getParent()).getChildren().set(((Pane) textField.getParent()).getChildren().indexOf(textField), taskDescription);
+                    String data = textField.getText();
+                    vBox.getChildren().set(index, descriptionPane);
+                    taskDescription.setText(data);
                 }
             });
         });
@@ -358,10 +371,12 @@ public class TaskViewCtrl {
         if(pane.getChildren().size() == pane.getChildren().indexOf(afterWhat) + 1){
             pane.getChildren().add(container);
         }
-        if(pane.getChildren().get(pane.getChildren().indexOf(afterWhat) + 1) instanceof StackPane){
+        else if(pane.getChildren().get(pane.getChildren().indexOf(afterWhat) + 1) instanceof StackPane){
             return;
         }
-        pane.getChildren().add(pane.getChildren().indexOf(afterWhat) + 1, container);
+        else {
+            pane.getChildren().add(pane.getChildren().indexOf(afterWhat) + 1, container);
+        }
         editView.setOnMouseClicked(consumer::accept);
     }
 }
