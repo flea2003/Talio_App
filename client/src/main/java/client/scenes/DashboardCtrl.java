@@ -521,6 +521,10 @@ public class DashboardCtrl implements Initializable {
 
                 if (txt.strip().length() == 0) {
                     textField.setText(label.getText());
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setHeaderText("Empty list name");
+                    alert.setContentText("Can not have a list without a name. Please enter a valid name.");
+                    alert.showAndWait();
                 } else {
                     newList.setName(txt);
                     newList.setBoard(boardCurr);
