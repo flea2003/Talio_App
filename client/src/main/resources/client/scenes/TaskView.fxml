@@ -37,7 +37,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </HBox>
-            <HBox>
+            <HBox style="-fx-background-color: #ADD8E6;">
                <children>
                   <Text fx:id="description" strokeType="OUTSIDE" strokeWidth="0.0" text="Description">
                      <font>
@@ -46,7 +46,7 @@
                   </Text>
                </children>
             </HBox>
-            <TextFlow fx:id="descriptionPane" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: grey;">
+            <TextFlow fx:id="descriptionPane" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #ADD8E6;">
                <children>
                   <Text fx:id="taskDescription" strokeType="OUTSIDE" strokeWidth="0.0">
                      <font>
@@ -54,8 +54,11 @@
                      </font>
                   </Text>
                </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
             </TextFlow>
-            <VBox fx:id="subTasks">
+            <VBox fx:id="subTasks" style="-fx-background-color: #ADD8E6;">
                <children>
                   <HBox fx:id="taskListHBox">
                      <children>

@@ -15,6 +15,8 @@
  */
 package client.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -103,6 +105,10 @@ public class ServerUtils {
      * @return the updated card
      */
     public Card updateCard(Card card){
+        System.out.println(card);
+        System.out.println();
+        System.out.println();
+        System.out.println();
         String endpoint = String.format("api/cards");
 
         return ClientBuilder.newClient(new ClientConfig())

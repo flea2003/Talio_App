@@ -73,7 +73,7 @@ public class BoardController {
      */
     @PostMapping(path = { "", "/" })
     public ResponseEntity<Board> add(@RequestBody Board board) {
-
+        System.out.println(board);
         if (board.name == null) {
             return ResponseEntity.badRequest().build();
         }

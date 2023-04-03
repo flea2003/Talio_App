@@ -2,6 +2,8 @@ package client.scenes;
 
 import client.services.ButtonTalio;
 import client.utils.ServerUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -104,6 +106,7 @@ public class TaskViewCtrl {
             TextField textField = new TextField(taskName.getText());
             ((Pane) taskName.getParent()).getChildren().set(((Pane) taskName.getParent()).getChildren().indexOf(taskName), textField);
             textField.setStyle(taskName.getStyle());
+            textField.requestFocus();
             textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue) {
                 } else {
@@ -111,15 +114,24 @@ public class TaskViewCtrl {
                         String data = textField.getText();
                         currCard.name = data;
                         server.updateBoard(currCard.getList().getBoard());
-                        ((Pane) textField.getParent()).getChildren().set(((Pane) textField.getParent()).getChildren().indexOf(textField), taskName);
+                        if((Pane) textField.getParent() != null) {
+                            int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                            ((Pane) textField.getParent()).getChildren().set(indx, taskName);
+                        }
+                    }
+                    else{
+                        if((Pane) textField.getParent() != null) {
+                            int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                            ((Pane) textField.getParent()).getChildren().set(indx, taskName);
+                        }
                     }
                 }
             });
 
             textField.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
-                    ((Pane) textField.getParent()).getChildren().set(((Pane) textField.getParent()).getChildren().indexOf(textField), taskName);
-                }
+                    int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                    ((Pane) textField.getParent()).getChildren().set(indx, taskName);                  }
             });
         });
 
@@ -133,16 +145,15 @@ public class TaskViewCtrl {
             int index = descriptionPane.getParent().getChildrenUnmodifiable().indexOf(descriptionPane);
             VBox vBox = (VBox) descriptionPane.getParent();
             vBox.getChildren().set(index, textField);
+            textField.requestFocus();
             textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue) {
                 } else {
-                    if (textField.getText().strip().length() != 0) {
-                        String data = textField.getText();
-                        currCard.description = data;
-                        server.updateBoard(currCard.getList().getBoard());
-                        vBox.getChildren().set(index, descriptionPane);
-                        taskDescription.setText(data);
-                    }
+                    String data = textField.getText();
+                    currCard.description = data;
+                    server.updateBoard(currCard.getList().getBoard());
+                    vBox.getChildren().set(index, descriptionPane);
+                    taskDescription.setText(data);
                 }
             });
 
@@ -160,15 +171,12 @@ public class TaskViewCtrl {
         }
         taskNo.setText("Task No. " + card.getNumberInTheList());
         for(Subtask subtask : currCard.getSubtasks()){
-            System.out.println(subtask);
             createSubtask(subtask);
         }
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
             @Override
             public void processData(String data) {
-                //System.out.println(data);
                 currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), card, 0));
-                //System.out.println(currCard);
                 server.updateBoard(currCard.getList().board);
             }
 
@@ -320,27 +328,71 @@ public class TaskViewCtrl {
         imageView.setFitWidth(15);
         imageView.setFitHeight(15);
         StackPane container = new StackPane(imageView);
+        container.setVisible(false);
         hbox.getChildren().add(container);
+        StackPane finalContainer1 = container;
         imageView = new ImageView(new Image("pictures/down_arrow.png"));
         imageView.setFitWidth(15);
         imageView.setFitHeight(15);
         container = new StackPane(imageView);
         hbox.getChildren().add(container);
+        container.setVisible(false);
+        StackPane finalContainer2 = container;
         imageView = new ImageView(new Image("pictures/up_arrow.png"));
         imageView.setFitWidth(15);
         imageView.setFitHeight(15);
         container = new StackPane(imageView);
         hbox.getChildren().add(container);
+        StackPane finalContainer3 = container;
+        finalContainer3.setVisible(false);
         imageView = new ImageView(new Image("pictures/delete_icon.png"));
         imageView.setFitWidth(15);
         imageView.setFitHeight(15);
         container = new StackPane(imageView);
         hbox.getChildren().add(container);
+        StackPane finalContainer4 = container;
+        finalContainer4.setVisible(false);
+        finalContainer1.setOnMouseEntered(e -> {
+            finalContainer1.setStyle("-fx-background-color: #e0e0e0;");
+        });
+        finalContainer1.setOnMouseExited(e -> {
+            finalContainer1.setStyle("-fx-background-color: transparent;");
+        });
+        finalContainer2.setOnMouseEntered(e -> {
+            finalContainer2.setStyle("-fx-background-color: #e0e0e0;");
+        });
+        finalContainer2.setOnMouseExited(e -> {
+            finalContainer2.setStyle("-fx-background-color: transparent;");
+        });
+        finalContainer3.setOnMouseEntered(e -> {
+            finalContainer3.setStyle("-fx-background-color: #e0e0e0;");
+        });
+        finalContainer3.setOnMouseExited(e -> {
+            finalContainer3.setStyle("-fx-background-color: transparent;");
+        });
+        finalContainer4.setOnMouseEntered(e -> {
+            finalContainer4.setStyle("-fx-background-color: #e0e0e0;");
+        });
+        finalContainer4.setOnMouseExited(e -> {
+            finalContainer4.setStyle("-fx-background-color: transparent;");
+        });
+        finalContainer4.setOnMouseClicked(e -> {
+            deleteSubtask(subtask);
+        });
+        hbox.setOnMouseEntered(event -> {
+            finalContainer1.setVisible(true);
+            finalContainer2.setVisible(true);
+            finalContainer3.setVisible(true);
+            finalContainer4.setVisible(true);
+        });
+        hbox.setOnMouseExited(event -> {
+            finalContainer1.setVisible(false);
+            finalContainer2.setVisible(false);
+            finalContainer3.setVisible(false);
+            finalContainer4.setVisible(false);
+        });
         checkBox.setOnAction(e -> {
-            System.out.println(subtask.isCompleted());
             subtask.switchState();
-            System.out.println(subtask.isCompleted());
-
             server.updateBoard(currCard.getList().board);
         });
         subTasks.getChildren().add(hbox);
@@ -378,5 +430,46 @@ public class TaskViewCtrl {
             pane.getChildren().add(pane.getChildren().indexOf(afterWhat) + 1, container);
         }
         editView.setOnMouseClicked(consumer::accept);
+    }
+
+    private void deleteSubtask(Subtask subtask) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Delete Subtask '" + subtask.getName() + "'?");
+        alert.setContentText("Are you sure you want to delete subtask '" + subtask.getName() +
+                "'?\nThis will permanently delete the subtask from the server.");
+
+        ButtonType delete = new ButtonType("Delete");
+        ButtonType cancel = new ButtonType("Cancel");
+        alert.getButtonTypes().setAll(delete, cancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == delete) {
+            //currCard.subtasks.remove(subtask);
+            ObjectMapper objectMapper = new ObjectMapper();
+            currCard.subtasks.remove(subtask);
+            // convert the card object to JSON
+            String json = null;
+            try {
+                json = objectMapper.writeValueAsString(currCard.getList().getBoard());
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+            // print the JSON string
+            server.updateBoard(currCard.getList().getBoard());
+        }
+    }
+
+    private void moveUpSubtask(){
+
+    }
+
+    private void moveDownSubtask(){
+
+    }
+
+    private void editSubtask(){
+
     }
 }
