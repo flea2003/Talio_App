@@ -19,7 +19,6 @@ import commons.Board;
 import commons.Card;
 import commons.List;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -27,11 +26,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 
-import java.io.IOException;
-
 import static client.Main.FXML;
-import static com.google.inject.Guice.createInjector;
-import static org.glassfish.hk2.utilities.ServiceLocatorUtilities.createAndPopulateServiceLocator;
 
 public class MainCtrl {
 

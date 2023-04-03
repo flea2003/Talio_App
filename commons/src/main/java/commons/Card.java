@@ -19,13 +19,6 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
 
-    /**
-     * link the card to its subtasks
-     */
-    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    public java.util.List<Subtask> subtasks;
-
     public String description;
 
     public String name;
@@ -35,6 +28,13 @@ public class Card {
     @JoinColumn(name = "list_id")
     @JsonBackReference
     private List list;
+
+    /**
+     * link the card to its subtasks
+     */
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    public java.util.List<Subtask> subtasks;
 
     /**
      * constructor
@@ -164,4 +164,19 @@ public class Card {
     public String getName() {
         return this.name;
     }
+
+    /**
+     * getter for id
+     * @return the long id
+     */
+    public long getId() {
+        return id;
+    }
 }
+
+
+
+
+
+
+

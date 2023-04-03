@@ -351,6 +351,14 @@ public class ServerUtils {
     private StompSession session ;
 
     /**
+     * getter for session used for testing
+     * @return the session
+     */
+    public StompSession getSession() {
+        return session;
+    }
+
+    /**
      * Creates a websocket connection
      * @param IP the IP address of the server to create a websocket connection
      */

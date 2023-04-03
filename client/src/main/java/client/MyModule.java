@@ -35,6 +35,5 @@ public class MyModule implements Module {
         binder.bind(TaskViewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(TaskEditCtrl.class).in(Scopes.SINGLETON);
         binder.bind(ServerConnectCtrl.class).in(Scopes.SINGLETON);
-
     }
 }

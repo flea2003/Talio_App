@@ -167,7 +167,7 @@ public class List {
      * gets the id of the list
      * @return the id of the list
      */
-    public Object getID() {
+    public long getID() {
         return id;
     }
 
