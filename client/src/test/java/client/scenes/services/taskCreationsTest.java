@@ -2,14 +2,10 @@ package client.scenes.services;
 
 import client.scenes.TaskCreationCtrl;
 import commons.Card;
-import javafx.concurrent.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class taskCreationsTest {
 
@@ -19,7 +15,7 @@ class taskCreationsTest {
     @BeforeEach
     void setUp() {
          taskCreationCtrl = new TaskCreationCtrl(null, null);
-         taskCreationCtrl.sendData(null, 10, null);
+         taskCreationCtrl.sendData(null, null, 10, null);
          taskCreationCtrl1 = new TaskCreationCtrl(null, null);
     }
 

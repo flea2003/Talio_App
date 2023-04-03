@@ -1,32 +1,24 @@
 package client.scenes;
 
-import client.Main;
-import client.scenes.services.CardControllerState;
 import client.scenes.services.taskCreations;
 import client.utils.ServerUtils;
 
 import commons.Board;
 import commons.Card;
 import commons.List;
-import commons.Subtask;
-import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
-import java.util.ArrayList;
 import javax.inject.Inject;
 import java.util.Objects;
 
-public class TaskCreationCtrl extends Application implements CardControllerState {
+public class TaskCreationCtrl  {
 
     private  ServerUtils server;
     private  MainCtrl mainCtrl;
@@ -64,26 +56,27 @@ public class TaskCreationCtrl extends Application implements CardControllerState
         this.mainCtrl = mainCtrl;
     }
 
-    public void sendData(Scene taskCreation, long boardId, List listCurr){
+    public void sendData(Stage stage, Scene taskCreation, long boardId, List listCurr){
+        newStage = stage;
         this.taskCreation = taskCreation;
         this.boardId = boardId;
         this.listCurr = listCurr;
     }
-    @Override
-    public void start(javafx.stage.Stage primaryStage)  {
-        newStage = new Stage();
-        newStage.setTitle("Task Creation");
-        newStage.setScene(taskCreation);
-        newStage.show();
-
-        newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                taskCreations.getInstance().remove(TaskCreationCtrl.this);
-            }
-        });
-        taskCreation.setOnKeyPressed(e -> this.keyPressed(e));
-    }
+//    @Override
+//    public void start(javafx.stage.Stage primaryStage)  {
+//        newStage = new Stage();
+//        newStage.setTitle("Task Creation");
+//        newStage.setScene(taskCreation);
+//        newStage.show();
+//
+//        newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+//            @Override
+//            public void handle(WindowEvent event) {
+//                taskCreations.getInstance().remove(TaskCreationCtrl.this);
+//            }
+//        });
+//        taskCreation.setOnKeyPressed(e -> this.keyPressed(e));
+//    }
 
     /**
      * processes the click of the addTask button
@@ -160,12 +153,10 @@ public class TaskCreationCtrl extends Application implements CardControllerState
         this.boardId = boardId;
     }
 
-    @Override
     public Card getCard() {
         return null;
     }
 
-    @Override
     public Stage getStage() {
         return null;
     }
