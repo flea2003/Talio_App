@@ -4,43 +4,48 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.TaskCreationCtrl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="377.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.TaskCreationCtrl">
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="377.0" style="-fx-background-color: #e5e3f1;" BorderPane.alignment="CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Type Task Name">
+            <Text fill="#5c5a5b" strokeType="OUTSIDE" strokeWidth="0.0" text="Type Task Name" textAlignment="CENTER">
                <VBox.margin>
-                  <Insets left="250.0" top="90.0" />
+                  <Insets left="145.0" right="145.0" top="60.0" />
                </VBox.margin>
             </Text>
-            <TextField fx:id="taskName">
+            <TextField fx:id="taskName" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="178.0" style="-fx-background-radius: 10px;">
                <VBox.margin>
-                  <Insets left="200.0" right="200.0" top="5.0" />
+                  <Insets left="100.0" right="100.0" top="5.0" />
                </VBox.margin>
             </TextField>
-            <Text layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Type Task Description">
+            <Text fill="#5c5a5b" layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Type Task Description" textAlignment="CENTER">
                <VBox.margin>
-                  <Insets bottom="5.0" left="240.0" right="100.0" top="20.0" />
+                  <Insets bottom="5.0" left="132.0" right="132.0" top="20.0" />
                </VBox.margin>
             </Text>
-            <TextField fx:id="taskDescription" layoutX="10.0" layoutY="27.0">
+            <TextField fx:id="taskDescription" layoutX="10.0" layoutY="27.0" minHeight="-Infinity" prefHeight="43.0" prefWidth="278.0" style="-fx-background-radius: 10px;">
                <VBox.margin>
-                  <Insets left="100.0" right="100.0" />
+                  <Insets left="50.0" right="50.0" />
                </VBox.margin>
             </TextField>
-            <Button fx:id="addTask" mnemonicParsing="false" onAction="#processClick" text="Add Task">
-               <VBox.margin>
-                  <Insets left="265.0" top="20.0" />
-               </VBox.margin>
-            </Button>
-            <Text fx:id="error" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0">
-               <VBox.margin>
-                  <Insets left="150.0" top="15.0" />
-               </VBox.margin>
-            </Text>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Text fx:id="error" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="252.00000303983688">
+                     <HBox.margin>
+                        <Insets left="5.0" top="15.0" />
+                     </HBox.margin>
+                  </Text>
+                  <Button fx:id="addTask" alignment="CENTER" mnemonicParsing="false" onAction="#processClick" styleClass="connectButton" stylesheets="/CSS/button.css" text="Add Task" textAlignment="CENTER" textFill="#e5e3f1">
+                     <HBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
       </VBox>
    </center>

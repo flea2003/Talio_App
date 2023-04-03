@@ -2,14 +2,9 @@ package server.api;
 
 import java.util.*;
 
-import commons.Quote;
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.core.AbstractDestinationResolvingMessagingTemplate;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,17 +18,33 @@ public class ListController {
     @Autowired
     ListRepository repo;
 
-    public ListController(Random random, ListRepository repo, SimpMessagingTemplate messagingTemplate) {
+    /**
+     * constructor
+     * @param random a random used for testing
+     * @param repo the list repository
+     * @param messagingTemplate the messagingTemplate used to trigger the websocket
+     */
+    public ListController(Random random, ListRepository repo,
+                          SimpMessagingTemplate messagingTemplate) {
         this.random = random;
         this.repo = repo;
         this.messagingTemplate = messagingTemplate;
     }
 
+    /**
+     * gets all the lists in the database
+     * @return a list of the lists
+     */
     @GetMapping(path = { "", "/" })
     public List<commons.List> getAll() {
         return repo.findAll();
     }
 
+    /**
+     * gets a list by its id
+     * @param id the list id
+     * @return a response (bad request or ok)
+     */
     @GetMapping("/{id}")
     public ResponseEntity<commons.List> getById(@PathVariable("id") long id) {
         if (id < 0 || !repo.existsById(id)) {
@@ -42,6 +53,11 @@ public class ListController {
         return ResponseEntity.ok(repo.findById(id).get());
     }
 
+    /**
+     * adds a list
+     * @param list the list to be added
+     * @return a response (bad request or ok)
+     */
     @PostMapping(path = { "", "/" })
     public ResponseEntity<commons.List> add(@RequestBody commons.List list) {
         if (list.name == null|| list.name.strip().length() == 0) {
@@ -52,14 +68,11 @@ public class ListController {
         return ResponseEntity.ok(list);
     }
 
-    @MessageMapping("/addlist")
-    @SendTo("/topic/updates")
-    public commons.List addNewList(commons.List q){
-        add(q);
-        messagingTemplate.convertAndSend("/topic/updates", true);
-        return q;
-    }
-
+    /**
+     * deletes a list
+     * @param id the id of the list to be deleted
+     * @return a response (bad request or ok)
+     */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         if (id < 0 || !repo.existsById(id)) {
@@ -71,18 +84,11 @@ public class ListController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    @PostMapping("/changeName/{id}")
-//    public ResponseEntity<commons.List> changeName(@PathVariable("id") long id, @RequestBody String name){
-//        if (id < 0 || !repo.existsById(id) || name == null || name.trim().isEmpty()) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//        commons.List list=repo.getById(id);
-//        repo.getById(id).setName(name);
-//        repo.save(list);
-//        messagingTemplate.convertAndSend("/topic/updates", true);
-//        return ResponseEntity.ok(list);
-//    }
-
+    /**
+     * updates a list
+     * @param list the list to be updated
+     * @return a response (bad request or ok)
+     */
     @PostMapping("/update")
     public ResponseEntity<commons.List> updateList(@RequestBody commons.List list){
         System.out.println(list.getBoard());
@@ -91,21 +97,16 @@ public class ListController {
         return ResponseEntity.ok(list);
     }
 
-
+    /**
+     * gets a random for testing
+     * @return a response (bad request or ok)
+     */
     @GetMapping("rnd")
     public ResponseEntity<commons.List> getRandom() {
-        var quotes = repo.findAll();
+        var lists = repo.findAll();
         var idx = random.nextInt((int) repo.count());
         messagingTemplate.convertAndSend("/topic/updates", true);
-        return ResponseEntity.ok(quotes.get(idx));
-    } // huh ?
-
-    @MessageMapping("/lists")
-    @SendTo("/topic/lists")
-    public commons.List addList(commons.List list){
-        System.out.println("hello");
-        add(list);
-        messagingTemplate.convertAndSend("/topic/updates", true);
-        return list;
+        return ResponseEntity.ok(lists.get(idx));
     }
+
 }
