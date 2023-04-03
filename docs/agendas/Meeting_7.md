@@ -46,6 +46,7 @@ Note taker:     Rafael Alani
 # Feedback (15:03)
 - In what aspects of the project are we behind?
 - What should we focus on for this week?
+- When mocking a class while testing with mockito must the class have test coverage?
 - Should we focus more on the final heuristic evaluation and product pitch or the app?
 - What went well and what can be improved next time?
 
