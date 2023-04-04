@@ -30,11 +30,19 @@ public class Card {
     private List list;
 
     /**
+     * link the card to its tags
+     */
+    @ManyToMany
+    @JoinColumn(name = "tag_id")
+    @JsonBackReference
+    private java.util.List<Tag> tags;
+
+    /**
      * link the card to its subtasks
      */
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     @JsonManagedReference
-    public java.util.List<Subtask> subtasks;
+    private java.util.List<Subtask> subtasks;
 
     /**
      * constructor
@@ -45,6 +53,7 @@ public class Card {
      */
     public Card(String description, String name, List list, int numberInTheList) {
         subtasks = new ArrayList<>();
+        tags = new ArrayList<>();
         this.description = description;
         this.name = name;
         this.list = list;
@@ -171,6 +180,22 @@ public class Card {
      */
     public long getId() {
         return id;
+    }
+
+    /**
+     * getter for tags
+     * @return the list of tags
+     */
+    public java.util.List<Tag> getTags() {
+        return tags;
+    }
+
+    /**
+     * setter for tags
+     * @param tags the list of a card's tags
+     */
+    public void setTags(java.util.List<Tag> tags) {
+        this.tags = tags;
     }
 }
 
