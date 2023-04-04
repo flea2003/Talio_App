@@ -3,9 +3,8 @@ package server.api;
 import commons.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import server.database.CardRepository;
+import server.services.CardService;
 
 import java.util.List;
 
@@ -14,19 +13,7 @@ import java.util.List;
 public class CardController {
 
     @Autowired
-    CardRepository repo;
-
-    private final SimpMessagingTemplate messagingTemplate;
-
-    /**
-     * constructor
-     * @param repo the card repository
-     * @param messagingTemplate the messagingTemplate used to trigger the websocket
-     */
-    public CardController(CardRepository repo, SimpMessagingTemplate messagingTemplate) {
-        this.repo = repo;
-        this.messagingTemplate = messagingTemplate;
-    }
+    CardService cardService;
 
     /**
      * gets all the cards from a specific list
@@ -34,8 +21,7 @@ public class CardController {
      * @return a list of the cards
      */
     public  List<Card> getAllFromList(long list_id){
-        var optList = repo.findAllByListId(list_id);
-        return optList.orElse(null);
+        return cardService.getCardsByListId(list_id);
     }
 
     /**
@@ -44,7 +30,7 @@ public class CardController {
      */
     @GetMapping({"", "/"})
     public List<Card> getAll(){
-        return repo.findAll();
+        return cardService.getAllCards();
     }
 
     /**
@@ -54,10 +40,11 @@ public class CardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Card> getById (@PathVariable long id){
-        if(id < 0 || !repo.existsById(id)) {
+        Card card = cardService.getCardById(id);
+        if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return ResponseEntity.ok(card);
     }
 
     /**
@@ -67,13 +54,12 @@ public class CardController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Card> delete(@PathVariable long id){
-        if(id < 0 || !repo.existsById(id)) {
+        Card card = cardService.getCardById(id);
+        if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        Card card = repo.findById(id).get();
-        repo.delete(card);
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        cardService.deleteCard(card);
         return ResponseEntity.ok(card);
     }
 
@@ -89,9 +75,8 @@ public class CardController {
             return ResponseEntity.badRequest().build();
         }
         else{
-            repo.save(card);
+            cardService.saveCard(card);
             System.out.println("A CARD WAS UPDATED");
-            messagingTemplate.convertAndSend("/topic/updates", true);
             return ResponseEntity.ok(card);
         }
     }
@@ -107,8 +92,7 @@ public class CardController {
             return ResponseEntity.badRequest().build();
         }
 
-        repo.save(card);
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        cardService.saveCard(card);
         return ResponseEntity.ok(card);
     }
 
