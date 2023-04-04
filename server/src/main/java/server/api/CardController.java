@@ -84,9 +84,6 @@ public class CardController {
      */
     @PostMapping(path =  {"", "/"})
     public ResponseEntity<Card>add(@RequestBody Card card){
-        System.out.println("CHECK");
-        System.out.println(card);
-        System.out.println("END CHECK");
         if(card == null || isNullOrEmpty(card.name)){
             return ResponseEntity.badRequest().build();
         }

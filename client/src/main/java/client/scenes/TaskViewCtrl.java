@@ -176,7 +176,15 @@ public class TaskViewCtrl {
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
             @Override
             public void processData(String data) {
-                currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), card, 0));
+                currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), currCard, 0));
+                ObjectMapper jsonMapper = new ObjectMapper();
+                String json = null;
+                try {
+                    json = jsonMapper.writeValueAsString(currCard.getList().board);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println(json);
                 server.updateBoard(currCard.getList().board);
             }
 
@@ -379,6 +387,9 @@ public class TaskViewCtrl {
         finalContainer4.setOnMouseClicked(e -> {
             deleteSubtask(subtask);
         });
+        finalContainer1.setOnMouseClicked(e -> {
+            editSubtask(subtask, checkBox);
+        });
         hbox.setOnMouseEntered(event -> {
             finalContainer1.setVisible(true);
             finalContainer2.setVisible(true);
@@ -448,16 +459,9 @@ public class TaskViewCtrl {
             //currCard.subtasks.remove(subtask);
             ObjectMapper objectMapper = new ObjectMapper();
             currCard.subtasks.remove(subtask);
-            // convert the card object to JSON
-            String json = null;
-            try {
-                json = objectMapper.writeValueAsString(currCard.getList().getBoard());
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-
-            // print the JSON string
-            server.updateBoard(currCard.getList().getBoard());
+            subtask.setCard(null);
+            server.deleteSubtask(subtask);
+            server.updateBoard(currCard.getList().board);
         }
     }
 
@@ -469,7 +473,31 @@ public class TaskViewCtrl {
 
     }
 
-    private void editSubtask(){
+    private void editSubtask(Subtask subtask, CheckBox checkBox){
+        TextField textField = new TextField(subtask.getName());
 
+        int labelIndex = -1;
+        subTasks.getChildren().indexOf(checkBox);
+        for(int i=0;i<subTasks.getChildren().size();i++){
+            HBox hBox = (HBox) (subTasks.getChildren().get(i));
+            if(hBox.getChildren().get(0).equals(checkBox)){
+                labelIndex = i;
+            }
+        }
+        Node node = subTasks.getChildren().remove(labelIndex);
+        subTasks.getChildren().add(labelIndex, textField);
+
+        int finalLabelIndex = labelIndex;
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                String txt = textField.getText();
+                if(txt.length() > 0) {
+                    subtask.setName(txt);
+                    System.out.println(subtask);
+                    server.saveSubtask(subtask);//send the text to the database
+                }
+                subTasks.getChildren().set(finalLabelIndex, node);
+            }
+        });
     }
 }

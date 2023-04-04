@@ -25,6 +25,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -412,6 +413,7 @@ public class DashboardCtrl implements Initializable {
 
                     Board boardCurr = new Board(newText);
                     boardCurr = server.addBoard(boardCurr);
+                    boardCurr = server.addBoard(boardCurr);
                     boardCurr.lists = new ArrayList<>();
 //                    boardCurr = server.getBoard(boardCurr.id);
 //                    System.out.println(boardCurr);
@@ -557,7 +559,7 @@ public class DashboardCtrl implements Initializable {
                 newList.setBoard(boardCurr);
 
                 for (int i = 0; i < boardCurr.lists.size(); i++) {
-                    if (boardCurr.lists.get(i).getID() == newList.getID()) {
+                    if (boardCurr.lists.get(i).getID().equals(newList.getID())) {
                         boardCurr.lists.set(i, newList);
                     }
                 }
@@ -577,13 +579,15 @@ public class DashboardCtrl implements Initializable {
                 if (empty) {
                     setText("");
                 } else {
-                    setText(q.name);
+                    HBox content = new HBox();
+                    //setText(q.name);
                     setOnMouseClicked(event -> {
                         if (event.getClickCount() == 2) {
                             mainCtrl.switchTaskView(q, server.getBoard(boardId));
                         }
                     });
                     //if the card has a description add the description icon
+                    HBox icons = new HBox();
                     if (q.description != null && q.description.strip().length() != 0) {
 
                         Image imgDescription = new Image("pictures/description_icon.png");
@@ -592,19 +596,52 @@ public class DashboardCtrl implements Initializable {
                         imageDescription.setFitHeight(20);
 
                         StackPane stackPane = new StackPane(imageDescription);
-                        StackPane.setAlignment(imageDescription, Pos.TOP_RIGHT);
 
-                        setGraphic(stackPane);
+                        content.getChildren().add(stackPane);
+                        stackPane.setAlignment(Pos.CENTER_LEFT);
+//                        setGraphic(stackPane);
+                    }
+                    else{
+                        StackPane stackPane = new StackPane();
+                        stackPane.setAlignment(Pos.CENTER_LEFT);
+                        stackPane.setMaxWidth(0);
+                        content.getChildren().add(stackPane);
                     }
 
-                    if(q.subtasks.size() >= 1){
-                        int total = q.subtasks.size();
-                        int done = 0;
-                        for(Subtask subtask : q.getSubtasks()){
-                            if(subtask.isCompleted() == 1) done++;
+                    Text display = new Text(q.name);
+                    display.setWrappingWidth(160);
+                    content.getChildren().add(display);
+
+//                    if(q.subtasks.size() >= 1){
+                        Image imgDone = new Image("pictures/done_icon.png");
+                        ImageView imageDone = new ImageView(imgDone);
+                        imageDone.setFitWidth(20);
+                        imageDone.setFitHeight(20);
+                        int total = 0, done = 0;
+                        if(q.subtasks != null) {
+                            total = q.subtasks.size();
+                            done = 0;
+                            for (Subtask subtask : q.getSubtasks()) {
+                                if (subtask.isCompleted() == 1) done++;
+                            }
                         }
-                        setText(this.getText() + " done: " + done + "/" + total);
-                    }
+                        HBox hBox = new HBox();
+                        hBox.getChildren().add(imageDone);
+                        hBox.getChildren().add(new Text(done + "/" + total));
+
+//                        setGraphic(hBox);
+                        content.getChildren().add(hBox);
+                        hBox.setAlignment(Pos.BOTTOM_RIGHT);
+                        HBox.setHgrow(hBox, Priority.ALWAYS);
+                        if(q.subtasks.size() == 0){
+                            hBox.setVisible(false);
+                        }
+//                        setGraphic(hBox);
+//                    }
+
+                    content.setAlignment(Pos.CENTER);
+                    content.setSpacing(Region.USE_COMPUTED_SIZE); // set spacing to computed size
+                    setGraphic(content);
                 }
                 // if we detect the drag we delete the card from the list and set the done variable
                 setOnDragDetected(event -> {
@@ -983,7 +1020,7 @@ public class DashboardCtrl implements Initializable {
             public void handle(ActionEvent event) {
                 String key = input.getText();
                 Board retrievedBoard;
-
+                System.out.println(key);
                 if (input.getText().isEmpty()) {
                     errorMessage.setText("The key that you have entered is empty");
                 } else {

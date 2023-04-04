@@ -58,8 +58,11 @@ public class BoardController {
      */
     @GetMapping("/key/{key}")
     public ResponseEntity<Board> getByKey(@PathVariable("key") String key) {
+        System.out.println(key);
         Optional<Board> board = repo.findBoardByKey(key);
+        System.out.println(board);
         if(board.isEmpty()) {
+            System.out.println("WHY");
             return ResponseEntity.ok(null);
         }
         return ResponseEntity.ok(board.get());
@@ -73,7 +76,6 @@ public class BoardController {
      */
     @PostMapping(path = { "", "/" })
     public ResponseEntity<Board> add(@RequestBody Board board) {
-        System.out.println(board);
         if (board.name == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -123,11 +125,6 @@ public class BoardController {
      */
     @PostMapping("/update")
     public ResponseEntity<Board> updateBoard(@RequestBody Board board){
-        for(commons.List list : board.getLists()){
-            for(Card card : list.getCards()){
-                System.out.println(card);
-            }
-        }
         repo.save(board);
         messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(board);

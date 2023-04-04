@@ -91,7 +91,6 @@ public class ListController {
      */
     @PostMapping("/update")
     public ResponseEntity<commons.List> updateList(@RequestBody commons.List list){
-        System.out.println(list.getBoard());
         repo.save(list);
         messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(list);

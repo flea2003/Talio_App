@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
+import commons.Subtask;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -105,10 +106,6 @@ public class ServerUtils {
      * @return the updated card
      */
     public Card updateCard(Card card){
-        System.out.println(card);
-        System.out.println();
-        System.out.println();
-        System.out.println();
         String endpoint = String.format("api/cards");
 
         return ClientBuilder.newClient(new ClientConfig())
@@ -352,6 +349,24 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(board, APPLICATION_JSON), Board.class);
+    }
+
+    public void deleteSubtask(Subtask subtask){
+        String endpoint = String.format("api/subtask/", subtask);
+        ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
+    }
+
+    public void saveSubtask(Subtask subtask){
+        String endpoint = String.format("api/subtask/", subtask);
+        ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 
     private StompSession session ;
