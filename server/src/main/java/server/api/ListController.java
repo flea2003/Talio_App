@@ -2,6 +2,8 @@ package server.api;
 
 import java.util.*;
 
+import commons.Card;
+import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +34,20 @@ public class ListController {
     }
 
     /**
-     * gets all the lists in the database
+     * gets all the lists in the database in the right order
      * @return a list of the lists
      */
     @GetMapping(path = { "", "/" })
     public List<commons.List> getAll() {
-        return repo.findAll();
+        List<commons.List> res = repo.findAll();
+        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
+        for(commons.List list : res){
+            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+            for(commons.Card card : list.getCards()){
+                Collections.sort(card.getSubtasks() , Comparator.comparingInt(Subtask::getNumberInTheCard));
+            }
+        }
+        return res;
     }
 
     /**

@@ -1,12 +1,15 @@
 package server.api;
 
 import commons.Card;
+import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.CardRepository;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -39,12 +42,17 @@ public class CardController {
     }
 
     /**
-     * gets all the cards in the database
+     * gets all the cards in the database in the right order
      * @return a list of the cards
      */
     @GetMapping({"", "/"})
     public List<Card> getAll(){
-        return repo.findAll();
+        List<commons.Card> res = repo.findAll();
+        Collections.sort(res, Comparator.comparingInt(Card::getNumberInTheList));
+        for(commons.Card card : res){
+            Collections.sort(card.getSubtasks() , Comparator.comparingInt(Subtask::getNumberInTheCard));
+        }
+        return res;
     }
 
     /**
