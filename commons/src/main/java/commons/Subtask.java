@@ -145,12 +145,4 @@ public class Subtask {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    /**
-     * to string representation of a Subtask
-     * @return the string of the object
-     */
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
-    }
 }
