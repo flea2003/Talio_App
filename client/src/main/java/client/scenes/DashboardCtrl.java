@@ -493,7 +493,7 @@ public class DashboardCtrl implements Initializable {
                     listCurr.cards.add(cardDragged); // update with the card dropped
 
                     for (int i = 0; i < boardCurr.lists.size(); i++) {
-                        if (boardCurr.lists.get(i).getID() == listCurr.getID()) {
+                        if (boardCurr.lists.get(i).getID().equals(listCurr.getID())) {
                             boardCurr.lists.set(i, listCurr);
                         }
                     }
@@ -649,6 +649,13 @@ public class DashboardCtrl implements Initializable {
                         return;
                     }
 
+                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+
+                    content.putString(getItem().name);
+                    dragboard.setContent(content);
+                    dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
+
                     draggedCard = this;
                     cardDragged = getItem(); // store the Card object in a local variable
                     List listCurr = cardDragged.getList();
@@ -662,13 +669,6 @@ public class DashboardCtrl implements Initializable {
 
                     server.updateBoard(boardCurr);
                     server.deleteCard(cardDragged.id);
-
-                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-
-                    content.putString(getItem().name);
-                    dragboard.setContent(content);
-                    dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
 
                     event.consume();
                 });

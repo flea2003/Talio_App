@@ -486,7 +486,7 @@ public class TaskViewCtrl {
         }
         Node node = subTasks.getChildren().remove(labelIndex);
         subTasks.getChildren().add(labelIndex, textField);
-
+        textField.requestFocus();
         int finalLabelIndex = labelIndex;
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -494,7 +494,7 @@ public class TaskViewCtrl {
                 if(txt.length() > 0) {
                     subtask.setName(txt);
                     System.out.println(subtask);
-                    server.saveSubtask(subtask);//send the text to the database
+                    server.updateBoard(subtask.getCard().getList().board);//send the text to the database
                 }
                 subTasks.getChildren().set(finalLabelIndex, node);
             }
