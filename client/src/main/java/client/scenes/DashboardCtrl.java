@@ -28,7 +28,6 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -71,7 +70,6 @@ public class DashboardCtrl implements Initializable {
     private BorderPane innerBoardsPane;
     private java.util.List<commons.Board> localBoards;
     private Board focusedBoard;
-    java.util.List<Board> connectedBoards;
     Map<String, java.util.List<Board>> serverBoards;
     @FXML
     private Button addBoard;
@@ -103,7 +101,6 @@ public class DashboardCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        innerBoardsPane.set
         String currentServer = server.getServer();
         if(serverBoards ==null) {
             serverBoards = new HashMap<>();
@@ -113,28 +110,59 @@ public class DashboardCtrl implements Initializable {
             serverBoards.put(currentServer, boards);
         }
         addBoardLabel.setVisible(false);
-        connectedBoards = new ArrayList<>();
-        connectedBoards.addAll(serverBoards.get(currentServer));
         openShare();
         openAddBoard();
         addBoard.setOnAction(e -> {
             createBoard();
         });
-        refreshBoards(connectedBoards);
+
+        setBoards();
+        refreshBoards(serverBoards.get(currentServer));
         server.refreshBoards("/topic/updates", Boolean.class, l -> {
             // this method refreshes. The platform.runLater() because of thread issues.
             Platform.runLater(() -> {
                 try{
+                    setBoards();
                     refreshBoards(serverBoards.get(currentServer));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         });
+    }
 
+    /**
+     * checks that the changes on each board have been updated and
+     * if not, it updates them
+     */
+    public void setBoards(){
+        String currentServer = server.getServer();
+        java.util.List<Board> serBoards = server.getBoards();
 
-//        ConsolePrinterThread printerThread = new ConsolePrinterThread();
-//        printerThread.start();
+        //Get the list of boards for the current server
+        java.util.List<Board> localBoards = serverBoards.get(currentServer);
+
+        //Create a set of board IDs for the server boards
+        Set<Long> serverIds = new HashSet<>();
+        for (Board serBoard : serBoards) {
+            serverIds.add(serBoard.getId());
+        }
+
+        // Use an iterator to update and remove boards
+        Iterator<Board> iterator = localBoards.iterator();
+        while (iterator.hasNext()) {
+            Board board = iterator.next();
+            if (serverIds.contains(board.getId())) {
+                for (Board serBoard : serBoards) {
+                    if (board.getId() == serBoard.getId()) {
+                        board.setName(serBoard.getName());
+                        break;
+                    }
+                }
+            } else {
+                iterator.remove();
+            }
+        }
     }
 
     /**
@@ -153,24 +181,6 @@ public class DashboardCtrl implements Initializable {
         for (Board boardCurr : boards) {
             Label label = new Label(boardCurr.name);
 
-//            //create delete icon
-//            Image imgDelete =new Image("pictures/delete_icon.png");
-//            ImageView imageDelete = new ImageView(imgDelete);
-//            imageDelete.setFitWidth(20);
-//            imageDelete.setFitHeight(20);
-//            Rectangle backroundDelete = new Rectangle(20, 20);
-//            backroundDelete.setFill(Color.TRANSPARENT);
-//            Node deleteBoard = new Group(backroundDelete, imageDelete);
-//
-//            //create edit icon
-//            Image imgEdit =new Image("pictures/edit_icon.png");
-//            ImageView imageEdit = new ImageView(imgEdit);
-//            imageEdit.setFitWidth(20);
-//            imageEdit.setFitHeight(20);
-//            Rectangle backroundEdit = new Rectangle(20, 20);
-//            backroundEdit.setFill(Color.TRANSPARENT);
-//            Node editBoard = new Group(backroundEdit, imageEdit);
-
             //create delete icon
             Image dots = new Image("pictures/dots.png");
             ImageView dotsView = new ImageView(dots);
@@ -180,8 +190,6 @@ public class DashboardCtrl implements Initializable {
             Button dotsMenu = new Button();
             dotsMenu.setGraphic(dotsView);
             dotsMenu.setContextMenu(createThreeDotContextMenu(label, dotsMenu));
-
-//            Node dotMenu = new Group(backroundDelete, imageDelete);
 
             HBox hBox = new HBox(label, new Region(), dotsMenu);
             hBox.setMaxWidth(120);
@@ -232,9 +240,13 @@ public class DashboardCtrl implements Initializable {
             hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
         }
 
-        Button addListButton = new Button("Create List");
-
         VBox vboxEnd = new VBox();
+        vboxEnd.getStylesheets().add("/CSS/button.css");
+
+        Button addListButton = new Button("Create List");
+        addListButton.getStyleClass().add("connectButton");
+        addListButton.setStyle("-fx-text-fill: white");
+
         vboxEnd.getChildren().add(addListButton);
         hboxList.getChildren().add(vboxEnd);
 
@@ -284,11 +296,9 @@ public class DashboardCtrl implements Initializable {
                 hboxList.setUserData(null);
                 hboxList.getChildren().clear();
             }
-            //remove board from connectedBoards
-            connectedBoards.remove(board);
-            //delete board
-            connectedBoards.remove(board);
+            //remove board from serverBoards
             serverBoards.get(server.getServer()).remove(board);
+            //delete board
             server.deleteBoard(board.getId());
         }
     }
@@ -374,11 +384,10 @@ public class DashboardCtrl implements Initializable {
                     System.out.println(boardCurr.id);
 //                    boardCurr = server.getBoard(boardCurr.id);
 //                    System.out.println(boardCurr);
-                    connectedBoards.add(boardCurr);
                     serverBoards.get(server.getServer()).add(boardCurr);
                     addBoardLabel.setText("");
                     addBoardLabel.setVisible(false);
-                    refreshBoards(connectedBoards);
+                    refreshBoards(serverBoards.get(server.getServer()));
                 }
             }
         });
@@ -881,9 +890,8 @@ public class DashboardCtrl implements Initializable {
 
                 idOfCurrentBoard = -1;
 
-                connectedBoards.remove(board);
                 serverBoards.get(server.getServer()).remove(board);
-                refreshBoards(connectedBoards);
+                refreshBoards( serverBoards.get(server.getServer()));
             }
         });
 
@@ -946,7 +954,7 @@ public class DashboardCtrl implements Initializable {
                     retrievedBoard = server.getBoardByKey(key);
                     if (retrievedBoard != null) {
                         boolean boardAdded = false;
-                        for (Board board : connectedBoards) {
+                        for (Board board : serverBoards.get(server.getServer())) {
                             if (board.id == retrievedBoard.id) {
                                 errorMessage.setText("Board is already added");
                                 boardAdded = true;
@@ -954,9 +962,8 @@ public class DashboardCtrl implements Initializable {
                         }
                         if (!boardAdded) {
                             errorMessage.setText("");
-                            connectedBoards.add(retrievedBoard);
                             serverBoards.get(server.getServer()).add(retrievedBoard);
-                            refreshBoards(connectedBoards);
+                            refreshBoards(serverBoards.get(server.getServer()));
                             ContextMenu contextMenu = addBoardButton.getContextMenu();
                             contextMenu.setY(contextMenu.getY() + 24);
                         }
