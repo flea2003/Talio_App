@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.Card;
+import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -48,6 +49,9 @@ public class CardController {
     public List<Card> getAll(){
         List<commons.Card> res = repo.findAll();
         Collections.sort(res, Comparator.comparingInt(Card::getNumberInTheList));
+        for(commons.Card card : res){
+            Collections.sort(card.getSubtasks() , Comparator.comparingInt(Subtask::getNumberInTheCard));
+        }
         return res;
     }
 
