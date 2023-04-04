@@ -45,7 +45,7 @@ public class ListController {
      */
     @PostMapping(path = { "", "/" })
     public ResponseEntity<commons.List> add(@RequestBody commons.List list) {
-        if (list.name == null|| list.name.strip().length() == 0) {
+        if (list.name == null || list.name.strip().length() == 0) {
             return ResponseEntity.badRequest().build();
         }
         listService.saveList(list);

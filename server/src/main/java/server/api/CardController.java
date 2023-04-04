@@ -69,7 +69,7 @@ public class CardController {
      * @return a response (bad request or ok)
      */
     @PostMapping(path =  {"", "/"})
-    public ResponseEntity<Card>add(@RequestBody Card card){
+    public ResponseEntity<Card> add(@RequestBody Card card){
         if(card == null || isNullOrEmpty(card.name)){
             System.out.println("A CARD WAS UPDATED  feic");
             return ResponseEntity.badRequest().build();
@@ -101,7 +101,7 @@ public class CardController {
      * @param s the string to be checked
      * @return if the string is null or empty
      */
-    private static boolean isNullOrEmpty(String s) {
+    static boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
     }
 }
