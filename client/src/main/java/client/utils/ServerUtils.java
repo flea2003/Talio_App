@@ -138,10 +138,11 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.List>>() {});
+        /////////////////////////////////
         Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
         for(commons.List list : res){
             Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
-        }
+        }/////////////////////////////////////
         return res;
     }
 
@@ -253,10 +254,12 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<commons.Board>() {});
+        ////////////////////////////////
         Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
         for(commons.List list : res.getLists()){
             Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
         }
+        //////////////////////////////
         return res;
     }
 

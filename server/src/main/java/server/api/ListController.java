@@ -32,12 +32,14 @@ public class ListController {
     }
 
     /**
-     * gets all the lists in the database
+     * gets all the lists in the database in the right order
      * @return a list of the lists
      */
     @GetMapping(path = { "", "/" })
     public List<commons.List> getAll() {
-        return repo.findAll();
+        List<commons.List> res = repo.findAll();
+        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
+        return res;
     }
 
     /**
