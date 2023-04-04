@@ -17,6 +17,7 @@ package client.utils;
 
 import commons.Board;
 import commons.Card;
+import commons.Subtask;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -415,4 +416,81 @@ public class ServerUtils {
     public void send(String destination,Object o){
         session.send(destination, o);
     }
+
+    /**
+     * sends a post request to trigger the respective method in subtaskController
+     * adds a subtask
+     * @param subtask the subtask to be added
+     * @return the added subtask
+     */
+    public Subtask addSubtask(Subtask subtask){
+        String endpoint = String.format("api/subtasks", subtask.id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON).accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
+    }
+
+    /**
+     * sends a post request to trigger the respective method in SubtaskController
+     * updates a subtask with a new one
+     * @param subtask the new subtask
+     * @return the updated subtask
+     */
+    public commons.Subtask updateSubtask(commons.Subtask subtask){
+        String endpoint = String.format("api/subtasks/update");
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), commons.Subtask.class);
+
+    }
+
+    /**
+     * sends a get request to trigger the respective method in subtaskController
+     * gets a specific subtask from the database
+     * @param id the id of the subtask to be gotten
+     * @return the gotten subtask
+     */
+    public commons.Subtask getSubtaskById(long id){
+        String endpoint = String.format("/api/subtasks/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(commons.Subtask.class);
+    }
+
+    /**
+     * sends a delete request to trigger the respective method in subtaskController
+     * deletes a subtask
+     * @param id the id of the subtask to be deleted
+     * @return the deleted subtask
+     */
+    public commons.Subtask deleteSubtask(long id){
+        String endpoint = String.format("api/subtask/delete/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete(new GenericType<commons.Subtask>() {});
+    }
+
+    /**
+     * sends a get request to trigger the respective method in subtaskController
+     * gets all the subtasks from the database
+     * @return the subtasks
+     */
+    public List<Subtask> getSubtasks(){
+        String endpoint = String.format("api/subtasks");
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Subtask>>() {});
+    }
+
+
+
 }
