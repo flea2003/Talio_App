@@ -177,15 +177,11 @@ public class TaskViewCtrl {
             @Override
             public void processData(String data) {
                 currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), currCard, 0));
-                ObjectMapper jsonMapper = new ObjectMapper();
-                String json = null;
-                try {
-                    json = jsonMapper.writeValueAsString(currCard.getList().board);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-                System.out.println(json);
                 server.updateBoard(currCard.getList().board);
+                for(Subtask subtask : currCard.getSubtasks()){
+                    System.out.println(subtask.getId());
+                }
+                System.out.println("END OF THE CARD");
             }
 
             @Override
@@ -301,6 +297,7 @@ public class TaskViewCtrl {
             hasTextField = true;
             TextField textField = new TextField();
             subTasks.getChildren().add(textField);
+            textField.requestFocus();
             textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue) {
                     textField.setText("");
@@ -493,9 +490,13 @@ public class TaskViewCtrl {
                 String txt = textField.getText();
                 if(txt.length() > 0) {
                     subtask.setName(txt);
-                    System.out.println(subtask);
                     server.updateBoard(subtask.getCard().getList().board);//send the text to the database
                 }
+                subTasks.getChildren().set(finalLabelIndex, node);
+            }
+        });
+        textField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
                 subTasks.getChildren().set(finalLabelIndex, node);
             }
         });

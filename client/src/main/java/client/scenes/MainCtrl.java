@@ -126,6 +126,7 @@ public class MainCtrl {
     public void switchTaskView(Card q, Board boardCurr){
         primaryStage.setTitle("View Task");
         primaryStage.setScene(taskView);
+//        taskView.set
         taskViewCtrl.setBoardCurr(boardCurr);
         taskViewCtrl.renderInfo(q);
     }

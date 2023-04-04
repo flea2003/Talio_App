@@ -360,9 +360,9 @@ public class ServerUtils {
                 .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 
-    public void saveSubtask(Subtask subtask){
+    public Subtask saveSubtask(Subtask subtask){
         String endpoint = String.format("api/subtask/", subtask);
-        ClientBuilder.newClient(new ClientConfig())
+        return  ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)

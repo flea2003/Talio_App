@@ -35,7 +35,7 @@ public class SubtaskController {
     }
 
     public ResponseEntity<Subtask> update(@RequestBody commons.Subtask subtask){
-        System.out.println(subtask);
+//        System.out.println(subtask);
         repo.save(subtask);
         messagingTemplate.convertAndSend("/topic/updates", true);
         return ResponseEntity.ok(subtask);

@@ -44,6 +44,7 @@ public abstract class ButtonTalio extends Button {
         textField = new TextField();
         textField.setPromptText(textLabel);
         addLabel(node);
+        textField.requestFocus();
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 textField.setText("");
