@@ -9,6 +9,7 @@ import commons.Card;
 import commons.List;
 import commons.Subtask;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,10 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -78,6 +76,14 @@ public class TaskViewCtrl {
     @FXML
     TextFlow descriptionPane;
 
+    @FXML
+    private HBox hboxButtons;
+    @FXML
+    private BorderPane borderPane;
+    @FXML
+    private ScrollPane scrollPane;
+
+
     /**
      * constructor
      * @param server the current server
@@ -96,6 +102,9 @@ public class TaskViewCtrl {
      * @param card the card to show
      */
     public void renderInfo(Card card){
+//        borderPane.setCenter(scrollPane);
+//        BorderPane.setAlignment(scrollPane, Pos.CENTER);
+        hboxButtons.getStylesheets().add("CSS/button.css");
         while(subTasks.getChildren().size() >= 2){
             subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
         }

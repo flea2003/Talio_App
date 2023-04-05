@@ -18,8 +18,12 @@ package client.scenes;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -36,7 +40,6 @@ public class MainCtrl {
     private Scene taskCreation;
     private Scene taskEdit;
     private TaskEditCtrl taskEditCtrl;
-
 
     /**
      * initializes the application with the provided parameters
@@ -125,8 +128,22 @@ public class MainCtrl {
      */
     public void switchTaskView(Card q, Board boardCurr){
         primaryStage.setTitle("View Task");
+//        taskView.getRoot().toFront();
         primaryStage.setScene(taskView);
 //        taskView.set
+
+//        StackPane root = new StackPane();
+//        root.getChildren().addAll(dashboard.getRoot(), taskView.getRoot());
+//        taskView.getRoot().setScaleX(0.8);
+//        taskView.getRoot().setScaleY(0.8);
+//
+//// Align the dashboard node to the center of the stack pane
+//        StackPane.setAlignment(dashboard.getRoot(), Pos.CENTER);
+//        dashboard.getRoot().setAlignment(Pos.CENTER);
+//
+//        Scene overlayScene = new Scene(root, primaryStage.getScene().getRoot().getLayoutBounds().getWidth(), primaryStage.getScene().getRoot().getLayoutBounds().getHeight());
+//        primaryStage.setScene(overlayScene);
+
         taskViewCtrl.setBoardCurr(boardCurr);
         taskViewCtrl.renderInfo(q);
     }
