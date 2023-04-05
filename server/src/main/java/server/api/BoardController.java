@@ -1,6 +1,8 @@
 package server.api;
 
 import commons.Board;
+import commons.Card;
+import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +38,17 @@ public class BoardController {
      */
     @GetMapping(path = { "", "/" })
     public List<Board> getAll() {
-        return repo.findAll();
+        List<Board> res =  repo.findAll();
+        for(commons.Board board: res){
+            Collections.sort(board.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+            for(commons.List list : board.getLists()){
+                Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+                for(commons.Card card : list.getCards()){
+                    Collections.sort(card.getSubtasks() , Comparator.comparingInt(Subtask::getNumberInTheCard));
+                }
+            }
+        }
+        return res;
     }
 
     /**
