@@ -20,3 +20,15 @@
     -fx-background-color: #000000;
 }
 
+.checkBox-custom .box {
+    -fx-background-color: #a29cf4;
+    -fx-border-color: rgb(123,104,238);
+    -fx-border-radius: 2px;
+    -fx-background-radius: 2px;
+}
+
+.checkBox-custom:selected .box {
+    -fx-background-color: rgb(123,104,238);
+    -fx-border-color: rgb(123,104,238);
+}
+

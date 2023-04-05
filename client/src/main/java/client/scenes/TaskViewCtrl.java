@@ -83,7 +83,8 @@ public class TaskViewCtrl {
     @FXML
     private ScrollPane scrollPane;
 
-
+    @FXML
+    private VBox actualSubtasks;
     /**
      * constructor
      * @param server the current server
@@ -336,6 +337,9 @@ public class TaskViewCtrl {
     public void createSubtask(Subtask subtask){
         HBox hbox = new HBox();
         CheckBox checkBox = new CheckBox(subtask.getName());
+        checkBox.getStylesheets().add("CSS/button.css");
+        checkBox.getStyleClass().add("checkBox-custom");
+        checkBox.setStyle("-fx-font-size: 18px; -fx-font-style: italic; -fx-font-family: 'Candara Light';");
         checkBox.setSelected(subtask.isCompleted() != 0);
         hbox.getChildren().add(checkBox);
         ImageView imageView = new ImageView(new Image("pictures/edit_icon.png"));
@@ -412,7 +416,7 @@ public class TaskViewCtrl {
             subtask.switchState();
             server.updateBoard(currCard.getList().board);
         });
-        subTasks.getChildren().add(hbox);
+        actualSubtasks.getChildren().add(hbox);
 
     }
 
