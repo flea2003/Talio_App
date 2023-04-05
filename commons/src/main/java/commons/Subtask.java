@@ -47,6 +47,16 @@ public class Subtask {
     }
 
     /**
+     * A subtask's constructor used for testing
+     * @param id the task's id long
+     * @param numberInTheCard its order in the card
+     */
+    public Subtask(long id, int numberInTheCard) {
+        this.id = id;
+        this.numberInTheCard = numberInTheCard;
+    }
+
+    /**
      * a getter for the id
      * @return the long id
      */
