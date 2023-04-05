@@ -160,6 +160,9 @@ public class DashboardCtrl implements Initializable {
                     }
                 }
             } else {
+                if(hboxList.getUserData() != null && (Long)hboxList.getUserData() == board.getId()){
+                    hboxList.setUserData(null);
+                }
                 iterator.remove();
             }
         }
@@ -170,8 +173,18 @@ public class DashboardCtrl implements Initializable {
      * @param boards the boards to populate the dashboard
      */
     public void refreshBoards(java.util.List<Board> boards){
-        if(hboxList.getUserData()!=null){
+        //if an update happens to an already selected board, it updates it
+        if(hboxList.getUserData() != null){
             refreshSpecificBoard((Long) hboxList.getUserData());
+        }
+
+        //if no board is selected, clear the list interface
+        // (used for when another client deletes a board)
+        if(hboxList.getUserData() == null){
+            if (hboxList.getChildren().size() > 0) {
+                hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
+            }
+            shareBoard.setVisible(false);
         }
 
         if (boardsVBox.getChildren().size() > 0) {
