@@ -26,10 +26,6 @@ public class ListService {
         return listRepository.findById(id).get();
     }
 
-    public List<commons.List> getCardsByListId(long listId) {
-        return listRepository.findAllByBoardId(listId).orElse(null);
-    }
-
     public commons.List saveList(commons.List list) {
         commons.List savedList = listRepository.save(list);
         messagingTemplate.convertAndSend("/topic/updates", true);
