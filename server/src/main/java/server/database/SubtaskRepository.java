@@ -1,6 +1,5 @@
 package server.database;
 
-import commons.Card;
 import commons.Subtask;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,6 +12,6 @@ public interface SubtaskRepository extends JpaRepository<Subtask, Long> {
      * @param id the id of the subtask
      * @return the subtask or null
      */
-    Optional<List<Subtask>> findAllBySubtaskId(long id);
+    Optional<List<Subtask>> findAllById(long id);
 
 }
