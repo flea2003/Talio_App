@@ -1059,6 +1059,8 @@ public class DashboardCtrl implements Initializable {
         contextMenu.setAutoHide(true);
         contextMenu.setHideOnEscape(true);
 
+
+
         addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
             if(!newValue) {
                 contextMenu.hide();

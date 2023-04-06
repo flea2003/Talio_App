@@ -9,6 +9,7 @@ import commons.Card;
 import commons.List;
 import commons.Subtask;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -188,15 +189,18 @@ public class TaskViewCtrl {
             public void processData(String data) {
                 currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), currCard, 0));
                 server.updateBoard(currCard.getList().board);
-                for(Subtask subtask : currCard.getSubtasks()){
-                    System.out.println(subtask.getId());
-                }
-                System.out.println("END OF THE CARD");
+//                for(Subtask subtask : currCard.getSubtasks()){
+//                    System.out.println(subtask.getId());
+//                }
+//                System.out.println("END OF THE CARD");
             }
 
             @Override
             public void addLabel(Pane node) {
-                if(node.getChildren().get(node.getChildren().size() - 1) instanceof TextField){
+                if(node.getChildren().size() == 0){
+                    node.getChildren().add(this.textField);
+                }
+                else if(node.getChildren().get(node.getChildren().size() - 1) instanceof TextField){
                     return;
                 }
                 else{
@@ -211,10 +215,11 @@ public class TaskViewCtrl {
 
             @Override
             public Pane addButton() {
+                this.setPadding(new Insets(0, 0, 10, 0));
                 if(!(taskListHBox.getChildren().size() >= 1 && taskListHBox.getChildren().get(taskListHBox.getChildren().size() - 1) instanceof ButtonTalio)){
                     taskListHBox.getChildren().add(this);
                 }
-                return subTasks;
+                return actualSubtasks;
             }
         };
         addSubtask.setStyle("-fx-background-color: transparent;");

@@ -53,6 +53,8 @@ public abstract class ButtonTalio extends Button {
                     String data = textField.getText();
                     processData(data);
                     deleteLabel(node);
+                }else{
+//                    deleteLabel(node);
                 }
             }
         });
