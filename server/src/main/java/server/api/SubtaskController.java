@@ -14,7 +14,7 @@ import server.database.ListRepository;
 import server.database.SubtaskRepository;
 
 @RestController
-@RequestMapping("/api/subtasks")
+@RequestMapping("/api/subtask")
 public class SubtaskController {
     private final SimpMessagingTemplate messagingTemplate;
 

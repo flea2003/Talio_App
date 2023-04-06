@@ -625,7 +625,7 @@ public class DashboardCtrl implements Initializable {
                     HBox content = new HBox();
                     //setText(q.name);
                     setOnMouseClicked(event -> {
-                        if (event.getClickCount() == 2) {
+                        if (event.getClickCount() % 2 == 0) {
                             mainCtrl.switchTaskView(q, server.getBoard(boardId));
                         }
                     });

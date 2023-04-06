@@ -13,6 +13,7 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -220,12 +221,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
             @Override
             public void processData(String data) {
-                currCard.addSubtask(new Subtask(data, "", subTasks.getChildren().size(), currCard, 0));
+                Subtask subtask = new Subtask(data, "", subTasks.getChildren().size(), currCard, 0);
+                subtask = server.saveSubtask(subtask);
+                currCard.addSubtask(subtask);
                 server.updateBoard(currCard.getList().board);
-//                for(Subtask subtask : currCard.getSubtasks()){
-//                    System.out.println(subtask.getId());
-//                }
-//                System.out.println("END OF THE CARD");
             }
 
             @Override
@@ -239,6 +238,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 else{
                     node.getChildren().add(this.textField);
                 }
+                this.textField.setStyle("-fx-background-color: #e5e3f1;");
             }
 
             @Override
