@@ -2,6 +2,8 @@ package client.scenes;
 
 import client.Main;
 import client.services.ButtonTalio;
+import client.scenes.services.taskEdits;
+import client.scenes.services.taskViews;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -15,7 +17,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -100,6 +105,7 @@ public class DashboardCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+//        innerBoardsPane.set
         String currentServer = server.getServer();
         if(serverBoards == null) {
             serverBoards = new HashMap<>();
@@ -139,7 +145,6 @@ public class DashboardCtrl implements Initializable {
         addBoard.setOnAction(e -> {
             createBoard();
         });
-
         refreshBoards(connectedBoards);
         server.refreshBoards("/topic/updates", Boolean.class, l -> {
             // this method refreshes. The platform.runLater() because of thread issues.
@@ -151,6 +156,10 @@ public class DashboardCtrl implements Initializable {
                 }
             });
         });
+
+
+//        ConsolePrinterThread printerThread = new ConsolePrinterThread();
+//        printerThread.start();
     }
 
     /**
@@ -159,7 +168,6 @@ public class DashboardCtrl implements Initializable {
      */
     public void refreshBoards(java.util.List<Board> boards){
         if(hboxList.getUserData()!=null){
-            refreshSpecificBoard((Long) hboxList.getUserData());
             refreshSpecificBoard((Long) hboxList.getUserData());
         }
 
@@ -170,11 +178,29 @@ public class DashboardCtrl implements Initializable {
         for (Board boardCurr : boards) {
             Label label = new Label(boardCurr.name);
 
+//            //create delete icon
+//            Image imgDelete =new Image("pictures/delete_icon.png");
+//            ImageView imageDelete = new ImageView(imgDelete);
+//            imageDelete.setFitWidth(20);
+//            imageDelete.setFitHeight(20);
+//            Rectangle backroundDelete = new Rectangle(20, 20);
+//            backroundDelete.setFill(Color.TRANSPARENT);
+//            Node deleteBoard = new Group(backroundDelete, imageDelete);
+//
+//            //create edit icon
+//            Image imgEdit =new Image("pictures/edit_icon.png");
+//            ImageView imageEdit = new ImageView(imgEdit);
+//            imageEdit.setFitWidth(20);
+//            imageEdit.setFitHeight(20);
+//            Rectangle backroundEdit = new Rectangle(20, 20);
+//            backroundEdit.setFill(Color.TRANSPARENT);
+//            Node editBoard = new Group(backroundEdit, imageEdit);
+
             //create delete icon
             Image dots = new Image("pictures/dots.png");
             ImageView dotsView = new ImageView(dots);
-            dotsView.setFitWidth(20);
-            dotsView.setFitHeight(20);
+            dotsView.setFitWidth(16);
+            dotsView.setFitHeight(16);
 
             Button dotsMenu = new Button();
             dotsMenu.setGraphic(dotsView);
@@ -184,11 +210,11 @@ public class DashboardCtrl implements Initializable {
 
             HBox hBox = new HBox(label, new Region(), dotsMenu);
             hBox.setMaxWidth(120);
-            //set the preferred width to the max width so the updates are noy noticeable
-            hBox.setPrefWidth(120);
-            hBox.setAlignment(Pos.CENTER_LEFT);
-            //Set spacer to fill available space
-            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS);
+            hBox.setPrefWidth(120);//set the preferred width to the max width so the updates are noy noticeable
+
+            hBox.setStyle("fx-background-color: #e5e3f1; -fx-background-radius: 10px;");
+            hBox.setAlignment(Pos.CENTER);
+            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS); //Set spacer to fill available space
 
 
             //Ensure that there is space for the buttons
@@ -225,6 +251,7 @@ public class DashboardCtrl implements Initializable {
      * @param id the id of the boards of which its lists will be used
      */
     public void refreshSpecificBoard(long id) {
+        shareBoard.setVisible(true);
         hboxList.setUserData(id);
         if (hboxList.getChildren().size() > 0) {
             hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
@@ -272,16 +299,9 @@ public class DashboardCtrl implements Initializable {
             }
         };
 
-//        Button addListButton = new Button("Create List");
-//
-//        VBox vboxEnd = new VBox();
-//        vboxEnd.getChildren().add(addListButton);
-//        hboxList.getChildren().add(vboxEnd);
-//
-//        addListButton.setOnAction(e -> {
-//            createList(vboxEnd, id);
-//        });
-
+        addListButton.setOnAction(e -> {
+            createList(vboxEnd, id);
+        });
 
         if (server.getBoard(id).lists != null && server.getBoard(id).lists.size() > 0) {
             if (hboxList.getChildren().size() > 1) {
@@ -317,6 +337,7 @@ public class DashboardCtrl implements Initializable {
         if (result.get() == delete) {
             //if the board to be deleted is selected remove its data from the interface
             if (hboxList.getUserData() != null && (long) hboxList.getUserData() == board.getId()) {
+                shareBoard.setVisible(false);
                 hboxList.setUserData(null);
                 hboxList.getChildren().clear();
             }
@@ -334,21 +355,24 @@ public class DashboardCtrl implements Initializable {
      * @param label the new name of the board
      */
     public void editBoard(Label label){
+        Board boardCurr = (Board) label.getUserData();
+
         //create a new stage
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(label.getScene().getWindow());
-        stage.setTitle("Edit Board");
+        stage.setTitle("Edit Board '" + boardCurr.getName() + "'");
 
         //create a vbox to add the fields in
         VBox vbox = new VBox(10);
         vbox.setAlignment(Pos.CENTER);
-        vbox.setStyle("-fx-background-color: rgb(214,202,221)");
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
 
         //create the fields of the scene
         Board boardCurr = (Board) label.getUserData();
         TextField textField = new TextField(boardCurr.getName());
-        textField.setStyle("-fx-background-color: rgb(230,230,250)");
+        textField.setStyle("-fx-background-color: rgb(204,204,255)");
         Label error = new Label("");
 
         //create the buttons
@@ -359,20 +383,10 @@ public class DashboardCtrl implements Initializable {
         buttons.setSpacing(10);
 
         //set colour for the buttons and create hovering effect
-        ok.setStyle("-fx-background-color: rgb(230,230,250)");
-        cancel.setStyle("-fx-background-color: rgb(230,230,250)");
-        ok.setOnMouseEntered(e -> {
-            ok.setStyle("-fx-background-color: rgb(178,132,190)");
-        });
-        ok.setOnMouseExited(e ->{
-            ok.setStyle("-fx-background-color: rgb(230,230,250)");
-        });
-        cancel.setOnMouseEntered(e -> {
-            cancel.setStyle("-fx-background-color: rgb(178,132,190)");
-        });
-        cancel.setOnMouseExited(e ->{
-            cancel.setStyle("-fx-background-color: rgb(230,230,250)");
-        });
+        ok.getStyleClass().add("connectButton");
+        ok.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
 
         //add listeners
         ok.setOnAction(event -> {
@@ -397,6 +411,7 @@ public class DashboardCtrl implements Initializable {
         Scene scene = new Scene(vbox, 377, 233);
         stage.setScene(scene);
         stage.showAndWait();
+
     }
 
     /**
@@ -412,7 +427,6 @@ public class DashboardCtrl implements Initializable {
                     String newText = addBoardLabel.getText();
 
                     Board boardCurr = new Board(newText);
-                    boardCurr = server.addBoard(boardCurr);
                     boardCurr = server.addBoard(boardCurr);
                     boardCurr.lists = new ArrayList<>();
 //                    boardCurr = server.getBoard(boardCurr.id);
@@ -448,13 +462,20 @@ public class DashboardCtrl implements Initializable {
         Board boardCurr=server.getBoard(boardId);
         for(List listCurr : list){
             VBox vBox = new VBox();
+            vBox.getStylesheets().add("/CSS/button.css");
             Label label = new Label(listCurr.name);
+            VBox addTask = new VBox();
+            addTask.setVisible(false);
 
             label.setUserData(listCurr.getID()); // set the list id as the label's UserData
 
             HBox hboxButtons = new HBox();
             Button delete = new Button("Delete List");
-            Button edit = new Button("Edit List");
+            delete.getStyleClass().add("connectButton");
+            delete.setStyle("-fx-text-fill: rgb(250,240,230)");
+            Button edit=new Button("Edit List");
+            edit.setStyle("-fx-text-fill: rgb(250,240,230)");
+            edit.getStyleClass().add("connectButton");
 
             //edit list using double-click
             label.setOnMouseClicked(e -> {
@@ -471,9 +492,15 @@ public class DashboardCtrl implements Initializable {
             // Add Card Button
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
+            addTaskButton.getStyleClass().add("connectButton");
+            addTaskButton.setStyle("-fx-text-fill: rgb(250,240,230)");
 
-            addTaskButton.setOnAction(e -> {
-                mainCtrl.switchTaskCreation(listCurr, boardId);
+            addTaskButton.setOnMouseClicked(e -> {
+                if( e.getClickCount() == 2){
+                    mainCtrl.switchTaskCreation(listCurr, boardId);
+                } else {
+                    createTask(listCurr, addTask, boardId);
+                }
             });
 
             ListView<Card> listView = new ListView<>();
@@ -493,7 +520,7 @@ public class DashboardCtrl implements Initializable {
                     listCurr.cards.add(cardDragged); // update with the card dropped
 
                     for (int i = 0; i < boardCurr.lists.size(); i++) {
-                        if (boardCurr.lists.get(i).getID().equals(listCurr.getID())) {
+                        if (boardCurr.lists.get(i).getID() == listCurr.getID()) {
                             boardCurr.lists.set(i, listCurr);
                         }
                     }
@@ -516,9 +543,10 @@ public class DashboardCtrl implements Initializable {
             vBox.getChildren().add(label);
             vBox.getChildren().add(listView);
             vBox.getChildren().add(hboxButtons);
-            hboxButtons.getChildren().add(addTaskButton);
-            hboxButtons.getChildren().add(delete);
-            hboxButtons.getChildren().add(edit);
+            vBox.getChildren().add(addTask);
+            HBox buttons = new HBox(addTaskButton, delete, edit);
+            buttons.setSpacing(5);
+            hboxButtons.getChildren().add(buttons);
 
             addCards(listCurr, vBox, listView);
         }
@@ -555,8 +583,16 @@ public class DashboardCtrl implements Initializable {
                 String txt = textField.getText();
                 List newList = server.getListById((Long) label.getUserData());
                 Board boardCurr = server.getBoard(boardId);
-                newList.setName(txt);
-                newList.setBoard(boardCurr);
+
+                if (txt.strip().length() == 0) {
+                    textField.setText(label.getText());
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setHeaderText("Empty list name");
+                    alert.setContentText("Can not have a list without a name. Please enter a valid name.");
+                    alert.showAndWait();
+                } else {
+                    newList.setName(txt);
+                    newList.setBoard(boardCurr);
 
                 for (int i = 0; i < boardCurr.lists.size(); i++) {
                     if (boardCurr.lists.get(i).getID().equals(newList.getID())) {
@@ -564,8 +600,8 @@ public class DashboardCtrl implements Initializable {
                     }
                 }
 
-                server.updateBoard(boardCurr);//send the text to the database
-
+                    server.updateBoard(boardCurr);//send the text to the database
+                }
             }
         });
     }
@@ -649,13 +685,6 @@ public class DashboardCtrl implements Initializable {
                         return;
                     }
 
-                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-
-                    content.putString(getItem().name);
-                    dragboard.setContent(content);
-                    dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
-
                     draggedCard = this;
                     cardDragged = getItem(); // store the Card object in a local variable
                     List listCurr = cardDragged.getList();
@@ -669,6 +698,13 @@ public class DashboardCtrl implements Initializable {
 
                     server.updateBoard(boardCurr);
                     server.deleteCard(cardDragged.id);
+
+                    Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+
+                    content.putString(getItem().name);
+                    dragboard.setContent(content);
+                    dragboard.setDragView(this.snapshot(null, null), event.getX(), event.getY());
 
                     event.consume();
                 });
@@ -686,12 +722,10 @@ public class DashboardCtrl implements Initializable {
                     double listViewY = this.localToScene(0, 0).getY();
                     if (mouseY - listViewY >= 50) {
                         sus = false;
-                        this.setStyle("-fx-border-color: transparent transparent black " +
-                                "transparent; -fx-border-width: 0 0 4 0;");
+                        this.setStyle("-fx-border-color: transparent transparent #e5e3f1 transparent; -fx-border-width: 0 0 4 0;");
                     } else {
                         sus = true;
-                        this.setStyle("-fx-border-color: black transparent transparent " +
-                                "transparent;-fx-border-width: 4 0 0 0;");
+                        this.setStyle("-fx-border-color: #e5e3f1 transparent transparent transparent; -fx-border-width: 4 0 0 0;");
                     }
                     event.acceptTransferModes(TransferMode.MOVE);
 
@@ -840,6 +874,7 @@ public class DashboardCtrl implements Initializable {
         idOfCurrentBoard = -1;
         hboxList.setUserData(null);
         mainCtrl.getPrimaryStage().close();
+        mainCtrl.closeStages();
         main.start(new Stage());
     }
 
@@ -875,14 +910,11 @@ public class DashboardCtrl implements Initializable {
         }));
 
         shareBoard.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = shareBoard.
-                    localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY) {
-                contextMenu.show(pane, absoluteCoordinates.getX(),
-                        absoluteCoordinates.getY() + shareBoard.getHeight());
-            }
-        });
+            Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY)
+                contextMenu.show(pane, absoluteCoordinates.getX() - 75, absoluteCoordinates.getY() + shareBoard.getHeight() +10);
 
+        });
         shareBoard.setContextMenu(contextMenu);
     }
 
@@ -973,22 +1005,10 @@ public class DashboardCtrl implements Initializable {
                 contextMenu.hide();
         });
 
-        final int[] nrClicks = {0};
-        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    if (nrClicks[0] == 1) {
-                        contextMenu.hide();
-                        nrClicks[0] = 0;
-                    } else {
-                        contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
-                        nrClicks[0]++;
-                    }
-                }
-            }
-        });
+        button.setOnMouseClicked(event -> {
+            Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY)
+                contextMenu.show(pane, absoluteCoordinates.getX() - 21, absoluteCoordinates.getY() + button.getHeight() - 33);
 
 
 //                button.setOnMouseClicked(event -> {
@@ -1020,7 +1040,7 @@ public class DashboardCtrl implements Initializable {
             public void handle(ActionEvent event) {
                 String key = input.getText();
                 Board retrievedBoard;
-                System.out.println(key);
+
                 if (input.getText().isEmpty()) {
                     errorMessage.setText("The key that you have entered is empty");
                 } else {
@@ -1059,8 +1079,6 @@ public class DashboardCtrl implements Initializable {
         contextMenu.setAutoHide(true);
         contextMenu.setHideOnEscape(true);
 
-
-
         addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
             if(!newValue) {
                 contextMenu.hide();
@@ -1069,15 +1087,69 @@ public class DashboardCtrl implements Initializable {
 
         addBoardButton.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = addBoardButton.
-                    localToScreen(addBoardButton.getLayoutX(), addBoardButton.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY) {
-                contextMenu.show(pane, absoluteCoordinates.getX(),
-                        absoluteCoordinates.getY() + addBoardButton.getHeight());
-            }
+                    localToScreen(boardsVBox.getBoundsInLocal().getMinX() + 150,
+                            addBoardLabel.getBoundsInLocal().getMaxY() - 68);
+            if(event.getButton() == MouseButton.PRIMARY)
+                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
 
         });
 
         addBoardButton.setContextMenu(contextMenu);
+    }
+
+    public void createTask(List list, VBox vboxEnd, long boardId){
+        vboxEnd.setVisible(true);
+
+        if(vboxEnd.getChildren().size()>1){
+            ObservableList<Node> children = vboxEnd.getChildren();
+            int numChildren = children.size();
+            children.remove(numChildren - 1);
+            children.remove(numChildren - 2);
+        }
+        TextField textField = new TextField("Enter Task Name");
+        Region spacer = new Region();
+        spacer.setPrefHeight(10);
+        vboxEnd.getChildren().add(spacer);
+        vboxEnd.getChildren().add(textField);
+
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                textField.setText("");
+            }else{
+                if (textField.getText().strip().length() == 0) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Can not create a task with no name");
+                    alert.showAndWait();
+                    vboxEnd.setVisible(false);
+                } else {
+                    String taskName = textField.getText();
+                    Board boardCurr=server.getBoard(boardId);
+
+                    Card card = new Card();
+                    card.setName(taskName);
+                    list.cards.add(card);
+
+                    for(int i=0; i<boardCurr.lists.size(); i++){
+                        if(boardCurr.lists.get(i).getID()==list.getID()){
+                            boardCurr.lists.set(i,list);
+                        }
+                    }
+
+                    server.updateBoard(boardCurr);
+
+                }
+            }
+        });
+
+        textField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                Scene scene = textField.getScene();
+                scene.getRoot().requestFocus(); // take the focus away from the textlabel
+                textField.setText("");
+                textField.setVisible(false);
+            }
+        });
+
     }
 }
 

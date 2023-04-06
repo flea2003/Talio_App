@@ -14,7 +14,7 @@ public class List {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long id;
+    public long id;
     @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
     @JsonManagedReference
     public java.util.List<Card> cards;
@@ -167,7 +167,7 @@ public class List {
      * gets the id of the list
      * @return the id of the list
      */
-    public Long getID() {
+    public long getID() {
         return id;
     }
 
@@ -186,6 +186,5 @@ public class List {
     public Board getBoard() {
         return board;
     }
-
 
 }

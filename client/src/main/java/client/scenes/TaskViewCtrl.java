@@ -1,9 +1,6 @@
 package client.scenes;
 
-import client.services.ButtonTalio;
 import client.utils.ServerUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -83,6 +80,12 @@ public class TaskViewCtrl {
     private BorderPane borderPane;
     @FXML
     private ScrollPane scrollPane;
+    private Scene taskView;
+
+    private Stage newStage;
+
+    private taskViews viewTasks;
+
 
     @FXML
     private VBox actualSubtasks;
@@ -97,6 +100,34 @@ public class TaskViewCtrl {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.card = card;
+        this.currCard = card;
+        this.viewTasks = viewTasks;
+
+    }
+
+    public void sendData(Scene scene, Card card, Board board){
+        this.taskView = scene;
+        this.currCard = card;
+        this.boardCurr = board;
+    }
+
+    @Override
+    public void start(javafx.stage.Stage primaryStage)  {
+        if(primaryStage != null)
+            newStage = primaryStage;
+        else newStage = new Stage();
+        newStage.setTitle("Task View");
+        newStage.setScene(taskView);
+        renderInfo(currCard);
+        newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                taskViews.getInstance().remove(TaskViewCtrl.this);
+            }
+        });
+        newStage.show();
+
+//        taskView.setOnKeyPressed(e -> this.keyPressed(e));
     }
 
     /**
@@ -266,7 +297,9 @@ public class TaskViewCtrl {
 
             server.updateBoard(boardCurr);
             server.deleteCard(currCard.id);
-            mainCtrl.switchDelete(currCard);
+            newStage.close();
+            taskViews.getInstance().remove(this);
+//            mainCtrl.switchDelete(currCard);
         }
 
     }
@@ -276,7 +309,8 @@ public class TaskViewCtrl {
      */
     @FXML
     public void setDone(){
-        mainCtrl.switchDashboard("LOL");
+//        mainCtrl.switchDashboard("LOL");
+        newStage.close();
     }
 
     private String extractValue(Text curr){
@@ -303,6 +337,10 @@ public class TaskViewCtrl {
         this.boardCurr = boardCurr;
     }
 
+    @Override
+    public Card getCard() {
+        return currCard;
+    }
     @FXML
     public void addSubtask(){
         if(hasTextField){
@@ -520,3 +558,7 @@ public class TaskViewCtrl {
         });
     }
 }
+
+    public Stage getStage(){return newStage;}
+}
+

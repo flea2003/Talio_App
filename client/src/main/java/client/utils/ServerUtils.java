@@ -142,10 +142,10 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.List>>() {});
-        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
-        for(commons.List list : res){
-            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
-        }
+//        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
+//        for(commons.List list : res){
+//            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+//        }
         return res;
     }
 
@@ -372,6 +372,14 @@ public class ServerUtils {
     private StompSession session ;
 
     /**
+     * getter for session used for testing
+     * @return the session
+     */
+    public StompSession getSession() {
+        return session;
+    }
+
+    /**
      * Creates a websocket connection
      * @param IP the IP address of the server to create a websocket connection
      */
@@ -428,4 +436,81 @@ public class ServerUtils {
     public void send(String destination,Object o){
         session.send(destination, o);
     }
+
+    /**
+     * sends a post request to trigger the respective method in subtaskController
+     * adds a subtask
+     * @param subtask the subtask to be added
+     * @return the added subtask
+     */
+    public Subtask addSubtask(Subtask subtask){
+        String endpoint = String.format("api/subtasks", subtask.id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON).accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
+    }
+
+    /**
+     * sends a post request to trigger the respective method in SubtaskController
+     * updates a subtask with a new one
+     * @param subtask the new subtask
+     * @return the updated subtask
+     */
+    public commons.Subtask updateSubtask(commons.Subtask subtask){
+        String endpoint = String.format("api/subtasks/update");
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), commons.Subtask.class);
+
+    }
+
+    /**
+     * sends a get request to trigger the respective method in subtaskController
+     * gets a specific subtask from the database
+     * @param id the id of the subtask to be gotten
+     * @return the gotten subtask
+     */
+    public commons.Subtask getSubtaskById(long id){
+        String endpoint = String.format("/api/subtasks/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(commons.Subtask.class);
+    }
+
+    /**
+     * sends a delete request to trigger the respective method in subtaskController
+     * deletes a subtask
+     * @param id the id of the subtask to be deleted
+     * @return the deleted subtask
+     */
+    public commons.Subtask deleteSubtask(long id){
+        String endpoint = String.format("api/subtask/delete/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete(new GenericType<commons.Subtask>() {});
+    }
+
+    /**
+     * sends a get request to trigger the respective method in subtaskController
+     * gets all the subtasks from the database
+     * @return the subtasks
+     */
+    public List<Subtask> getSubtasks(){
+        String endpoint = String.format("api/subtasks");
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Subtask>>() {});
+    }
+
+
+
 }

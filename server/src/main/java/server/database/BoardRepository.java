@@ -12,4 +12,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
      * @return the board or null
      */
     Optional<Board> findBoardByKey(String key);
+
 }

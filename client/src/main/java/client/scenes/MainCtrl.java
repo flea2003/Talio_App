@@ -20,6 +20,7 @@ import commons.Card;
 import commons.List;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
@@ -28,15 +29,22 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 
 import java.awt.*;
 import java.util.Stack;
 
+import static client.Main.FXML;
+
 public class MainCtrl {
 
-    private Stage primaryStage;;
+
+    private Stage primaryStage;
+    private Scene overview;
+    private Scene add;
     private TaskViewCtrl taskViewCtrl;
     private TaskCreationCtrl taskCreationCtrl;
     private DashboardCtrl dashboardCtrl;
@@ -47,6 +55,7 @@ public class MainCtrl {
     private Scene taskCreation;
     private Scene taskEdit;
     private TaskEditCtrl taskEditCtrl;
+
 
     /**
      * initializes the application with the provided parameters
@@ -87,6 +96,12 @@ public class MainCtrl {
         this.taskCreationCtrl = taskCreation.getKey();
 
         switchDashboard("");
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+
+            }
+        });
     }
 
     /**
@@ -103,11 +118,13 @@ public class MainCtrl {
      * @param boardId the id of the board the list is in
      */
     public void switchTaskCreation(List listCurr, long boardId){
-        primaryStage.setTitle("Task Creation");
-        primaryStage.setScene(taskCreation);
-        taskCreationCtrl.setListCurr(listCurr);
-        taskCreationCtrl.setBoardId(boardId);
-        taskCreation.setOnKeyPressed(e -> taskCreationCtrl.keyPressed(e));
+        Stage stage = new Stage();
+        taskCreationCtrl.sendData(stage, taskCreation, boardId, listCurr);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(primaryStage.getScene().getWindow());
+        stage.setTitle("Create a Task");
+        stage.setScene(taskCreation);
+        stage.showAndWait();
     }
 
     /**
@@ -134,186 +151,27 @@ public class MainCtrl {
      * @param boardCurr the board the card is in
      */
     public void switchTaskView(Card q, Board boardCurr){
-        primaryStage.setTitle("View Task");
-        primaryStage.setScene(taskView);
-//        taskView.setFill(Color.TRANSPARENT);
-//        StackPane stackPane = new StackPane();
-//        stackPane.getChildren().addAll(primaryStage.getScene().getRoot(), taskView.getRoot());
-//        primaryStage.getScene().setRoot(stackPane);
-//        primaryStage.setScene(primaryStage.getScene());
-//        Stage popup = new Stage();
-//        popup.initModality(Modality.NONE);
-//        popup.initOwner(primaryStage.getOwner());
-//        popup.setScene(taskView);
-//        popup.setX(primaryStage.getX());
-//        popup.setY(primaryStage.getY());
-//        popup.show();
-//        BorderPane borderPane = new BorderPane();
-//        // set the current scene as the center of the BorderPane
-//        borderPane.setCenter(primaryStage.getScene().getRoot());
-//        // set the taskView as the top of the BorderPane
-//        borderPane.setTop(taskView.getRoot());
-//        ((Region)taskView.getRoot()).setMaxHeight(primaryStage.getHeight() * 0.8);
-//
-//        // set the scene to the stack pane and show it
-//        // create a new scene with the BorderPane as the root
-//        Scene newScene = new Scene(borderPane);
-//        // set the new scene as the scene for the primaryStage
-//        primaryStage.setScene(newScene);
-//        // center the taskView in the BorderPane
-//        BorderPane.setAlignment(taskView.getRoot(), Pos.CENTER);
-//        CustomMenuItem popUpMenu = new CustomMenuItem(taskView.getRoot());
-//        popUpMenu.setHideOnClick(false);
-//
-//        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-//        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-//        popUpMenu.setMaxSize(screenWidth * 0.8, screenHeight * 0.8);
-//
-//        // create a StackPane as the parent container and add the CustomMenuItem to it
-//        StackPane stackPane = new StackPane();
-//        stackPane.getChildren().add(popUpMenu);
-//
-//        // set the alignment of the StackPane to center
-//        StackPane.setAlignment(popUpMenu, Pos.CENTER);
-//        CustomMenuItem popUpMenu = new CustomMenuItem();
-//        popUpMenu.setContent(taskView.getRoot());
+        if(taskViews.getInstance().isOpened(q))
+            return;
 
-//        // set the maximum size of the root node of the taskView scene to be 80% of the screen size
-//        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-//        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-//        ((Region)taskView.getRoot()).setMaxSize(screenWidth * 0.8, screenHeight * 0.8);
-//
-//        // create a StackPane as the parent container and add the CustomMenuItem to it
-//        StackPane stackPane = new StackPane();
-//        stackPane.getChildren().add(popUpMenu);
-//
-//        // set the alignment of the StackPane to center
-//        StackPane.setAlignment(popUpMenu, Pos.CENTER);
-//
-//        // add a mouse event handler to the CustomMenuItem to close it when clicked
-//        popUpMenu.getContent().setOnMouseClicked(event -> {
-//            primaryStage.setScene(previousScene);
-//        });
-//
-//        // create a new scene with the StackPane as the root
-//        Scene newScene = new Scene(stackPane, Color.TRANSPARENT);
 
-//        CustomMenuItem popUpMenu = new CustomMenuItem(taskView.getRoot());
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("client/src/main/resources/client/scenes/TaskView.fxml"));
+//        Parent root = null;
+//        try {
+//            root = loader.load();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        TaskViewCtrl controller = loader.getController();
 //
-//        // Create an AnchorPane that overlays the previous scene
-//        AnchorPane anchorPane = new AnchorPane();
-//        AnchorPane.setTopAnchor(popUpMenu, 0.0);
-//        AnchorPane.setRightAnchor(popUpMenu, 0.0);
-//        AnchorPane.setBottomAnchor(popUpMenu, 0.0);
-//        AnchorPane.setLeftAnchor(popUpMenu, 0.0);
-//        anchorPane.getChildren().add(popUpMenu);
-//
-//        // Add a mouse event handler to the CustomMenuItem to close it when clicked
-//        popUpMenu.getContent().setOnMouseClicked(event -> {
-//            anchorPane.getChildren().remove(popUpMenu);
-//        });
-//
-//        // Add the AnchorPane to the root of the previous scene
-//        ((Pane) previousScene.getRoot()).getChildren().add(anchorPane);
-//
-//        // set the new scene as the scene for the primaryStage
-//        primaryStage.setScene(newScene);
-//
-//        Stage dialogStage = new Stage();
-//        dialogStage.initModality(Modality.APPLICATION_MODAL);
-//        dialogStage.initOwner(primaryStage.getScene().getWindow());
-//
-//        // Create a Label to display the message in the dialog
-//        Label messageLabel = new Label(message);
-//        messageLabel.setWrapText(true);
-//        messageLabel.setMaxWidth(250);
-//
-//        // Create a Button to close the dialog
-//        Button closeButton = new Button("Close");
-//        closeButton.setOnAction(event -> {
-//            dialogStage.close();
-//        });
-//
-//        // Create a VBox to hold the Label and Button
-//        VBox vbox = new VBox(messageLabel, closeButton);
-//        vbox.setAlignment(Pos.CENTER);
-//        vbox.setSpacing(10);
-//        vbox.setPadding(new Insets(10));
-//
-//        // Set the VBox as the content of the Scene
-//        Scene dialogScene = new Scene(vbox);
-//
-//        // Set the size of the Scene
-//        dialogScene.setMinWidth(300);
-//        dialogScene.setMinHeight(200);
-//
-//        // Set the position of the Stage in the center of the parent Scene
-//        dialogStage.setX(parentScene.getWindow().getX() + (parentScene.getWidth() / 2) - (dialogScene.getMinWidth() / 2));
-//        dialogStage.setY(parentScene.getWindow().getY() + (parentScene.getHeight() / 2) - (dialogScene.getMinHeight() / 2));
-//
-//        // Set the Scene of the Stage and show the dialog
-//        dialogStage.setScene(dialogScene);
-//        dialogStage.show();
+//        controller.sendData(new Scene(root), q, boardCurr);
+//        controller.start(null);
+//        taskViews.getInstance().add(controller);
 
-        // Create a new Stage for the dialog
-//        Stage dialogStage = new Stage();
-//        dialogStage.initModality(Modality.APPLICATION_MODAL);
-//        dialogStage.initOwner(primaryStage.getScene().getWindow());
-//
-//        // Create a Label to display the message in the dialog
-//        Label messageLabel = new Label("heh");
-////        messageLabel.setWrapText(true);
-////        messageLabel.setMaxWidth(250);
-//
-//        // Create a Button to close the dialog
-//        Button closeButton = new Button("Close");
-////        closeButton.set(event -> {
-////            dialogStage.close();
-////        });
-//
-//        // Create a VBox to hold the Label and Button
-//        VBox vbox = new VBox();
-//        vbox.setAlignment(Pos.CENTER);
-//        vbox.setSpacing(10);
-////        vbox.setPadding(new Insets(10, 10, 10, 10));
-//
-//        // Set the VBox as the content of the Scene
-//        Scene dialogScene = new Scene(vbox);
-//
-//        // Set the size of the Scene
-////        dialogScene.setMinWidth(300);
-////        dialogScene.setMinHeight(200);
-//
-//        // Set the position of the Stage in the center of the parent Scene
-//        dialogStage.setX(primaryStage.getScene().getWindow().getX() + (primaryStage.getScene().getWidth() / 2) );
-//        dialogStage.setY(primaryStage.getScene().getWindow().getY() + (primaryStage.getScene().getHeight() / 2));
-//
-//        // Set the Scene of the Stage and show the dialog
-//        dialogStage.setScene(dialogScene);
-//        dialogStage.show();
-
-//        primaryStage.getScene().widthProperty().bindBidirectional(stackPane.prefWidthProperty());
-//        scene.heightProperty().bindBidirectional(stackPane.prefHeightProperty());
-
-        // Create a StackPane and add the scenes to it
-//        StackPane stackPane = new StackPane();
-//        stackPane.getChildren().addAll(primaryStage.getScene().getRoot(), taskView.getRoot());
-//
-//        // Set the StackPane as the primary stage's scene
-//        primaryStage.setScene(new Scene(stackPane));
-////        primaryStage.show();
-
-//        StackPane root = new StackPane();
-//        root.getChildren().addAll(primaryStage.getScene().getRoot(), taskView.getRoot());
-////        taskView.getRoot().setScaleX(0.5);
-////        taskView.getRoot().setScaleY(0.8);
-//        Scene overlayScene = new Scene(root);
-//        Stage overlayStage = new Stage();
-//        overlayStage.setScene(overlayScene);
-//        primaryStage.setScene(overlayScene);
-
-        taskViewCtrl.setBoardCurr(boardCurr);
-        taskViewCtrl.renderInfo(q);
+        var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+        taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
+        taskView.getKey().start(null);
+        taskViews.getInstance().add(taskView.getKey());
     }
 
     /**
@@ -322,10 +180,15 @@ public class MainCtrl {
      * @param boardCurr the board the card is in
      */
     public void switchEdit(Card q, Board boardCurr){
-        primaryStage.setTitle("Edit Task");
-        primaryStage.setScene(taskEdit);
-        taskEditCtrl.setBoardCurr(boardCurr);
-        taskEditCtrl.renderInfo(q);
+        TaskViewCtrl controller = taskViews.getInstance().getCotroller(q);
+        Stage viewStage = controller.getStage();
+        if(viewStage == null)
+            return;
+        taskViews.getInstance().remove(controller);
+        var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
+        taskEdit.getKey().sendData(new Scene(taskEdit.getValue()), q, boardCurr);
+        taskEdit.getKey().start(viewStage);
+        taskEdits.getInstance().add(taskEdit.getKey());
     }
 
     /**
@@ -336,4 +199,19 @@ public class MainCtrl {
         switchDashboard("deleted!");
     }
 
+    public void reallySwitchTaskView(Card q, Board boardCurr, Stage stage) {
+        if(taskViews.getInstance().isOpened(q))
+        return;
+
+        var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
+        taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
+        taskView.getKey().start(stage);
+        taskViews.getInstance().add(taskView.getKey());
+    }
+
+    public void closeStages() {
+        taskCreations.getInstance().closeAll();
+        taskViews.getInstance().closeAll();
+        taskEdits.getInstance().closeAll();
+    }
 }

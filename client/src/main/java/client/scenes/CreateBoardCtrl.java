@@ -10,11 +10,10 @@ import javafx.scene.text.Text;
 
 public class CreateBoardCtrl {
 
-    private final ServerUtils server;
     private final MainCtrl mainCtrl;
 
     @FXML
-    private TextField create; // text field for create a board
+    TextField create; // text field for create a board
 
     @FXML
     private javafx.scene.control.Button buttonCreate; // create button
@@ -25,12 +24,10 @@ public class CreateBoardCtrl {
 
     /**
      * constructor for a "create board" scene
-     * @param server
      * @param mainCtrl
      */
     @Inject
-    public CreateBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
-        this.server = server;
+    public CreateBoardCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
     }
 
@@ -109,7 +106,7 @@ public class CreateBoardCtrl {
      * sets the error if there is no name for the board
      * @param err can be found in keyPressed
      */
-    private void setError(String err){
+    void setError(String err){
         error.setText(err);
     }
 
@@ -136,4 +133,5 @@ public class CreateBoardCtrl {
     public Text getError() {
         return error;
     }
+
 }

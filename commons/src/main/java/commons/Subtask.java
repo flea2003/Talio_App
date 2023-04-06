@@ -25,7 +25,6 @@ public class Subtask {
     /**
      * to link the subtask to a specific card
      */
-
     @ManyToOne
     @JoinColumn(name = "card_id")
     @JsonBackReference
@@ -43,7 +42,7 @@ public class Subtask {
      * @param numberInTheCard its order in the card
      * @param card the card it is linked to
      */
-    public Subtask(long id, String name, String description, int numberInTheCard, Card card, int completed) {
+    public Subtask(long id, String name, String description, int numberInTheCard, Card card) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -58,6 +57,16 @@ public class Subtask {
         this.card = card;
         this.description = description;
         this.completed = 0;
+    }
+
+    /**
+     * A subtask's constructor used for testing
+     * @param id the task's id long
+     * @param numberInTheCard its order in the card
+     */
+    public Subtask(long id, int numberInTheCard) {
+        this.id = id;
+        this.numberInTheCard = numberInTheCard;
     }
 
     /**

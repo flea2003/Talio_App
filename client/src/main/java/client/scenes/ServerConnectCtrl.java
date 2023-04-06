@@ -1,18 +1,26 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-import javax.inject.Inject;
 
-
-public class ServerConnectCtrl {
+public class ServerConnectCtrl implements Initializable {
     private final ServerUtils server;
 
     private final MainCtrl mainCtrl;
@@ -20,7 +28,7 @@ public class ServerConnectCtrl {
     @FXML
     private javafx.scene.control.TextField serverAddress;
     @FXML
-    private javafx.scene.control.TextField password;
+    private javafx.scene.control.PasswordField password;
 
     @FXML
     private Text passwordText;
@@ -30,11 +38,19 @@ public class ServerConnectCtrl {
     @FXML
     private javafx.scene.control.Button connectButton2;
 
+    @FXML
+    private ImageView seePassword;
 
+    @FXML
+    private ImageView hidePassword;
+
+    @FXML
+    private TextField showPassword;
     @FXML
     private javafx.scene.control.Button connectAdmin;
 
-
+    @FXML
+    Button connectUser;
     @FXML
     private Text message;
 
@@ -66,10 +82,13 @@ public class ServerConnectCtrl {
      * @return if it managed to connect the client to the server
      */
     public boolean connectToTheServer(javafx.event.ActionEvent event) {
-        if (event.getSource() == connectButton) {
-            System.out.println("here");
-            String IP = serverAddress.getText();
-            String server = "http://" + IP + ":8080";
+        if(event.getSource() == connectButton) {
+            String IP=serverAddress.getText();
+            if (IP.isEmpty()) {
+                message.setText("This field can not be left empty");
+                return false;
+            }
+            String server="http://"+IP+":8080";
             message.setText("Searching for the server...");
             if (serverExists(server)) {
                 System.out.print("exists");
@@ -131,22 +150,60 @@ public class ServerConnectCtrl {
                 message.setText("Incorrect Password");
             } else {
                 connectButton.fire();
+                return true;
             }
-            return true;
         }
         return false;
     }
 
 
-    public boolean openAdminConnect(javafx.event.ActionEvent event) {
+    public void openAdminConnect(javafx.event.ActionEvent event) {
         if (event.getSource() == connectAdmin) {
             System.out.println("Lol");
+            seePassword.setVisible(true);
             password.setVisible(true);
             passwordText.setVisible(true);
             connectButton2.setVisible(true);
             connectButton.setVisible(false);
-            return true;
+            connectUser.setVisible(true);
+            connectAdmin.setVisible(false);
+
+            seePassword.setOnMousePressed( e -> {
+                seePassword.setVisible(false);
+                hidePassword.setVisible(true);
+                password.setVisible(false);
+                showPassword.setVisible(true);
+                showPassword.setText(password.getText());
+            });
+
+            seePassword.setOnMouseReleased( e -> {
+                seePassword.setVisible(true);
+                hidePassword.setVisible(false);
+                password.setVisible(true);
+                showPassword.setVisible(false);
+            });
         }
-        return false;
+    }
+
+    public void openUserConnect(javafx.event.ActionEvent event){
+        if (event.getSource() == connectUser) {
+            seePassword.setVisible(false);
+            password.setVisible(false);
+            passwordText.setVisible(false);
+            connectButton2.setVisible(false);
+            connectButton.setVisible(true);
+            connectUser.setVisible(false);
+            connectAdmin.setVisible(true);
+        }
+    }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        serverAddress.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode() == KeyCode.ENTER)
+                    connectButton.fire();
+            }
+        });
     }
 }

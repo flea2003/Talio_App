@@ -1,3 +1,24 @@
+.connectButton {
+    cursor: pointer;  /*seems like Cursor.HAND*/
+    -fx-background-color:  #544e50;
+    -fx-background-radius:  10px;
+}
+
+.connectButton:hover {
+    -fx-background-color: #000000;
+}
+
+.serverButton {
+    cursor: pointer;  /*seems like Cursor.HAND*/
+    -fx-background-color: rgb(123,104,238);
+    -fx-text-fill: white;
+    -fx-background-radius:  10px;
+}
+
+.serverButton:hover {
+    -fx-background-color: #000000;
+}
+
 .done {
     cursor: pointer;  /*seems like Cursor.HAND*/
         -fx-background-color: rgb(123,104,238);
@@ -19,16 +40,3 @@
 .delete:hover {
     -fx-background-color: #000000;
 }
-
-.checkBox-custom .box {
-    -fx-background-color: #a29cf4;
-    -fx-border-color: rgb(123,104,238);
-    -fx-border-radius: 2px;
-    -fx-background-radius: 2px;
-}
-
-.checkBox-custom:selected .box {
-    -fx-background-color: rgb(123,104,238);
-    -fx-border-color: rgb(123,104,238);
-}
-

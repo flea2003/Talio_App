@@ -29,8 +29,8 @@ import static com.google.inject.Guice.createInjector;
 
 public class Main extends Application {
 
-    private static final Injector INJECTOR = createInjector(new MyModule());
-    private static final MyFXML FXML = new MyFXML(INJECTOR);
+    public static final Injector INJECTOR = createInjector(new MyModule());
+    public static final MyFXML FXML = new MyFXML(INJECTOR);
 
     /**
      * the main method of the client
@@ -79,21 +79,9 @@ public class Main extends Application {
             }
 
         });
-        connectAdmin.setOnAction(e -> {
-            if (serverConnectCtrl.openAdminConnect(e)) {
-                var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
-                var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
-                var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
-                var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
-                var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
-                var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-                mainCtrl.initialize(primaryStage,
-                        dashboard, board, taskCreation, taskView, taskEdit);
-            }
-        });
         Button connectButton2 = (Button) serverConnect.getValue().lookup("#connectButton2");
         connectButton2.setOnAction(e -> {
-            if (serverConnectCtrl.checkPassword(e)) {
+            if (serverConnectCtrl.checkPassword(e) && serverConnectCtrl.connectToTheServer(e)) {
                 var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
                 var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
                 var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");

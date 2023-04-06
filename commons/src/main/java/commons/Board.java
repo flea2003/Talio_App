@@ -1,15 +1,15 @@
 package commons;
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
-import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Board {
@@ -136,5 +136,13 @@ public class Board {
      */
     public java.util.List<List> getLists() {
         return this.lists;
+    }
+
+    /**
+     * setter for the string key
+     * @param key the string to set the key into
+     */
+    public void setKey(String key) {
+        this.key = key;
     }
 }
