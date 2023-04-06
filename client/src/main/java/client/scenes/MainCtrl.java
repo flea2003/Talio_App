@@ -15,6 +15,9 @@
  */
 package client.scenes;
 
+import client.scenes.services.taskCreations;
+import client.scenes.services.taskEdits;
+import client.scenes.services.taskViews;
 import commons.Board;
 import commons.Card;
 import commons.List;

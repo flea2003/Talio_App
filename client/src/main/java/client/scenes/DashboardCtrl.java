@@ -1,9 +1,7 @@
 package client.scenes;
 
 import client.Main;
-import client.services.ButtonTalio;
-import client.scenes.services.taskEdits;
-import client.scenes.services.taskViews;
+import client.scenes.services.ButtonTalio;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -37,6 +35,7 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class DashboardCtrl implements Initializable {
@@ -299,10 +298,6 @@ public class DashboardCtrl implements Initializable {
             }
         };
 
-        addListButton.setOnAction(e -> {
-            createList(vboxEnd, id);
-        });
-
         if (server.getBoard(id).lists != null && server.getBoard(id).lists.size() > 0) {
             if (hboxList.getChildren().size() > 1) {
                 hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
@@ -370,7 +365,6 @@ public class DashboardCtrl implements Initializable {
         vbox.getStylesheets().add("CSS/button.css");
 
         //create the fields of the scene
-        Board boardCurr = (Board) label.getUserData();
         TextField textField = new TextField(boardCurr.getName());
         textField.setStyle("-fx-background-color: rgb(204,204,255)");
         Label error = new Label("");
@@ -506,7 +500,19 @@ public class DashboardCtrl implements Initializable {
             ListView<Card> listView = new ListView<>();
 
             listView.setOnDragOver(event -> {
-                event.acceptTransferModes(TransferMode.MOVE);
+//                double y = event.getY();
+//                System.out.println("Y: " + y);
+//                double listViewY = listView.localToScene(0, 0).getY();
+//                if(y - listViewY <= 100){
+////                    listView.scrollTo(0);
+//                    System.out.println("JOS");
+//                }
+//                else if(listViewY + listView.getHeight() - y <= 100){
+////                    listView.scrollTo(0);
+//                    System.out.println("SUS");
+//                }
+//                event.acceptTransferModes(TransferMode.MOVE);
+//                event.consume();
             });
 
             // if the drag ended on a tableview I add a new card to it
@@ -595,17 +601,18 @@ public class DashboardCtrl implements Initializable {
                     newList.setBoard(boardCurr);
 
                 for (int i = 0; i < boardCurr.lists.size(); i++) {
-                    if (boardCurr.lists.get(i).getID().equals(newList.getID())) {
+                    if (boardCurr.lists.get(i).getID() == newList.getID()) {
                         boardCurr.lists.set(i, newList);
                     }
                 }
 
-                    server.updateBoard(boardCurr);//send the text to the database
+                server.updateBoard(boardCurr);//send the text to the database
                 }
             }
         });
     }
 
+    int[] curr = new int[1];
     private void setFactory(ListView list, long boardId) {
         Board boardCurr = server.getBoard(boardId);
         list.setCellFactory(q -> new ListCell<Card>() {
@@ -635,7 +642,7 @@ public class DashboardCtrl implements Initializable {
 
                         content.getChildren().add(stackPane);
                         stackPane.setAlignment(Pos.CENTER_LEFT);
-//                        setGraphic(stackPane);
+    //                        setGraphic(stackPane);
                     }
                     else{
                         StackPane stackPane = new StackPane();
@@ -648,7 +655,7 @@ public class DashboardCtrl implements Initializable {
                     display.setWrappingWidth(160);
                     content.getChildren().add(display);
 
-//                    if(q.subtasks.size() >= 1){
+    //                    if(q.subtasks.size() >= 1){
                         Image imgDone = new Image("pictures/done_icon.png");
                         ImageView imageDone = new ImageView(imgDone);
                         imageDone.setFitWidth(20);
@@ -665,20 +672,20 @@ public class DashboardCtrl implements Initializable {
                         hBox.getChildren().add(imageDone);
                         hBox.getChildren().add(new Text(done + "/" + total));
 
-//                        setGraphic(hBox);
+    //                        setGraphic(hBox);
                         content.getChildren().add(hBox);
                         hBox.setAlignment(Pos.BOTTOM_RIGHT);
                         HBox.setHgrow(hBox, Priority.ALWAYS);
                         if(q.subtasks.size() == 0){
                             hBox.setVisible(false);
                         }
-//                        setGraphic(hBox);
-//                    }
+    //                        setGraphic(hBox);
+    //                    }
 
                     content.setAlignment(Pos.CENTER);
                     content.setSpacing(Region.USE_COMPUTED_SIZE); // set spacing to computed size
                     setGraphic(content);
-                }
+            }
                 // if we detect the drag we delete the card from the list and set the done variable
                 setOnDragDetected(event -> {
                     if (getItem() == null || isEmpty()) {
@@ -718,7 +725,7 @@ public class DashboardCtrl implements Initializable {
                 setOnDragOver(event -> {
                     double mouseX = event.getSceneX();
                     double mouseY = event.getSceneY();
-
+//                    System.out.println("X: " + mouseX + " Y: " + mouseY);
                     double listViewY = this.localToScene(0, 0).getY();
                     if (mouseY - listViewY >= 50) {
                         sus = false;
@@ -727,10 +734,27 @@ public class DashboardCtrl implements Initializable {
                         sus = true;
                         this.setStyle("-fx-border-color: #e5e3f1 transparent transparent transparent; -fx-border-width: 4 0 0 0;");
                     }
+
+                    double y = event.getY() + this.localToScene(0, 0).getY();
+                    listViewY = this.getListView().localToScene(0, 0).getY();
+                    if(y - listViewY <= 100){
+                        if(curr[0] % 16 == 0) {
+                            this.getListView().scrollTo(this.getIndex() - 1);
+                        }
+                        curr[0]++;
+                    }
+                    else if(listViewY + this.getListView().getHeight() - y <= 100){
+                        if(curr[0] % 16 == 0){
+                            this.getListView().scrollTo(this.getIndex() - 5);
+                        }
+                        curr[0]++;
+                    }
+
                     event.acceptTransferModes(TransferMode.MOVE);
 
                     event.consume();
                 });
+
 
                 setOnDragEntered(event -> {
                 });
@@ -977,6 +1001,7 @@ public class DashboardCtrl implements Initializable {
                 //if the board to be removed is selected remove its data from the interface
                 if (hboxList.getUserData() != null && (long) hboxList.getUserData() == board.getId()) {
                     hboxList.setUserData(null);
+                    shareBoard.setVisible(false);
                     hboxList.getChildren().clear();
                 }
 
@@ -1007,22 +1032,9 @@ public class DashboardCtrl implements Initializable {
 
         button.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
+            if (event.getButton() == MouseButton.PRIMARY)
                 contextMenu.show(pane, absoluteCoordinates.getX() - 21, absoluteCoordinates.getY() + button.getHeight() - 33);
-
-
-//                button.setOnMouseClicked(event -> {
-//                    Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
-//                    if (event.getButton() == MouseButton.PRIMARY) {
-//                        if (clickCount[0] == 1) {
-//                            contextMenu.hide();
-//                            clickCount[0] = 0;
-//                        } else {
-//                            contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
-//                            clickCount[0]++;
-//                        }
-//                    }
-//                });
+        });
 
         return contextMenu;
     }

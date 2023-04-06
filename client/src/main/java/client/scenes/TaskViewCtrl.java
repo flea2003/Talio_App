@@ -1,33 +1,35 @@
 package client.scenes;
 
+import client.scenes.services.ButtonTalio;
+import client.scenes.services.CardControllerState;
+import client.scenes.services.taskViews;
 import client.utils.ServerUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import commons.List;
 import commons.Subtask;
+import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class TaskViewCtrl {
+public class TaskViewCtrl extends Application implements CardControllerState {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
@@ -557,7 +559,6 @@ public class TaskViewCtrl {
             }
         });
     }
-}
 
     public Stage getStage(){return newStage;}
 }
