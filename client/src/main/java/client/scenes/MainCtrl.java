@@ -156,8 +156,6 @@ public class MainCtrl {
     public void switchTaskView(Card q, Board boardCurr){
         if(taskViews.getInstance().isOpened(q))
             return;
-
-
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("client/src/main/resources/client/scenes/TaskView.fxml"));
 //        Parent root = null;
 //        try {

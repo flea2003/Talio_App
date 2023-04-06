@@ -312,6 +312,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     @FXML
     public void setDone(){
 //        mainCtrl.switchDashboard("LOL");
+        taskViews.getInstance().remove(TaskViewCtrl.this);
         newStage.close();
     }
 

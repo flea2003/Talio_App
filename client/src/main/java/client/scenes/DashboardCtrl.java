@@ -625,8 +625,12 @@ public class DashboardCtrl implements Initializable {
                     HBox content = new HBox();
                     //setText(q.name);
                     setOnMouseClicked(event -> {
+                        System.out.println(event.getClickCount());
                         if (event.getClickCount() % 2 == 0) {
+//                            System.out.println("HERE");
                             mainCtrl.switchTaskView(q, server.getBoard(boardId));
+//                            boardsVBox.requestFocus();
+//                            event.consume();
                         }
                     });
                     //if the card has a description add the description icon
