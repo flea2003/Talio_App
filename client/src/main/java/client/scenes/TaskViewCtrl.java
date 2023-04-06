@@ -146,47 +146,53 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         }
         currCard = card;
         taskName.setText(card.name);
-
+        if(taskName.layoutBoundsProperty().get().getWidth() >= 400){
+            System.out.println("DA");
+            taskName.setWrappingWidth(400);
+        }
         addEditFunctionality((Pane)taskName.getParent(), taskName, taskName, e -> {
             TextField textField = new TextField(taskName.getText());
-            ((Pane) taskName.getParent()).getChildren().set(((Pane) taskName.getParent()).getChildren().indexOf(taskName), textField);
-            textField.setStyle(taskName.getStyle());
-            textField.requestFocus();
-            textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                } else {
-                    if (textField.getText().strip().length() != 0) {
-                        String data = textField.getText();
-                        currCard.name = data;
-                        server.updateBoard(currCard.getList().getBoard());
-                        if((Pane) textField.getParent() != null) {
-                            int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
-                            ((Pane) textField.getParent()).getChildren().set(indx, taskName);
+            if(taskName.getParent() != null) {
+                ((Pane) taskName.getParent()).getChildren().set(((Pane) taskName.getParent()).getChildren().indexOf(taskName), textField);
+                //textField.setStyle(taskName.getStyle());
+                textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                    } else {
+                        if (textField.getText().strip().length() != 0) {
+                            String data = textField.getText();
+                            currCard.name = data;
+                            server.updateBoard(currCard.getList().getBoard());
+                            if ((Pane) textField.getParent() != null) {
+                                int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                                ((Pane) textField.getParent()).getChildren().set(indx, taskName);
+                            }
+                        } else {
+                            if ((Pane) textField.getParent() != null) {
+                                int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                                ((Pane) textField.getParent()).getChildren().set(indx, taskName);
+                            }
                         }
                     }
-                    else{
-                        if((Pane) textField.getParent() != null) {
-                            int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
-                            ((Pane) textField.getParent()).getChildren().set(indx, taskName);
-                        }
-                    }
-                }
-            });
+                });
 
-            textField.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.ENTER) {
-                    int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
-                    ((Pane) textField.getParent()).getChildren().set(indx, taskName);                  }
-            });
+                textField.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                        ((Pane) textField.getParent()).getChildren().set(indx, taskName);                  }
+                });
+
+                textField.requestFocus();
+            }
+
         });
 
         taskDescription.setText(card.description);
         taskDescription.setWrappingWidth(400);
         addEditFunctionality((Pane)description.getParent(), description, taskDescription, e -> {
             TextField textField = new TextField(taskDescription.getText());
-            textField.setPrefWidth(400);
-            textField.setMinWidth(400);
-            textField.setMaxWidth(400);
+//            textField.setPrefWidth(400);
+//            textField.setMinWidth(400);
+//            textField.setMaxWidth(400);
             int index = descriptionPane.getParent().getChildrenUnmodifiable().indexOf(descriptionPane);
             VBox vBox = (VBox) descriptionPane.getParent();
             vBox.getChildren().set(index, textField);
@@ -312,6 +318,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     @FXML
     public void setDone(){
 //        mainCtrl.switchDashboard("LOL");
+//        System.out.println("XD");
         taskViews.getInstance().remove(TaskViewCtrl.this);
         newStage.close();
     }

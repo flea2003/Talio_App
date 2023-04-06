@@ -655,8 +655,19 @@ public class DashboardCtrl implements Initializable {
                         content.getChildren().add(stackPane);
                     }
 
-                    Text display = new Text(q.name);
-                    display.setWrappingWidth(160);
+                    Text display = null;
+                    display = new Text(q.name);
+                    if(q.name.length() >= 20){
+                        display = new Text(q.name.substring(0, 20) + "...");
+                    }
+                    else{
+                        display = new Text(q.name);
+                    }
+                    display.setStyle("-fx-font-style: Italic;");
+                    display.setStyle("-fx-font-family: Calibri Light;");
+                    display.setStyle("-fx-font-size: 14px;");
+
+//                    display.setWrappingWidth(160);
                     content.getChildren().add(display);
 
     //                    if(q.subtasks.size() >= 1){
