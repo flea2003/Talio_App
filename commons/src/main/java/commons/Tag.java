@@ -34,7 +34,10 @@ public class Tag {
      * to link the tag to multiple cards
      * a tag has a list of cards
      */
-    @ManyToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(name = "card_tag",
+        joinColumns = @JoinColumn(name = "tag_id"),
+        inverseJoinColumns = @JoinColumn(name = "card_id"))
     @JsonManagedReference
     public java.util.List<Card> cards;
 

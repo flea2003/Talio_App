@@ -33,7 +33,9 @@ public class Card {
      * link the card to its tags
      */
     @ManyToMany
-    @JoinColumn(name = "tag_id")
+    @JoinTable(name = "card_tag",
+        joinColumns = @JoinColumn(name = "card_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id"))
     @JsonBackReference
     private java.util.List<Tag> tags;
 
