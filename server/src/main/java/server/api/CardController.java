@@ -34,6 +34,7 @@ public class CardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Card> getById (@PathVariable long id){
+        System.out.println(id);
         Card card = cardService.getCardById(id);
         if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
@@ -65,12 +66,10 @@ public class CardController {
     @PostMapping(path =  {"", "/"})
     public ResponseEntity<Card> add(@RequestBody Card card){
         if(card == null || isNullOrEmpty(card.name)){
-            System.out.println("A CARD WAS UPDATED  feic");
             return ResponseEntity.badRequest().build();
         }
         else{
             cardService.saveCard(card);
-            System.out.println("A CARD WAS UPDATED");
             return ResponseEntity.ok(card);
         }
     }

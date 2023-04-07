@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.Main;
+import client.scenes.services.ButtonTalio;
 import client.scenes.services.taskEdits;
 import client.scenes.services.taskViews;
 import client.utils.ServerUtils;
@@ -8,6 +9,7 @@ import com.google.inject.Inject;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import commons.Subtask;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +30,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -204,14 +207,17 @@ public class DashboardCtrl implements Initializable {
             dotsMenu.setGraphic(dotsView);
             dotsMenu.setContextMenu(createThreeDotContextMenu(label, dotsMenu));
 
+//            Node dotMenu = new Group(backroundDelete, imageDelete);
+
             HBox hBox = new HBox(label, new Region(), dotsMenu);
             hBox.setMaxWidth(120);
-            hBox.setPrefWidth(120);//set the preferred width to the max width so the updates are noy noticeable
+            hBox.setPrefWidth(120); //set the preferred width to the max
+                                    // width so the updates are noy noticeable
 
             hBox.setStyle("fx-background-color: #e5e3f1; -fx-background-radius: 10px;");
             hBox.setAlignment(Pos.CENTER);
-            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS); //Set spacer to fill available space
-
+            HBox.setHgrow(hBox.getChildren().get(1), Priority.ALWAYS); //Set spacer to fill
+                                                                        // available space
 
             //Ensure that there is space for the buttons
             label.maxWidthProperty().bind(hBox.widthProperty().multiply(0.75));
@@ -252,20 +258,49 @@ public class DashboardCtrl implements Initializable {
         if (hboxList.getChildren().size() > 0) {
             hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
         }
+        // Created a new Interface, where we provide the methods of where
+        // to put the button, where the label should appear, and
+        ButtonTalio addListButton = new ButtonTalio("Create List", "Add List Name") {
+            @Override
+            public void processData(String data) {
+                Board boardCurr = server.getBoard(id);
+                List newList=new List(new ArrayList<Card>(), data,
+                        boardCurr, boardCurr.lists.size() + 1);
+                newList.setBoard(boardCurr);
+                boardCurr.lists.add(newList);
+                server.updateBoard(boardCurr);
+            }
 
-        VBox vboxEnd = new VBox();
-        vboxEnd.getStylesheets().add("/CSS/button.css");
+            @Override
+            public void addLabel(Pane vboxEnd) {
+                if(vboxEnd.getChildren().size()>1){
+                    ObservableList<Node> children = vboxEnd.getChildren();
+                    int numChildren = children.size();
+                    children.remove(numChildren - 1);
+                    children.remove(numChildren - 2);
+                }
+                Region spacer = new Region();
+                spacer.setPrefHeight(10);
+                vboxEnd.getChildren().add(spacer);
+                vboxEnd.getChildren().add(textField);
+            }
 
-        Button addListButton = new Button("Create List");
-        addListButton.getStyleClass().add("connectButton");
-        addListButton.setStyle("-fx-text-fill: white");
+            @Override
+            public void deleteLabel(Pane vboxEnd) {
+                vboxEnd.getChildren().remove(textField);
+                Region spacer = new Region();
+                spacer.setPrefHeight(10);
+                vboxEnd.getChildren().remove(spacer);
+            }
 
-        vboxEnd.getChildren().add(addListButton);
-        hboxList.getChildren().add(vboxEnd);
-
-        addListButton.setOnAction(e -> {
-            createList(vboxEnd, id);
-        });
+            @Override
+            public Pane addButton() {
+                VBox vboxEnd = new VBox();
+                vboxEnd.getChildren().add(this);
+                hboxList.getChildren().add(vboxEnd);
+                return vboxEnd;
+            }
+        };
 
         var lists = server.getBoard(id).lists;
         taskViews.getInstance().checkClosed(lists);
@@ -394,7 +429,6 @@ public class DashboardCtrl implements Initializable {
                     Board boardCurr = new Board(newText);
                     boardCurr = server.addBoard(boardCurr);
                     boardCurr.lists = new ArrayList<>();
-                    System.out.println(boardCurr.id);
 //                    boardCurr = server.getBoard(boardCurr.id);
 //                    System.out.println(boardCurr);
                     serverBoards.get(server.getServer()).add(boardCurr);
@@ -476,6 +510,7 @@ public class DashboardCtrl implements Initializable {
 
             // if the drag ended on a tableview I add a new card to it
             listView.setOnDragDropped(event -> {
+                event.acceptTransferModes(TransferMode.MOVE);
                 if (draggedCard != null) {
                     done = true; // the dragged ended succesfully
                     var sourceListView = draggedCard.getListView();
@@ -571,6 +606,15 @@ public class DashboardCtrl implements Initializable {
         });
     }
 
+    int[] curr = new int[1];
+
+    /**
+     * This method describes the manner in which all the
+     * cards will be created and arranged into lists
+     * This method also contains the drag and drop functionality
+     * @param list the list in which we store the cards
+     * @param boardId - the id of the board where the list is located
+     */
     private void setFactory(ListView list, long boardId) {
         Board boardCurr = server.getBoard(boardId);
         list.setCellFactory(q -> new ListCell<Card>() {
@@ -580,13 +624,21 @@ public class DashboardCtrl implements Initializable {
                 if (empty) {
                     setText("");
                 } else {
-                    setText(q.name);
+                    HBox content = new HBox();
+                    //setText(q.name);
                     setOnMouseClicked(event -> {
                         if (event.getClickCount() == 2) {
-                            mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                            if(server.getCardById(q.id) == null){
+                                // because of this + drag and drop we got
+                                // an error before
+                            }
+                            else{
+                                mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                            }
                         }
                     });
                     //if the card has a description add the description icon
+                    HBox icons = new HBox();
                     if (q.description != null && q.description.strip().length() != 0) {
 
                         Image imgDescription = new Image("pictures/description_icon.png");
@@ -595,10 +647,57 @@ public class DashboardCtrl implements Initializable {
                         imageDescription.setFitHeight(20);
 
                         StackPane stackPane = new StackPane(imageDescription);
-                        StackPane.setAlignment(imageDescription, Pos.TOP_RIGHT);
 
-                        setGraphic(stackPane);
+                        content.getChildren().add(stackPane);
+                        stackPane.setAlignment(Pos.CENTER_LEFT);
                     }
+                    else{
+                        StackPane stackPane = new StackPane();
+                        stackPane.setAlignment(Pos.CENTER_LEFT);
+                        stackPane.setMaxWidth(0);
+                        content.getChildren().add(stackPane);
+                    }
+                    Text display = null;
+                    display = new Text(q.name);
+                    if(q.name.length() >= 20){
+                        display = new Text(q.name.substring(0, 20) + "...");
+                    }
+                    else{
+                        display = new Text(q.name);
+                    }
+                    display.setStyle("-fx-font-style: Italic;");
+                    display.setStyle("-fx-font-family: Calibri Light;");
+                    display.setStyle("-fx-font-size: 14px;");
+                    content.getChildren().add(display);
+
+                    Image imgDone = new Image("pictures/done_icon.png");
+                    ImageView imageDone = new ImageView(imgDone);
+                    imageDone.setFitWidth(20);
+                    imageDone.setFitHeight(20);
+                    int total = 0, done = 0;
+                    if(q.subtasks != null) {
+                        total = q.subtasks.size();
+                        done = 0;
+                        for (Subtask subtask : q.getSubtasks()) {
+                            if (subtask.isCompleted() == 1){
+                                done++;
+                            }
+                        }
+                    }
+                    HBox hBox = new HBox();
+                    hBox.getChildren().add(imageDone);
+                    hBox.getChildren().add(new Text(done + "/" + total));
+
+                    content.getChildren().add(hBox);
+                    hBox.setAlignment(Pos.BOTTOM_RIGHT);
+                    HBox.setHgrow(hBox, Priority.ALWAYS);
+                    if(q.subtasks.size() == 0){
+                        hBox.setVisible(false);
+                    }
+
+                    content.setAlignment(Pos.CENTER);
+                    content.setSpacing(Region.USE_COMPUTED_SIZE); // set spacing to computed size
+                    setGraphic(content);
                 }
                 // if we detect the drag we delete the card from the list and set the done variable
                 setOnDragDetected(event -> {
@@ -608,6 +707,9 @@ public class DashboardCtrl implements Initializable {
 
                     draggedCard = this;
                     cardDragged = getItem(); // store the Card object in a local variable
+                    if(cardDragged == null){
+                        return;
+                    }
                     List listCurr = cardDragged.getList();
                     listCurr.cards.remove(cardDragged); // remove the card from the list
 
@@ -648,10 +750,27 @@ public class DashboardCtrl implements Initializable {
                         sus = true;
                         this.setStyle("-fx-border-color: #e5e3f1 transparent transparent transparent; -fx-border-width: 4 0 0 0;");
                     }
+
+                    double y = event.getY() + this.localToScene(0, 0).getY();
+                    listViewY = this.getListView().localToScene(0, 0).getY();
+                    if(y - listViewY <= 100){
+                        if(curr[0] % 16 == 0) {
+                            this.getListView().scrollTo(this.getIndex() - 1);
+                        }
+                        curr[0]++;
+                    }
+                    else if(listViewY + this.getListView().getHeight() - y <= 100){
+                        if(curr[0] % 16 == 0){
+                            this.getListView().scrollTo(this.getIndex() - 5);
+                        }
+                        curr[0]++;
+                    }
+
                     event.acceptTransferModes(TransferMode.MOVE);
 
                     event.consume();
                 });
+
 
                 setOnDragEntered(event -> {
                 });
@@ -661,6 +780,9 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragDropped(event -> { // if the drag ends on a card we update the table
+                    if(server.getCardById(q.id) == null){
+                        return;
+                    }
                     if (draggedCard != null) {
                         done = true;
                         var sourceListView = draggedCard.getListView();
@@ -708,6 +830,7 @@ public class DashboardCtrl implements Initializable {
                 setPrefWidth(size);
             }
         });
+
     }
 
     /**
@@ -831,14 +954,24 @@ public class DashboardCtrl implements Initializable {
         }));
 
         shareBoard.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(), shareBoard.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX() - 75, absoluteCoordinates.getY() + shareBoard.getHeight() +10);
-
+            Point2D absoluteCoordinates = shareBoard.localToScreen(shareBoard.getLayoutX(),
+                                                                   shareBoard.getLayoutY());
+            if(event.getButton() == MouseButton.PRIMARY) {
+                contextMenu.show(pane, absoluteCoordinates.getX() - 75,
+                                       absoluteCoordinates.getY() + shareBoard.getHeight() + 10);
+            }
         });
         shareBoard.setContextMenu(contextMenu);
     }
 
+    /**
+     * This method creates the ThreeDotContextMenu, which appears near
+     * each Board into My Boards overview, where we can choose to either
+     * detele, leave or rename a board
+     * @param label
+     * @param button
+     * @return the context menu itself
+     */
     public ContextMenu createThreeDotContextMenu(Label label, Button button) {
         final ContextMenu contextMenu = new ContextMenu();
         MenuItem edit = new MenuItem("Rename board");
@@ -896,8 +1029,10 @@ public class DashboardCtrl implements Initializable {
                 Board board = (Board) label.getUserData();
 
                 //if the board to be removed is selected remove its data from the interface
-                if (hboxList.getUserData() != null && (long) hboxList.getUserData() == board.getId()) {
+                if (hboxList.getUserData() != null
+                        && (long) hboxList.getUserData() == board.getId()) {
                     hboxList.setUserData(null);
+                    shareBoard.setVisible(false);
                     hboxList.getChildren().clear();
                 }
 
@@ -926,27 +1061,20 @@ public class DashboardCtrl implements Initializable {
         });
 
         button.setOnMouseClicked(event -> {
-            Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
-            if(event.getButton() == MouseButton.PRIMARY)
+            Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(),
+                                                               button.getLayoutY());
+            if (event.getButton() == MouseButton.PRIMARY)
                 contextMenu.show(pane, absoluteCoordinates.getX() - 21, absoluteCoordinates.getY() + button.getHeight() - 33);
-
-
-//                button.setOnMouseClicked(event -> {
-//                    Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(), button.getLayoutY());
-//                    if (event.getButton() == MouseButton.PRIMARY) {
-//                        if (clickCount[0] == 1) {
-//                            contextMenu.hide();
-//                            clickCount[0] = 0;
-//                        } else {
-//                            contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + button.getHeight());
-//                            clickCount[0]++;
-//                        }
-//                    }
-                });
+        });
 
         return contextMenu;
     }
-//    }
+
+    /**
+     * This method creates the pop-out screen where we can
+     * introduce the key of a board in order to connect to it
+     * In case the key doesn't work, we get an error back
+     */
     @FXML
     public void openAddBoard() {
         Label description = new Label("Key of the board:");
@@ -1017,6 +1145,14 @@ public class DashboardCtrl implements Initializable {
         addBoardButton.setContextMenu(contextMenu);
     }
 
+    /**
+     * Methods adds a label where we can enter the name of a
+     * new task we would like to create
+     * Sets an error if the name is empty
+     * @param list
+     * @param vboxEnd
+     * @param boardId
+     */
     public void createTask(List list, VBox vboxEnd, long boardId){
         vboxEnd.setVisible(true);
 
