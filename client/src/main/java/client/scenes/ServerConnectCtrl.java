@@ -162,7 +162,6 @@ public class ServerConnectCtrl implements Initializable {
 
     public void openAdminConnect(javafx.event.ActionEvent event) {
         if (event.getSource() == connectAdmin) {
-            System.out.println("Lol");
             seePassword.setVisible(true);
             password.setVisible(true);
             passwordText.setVisible(true);

@@ -32,7 +32,7 @@ public class MyModule implements Module {
         binder.bind(ServerUtils.class).in(Scopes.SINGLETON);
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
         binder.bind(DashboardCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(TaskViewCtrl.class).in(Scopes.SINGLETON);
+//        binder.bind(TaskViewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(TaskEditCtrl.class).in(Scopes.SINGLETON);
         binder.bind(ServerConnectCtrl.class).in(Scopes.SINGLETON);
     }

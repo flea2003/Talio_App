@@ -1,20 +1,13 @@
 package server.api;
 
-import commons.Card;
-import commons.Subtask;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.database.ListRepository;
 import server.services.ListService;
 
 import java.util.List;
 import java.util.Objects;
-
-
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/lists")
