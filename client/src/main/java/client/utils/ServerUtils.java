@@ -352,7 +352,7 @@ public class ServerUtils {
     }
 
     public void deleteSubtask(Subtask subtask){
-        String endpoint = String.format("api/subtask/", subtask);
+        String endpoint = String.format("api/subtasks/", subtask);
         ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -361,7 +361,7 @@ public class ServerUtils {
     }
 
     public Subtask saveSubtask(Subtask subtask){
-        String endpoint = String.format("api/subtask/", subtask);
+        String endpoint = String.format("api/subtasks/", subtask);
         return  ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -458,7 +458,7 @@ public class ServerUtils {
      * @return the updated subtask
      */
     public commons.Subtask updateSubtask(commons.Subtask subtask){
-        String endpoint = String.format("api/subtask/update");
+        String endpoint = String.format("api/subtasks/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -488,7 +488,7 @@ public class ServerUtils {
      * @return the deleted subtask
      */
     public commons.Subtask deleteSubtask(long id){
-        String endpoint = String.format("api/subtask/delete/%d", id);
+        String endpoint = String.format("api/subtasks/delete/%d", id);
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -508,6 +508,25 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<Subtask>>() {});
+    }
+
+    /**
+     * sends a get request to trigger the respective method in cardController
+     * gets a specific card from the database
+     * @param id the id of the card to be gotten
+     * @return the gotten card
+     */
+    public commons.Card getCardById(long id){
+        String endpoint = String.format("/api/cards/%d", id);
+        try{
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(server).path(endpoint)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .get(commons.Card.class);
+        }catch(Exception e){
+            return null;
+        }
     }
 
 

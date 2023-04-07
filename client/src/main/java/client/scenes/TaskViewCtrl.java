@@ -149,7 +149,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         currCard = card;
         taskName.setText(card.name);
         if(taskName.layoutBoundsProperty().get().getWidth() >= 400){
-            System.out.println("DA");
             taskName.setWrappingWidth(400);
         }
         addEditFunctionality((Pane)taskName.getParent(), taskName, taskName, e -> {
@@ -387,7 +386,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     }
 
     public void createSubtask(Subtask subtask){
-        System.out.println(subtask);
         HBox hbox = new HBox();
         CheckBox checkBox = new CheckBox(subtask.getName());
         checkBox.getStylesheets().add("CSS/button.css");

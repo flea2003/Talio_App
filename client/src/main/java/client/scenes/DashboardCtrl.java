@@ -2,6 +2,8 @@ package client.scenes;
 
 import client.Main;
 import client.scenes.services.ButtonTalio;
+import client.scenes.services.taskEdits;
+import client.scenes.services.taskViews;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -71,7 +73,6 @@ public class DashboardCtrl implements Initializable {
     private BorderPane innerBoardsPane;
     private java.util.List<commons.Board> localBoards;
     private Board focusedBoard;
-    java.util.List<Board> connectedBoards;
     Map<String, java.util.List<Board>> serverBoards;
     @FXML
     private Button addBoard;
@@ -103,9 +104,8 @@ public class DashboardCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        innerBoardsPane.set
         String currentServer = server.getServer();
-        if(serverBoards == null) {
+        if(serverBoards ==null) {
             serverBoards = new HashMap<>();
         }
         if (serverBoards.get(currentServer) == null) {
@@ -113,26 +113,62 @@ public class DashboardCtrl implements Initializable {
             serverBoards.put(currentServer, boards);
         }
         addBoardLabel.setVisible(false);
-        connectedBoards = new ArrayList<>();
-        connectedBoards.addAll(serverBoards.get(currentServer));
         openShare();
         openAddBoard();
-
         addBoard.setOnAction(e -> {
             createBoard();
         });
-        refreshBoards(connectedBoards);
+
+        setBoards();
+        refreshBoards(serverBoards.get(currentServer));
         server.refreshBoards("/topic/updates", Boolean.class, l -> {
             // this method refreshes. The platform.runLater() because of thread issues.
             Platform.runLater(() -> {
                 try{
+                    setBoards();
                     refreshBoards(serverBoards.get(currentServer));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         });
+    }
 
+    /**
+     * checks that the changes on each board have been updated and
+     * if not, it updates them
+     */
+    public void setBoards(){
+        String currentServer = server.getServer();
+        java.util.List<Board> serBoards = server.getBoards();
+
+        //Get the list of boards for the current server
+        java.util.List<Board> localBoards = serverBoards.get(currentServer);
+
+        //Create a set of board IDs for the server boards
+        Set<Long> serverIds = new HashSet<>();
+        for (Board serBoard : serBoards) {
+            serverIds.add(serBoard.getId());
+        }
+
+        // Use an iterator to update and remove boards
+        Iterator<Board> iterator = localBoards.iterator();
+        while (iterator.hasNext()) {
+            Board board = iterator.next();
+            if (serverIds.contains(board.getId())) {
+                for (Board serBoard : serBoards) {
+                    if (board.getId() == serBoard.getId()) {
+                        board.setName(serBoard.getName());
+                        break;
+                    }
+                }
+            } else {
+                if(hboxList.getUserData() != null && (Long)hboxList.getUserData() == board.getId()){
+                    hboxList.setUserData(null);
+                }
+                iterator.remove();
+            }
+        }
     }
 
     /**
@@ -140,8 +176,18 @@ public class DashboardCtrl implements Initializable {
      * @param boards the boards to populate the dashboard
      */
     public void refreshBoards(java.util.List<Board> boards){
-        if(hboxList.getUserData()!=null){
+        //if an update happens to an already selected board, it updates it
+        if(hboxList.getUserData() != null){
             refreshSpecificBoard((Long) hboxList.getUserData());
+        }
+
+        //if no board is selected, clear the list interface
+        // (used for when another client deletes a board)
+        if(hboxList.getUserData() == null){
+            if (hboxList.getChildren().size() > 0) {
+                hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
+            }
+            shareBoard.setVisible(false);
         }
 
         if (boardsVBox.getChildren().size() > 0) {
@@ -150,24 +196,6 @@ public class DashboardCtrl implements Initializable {
 
         for (Board boardCurr : boards) {
             Label label = new Label(boardCurr.name);
-
-//            //create delete icon
-//            Image imgDelete =new Image("pictures/delete_icon.png");
-//            ImageView imageDelete = new ImageView(imgDelete);
-//            imageDelete.setFitWidth(20);
-//            imageDelete.setFitHeight(20);
-//            Rectangle backroundDelete = new Rectangle(20, 20);
-//            backroundDelete.setFill(Color.TRANSPARENT);
-//            Node deleteBoard = new Group(backroundDelete, imageDelete);
-//
-//            //create edit icon
-//            Image imgEdit =new Image("pictures/edit_icon.png");
-//            ImageView imageEdit = new ImageView(imgEdit);
-//            imageEdit.setFitWidth(20);
-//            imageEdit.setFitHeight(20);
-//            Rectangle backroundEdit = new Rectangle(20, 20);
-//            backroundEdit.setFill(Color.TRANSPARENT);
-//            Node editBoard = new Group(backroundEdit, imageEdit);
 
             //create delete icon
             Image dots = new Image("pictures/dots.png");
@@ -179,7 +207,7 @@ public class DashboardCtrl implements Initializable {
             dotsMenu.setGraphic(dotsView);
             dotsMenu.setContextMenu(createThreeDotContextMenu(label, dotsMenu));
 
-//          Node dotMenu = new Group(backroundDelete, imageDelete);
+//            Node dotMenu = new Group(backroundDelete, imageDelete);
 
             HBox hBox = new HBox(label, new Region(), dotsMenu);
             hBox.setMaxWidth(120);
@@ -193,6 +221,7 @@ public class DashboardCtrl implements Initializable {
 
             //Ensure that there is space for the buttons
             label.maxWidthProperty().bind(hBox.widthProperty().multiply(0.75));
+
 
             //Make the icons visible only when hovering on the specific board
 
@@ -273,12 +302,16 @@ public class DashboardCtrl implements Initializable {
             }
         };
 
-        if (server.getBoard(id).lists != null && server.getBoard(id).lists.size() > 0) {
+        var lists = server.getBoard(id).lists;
+        taskViews.getInstance().checkClosed(lists);
+        taskEdits.getInstance().checkClosed(lists);
+
+        if ( lists != null && lists.size() > 0) {
             if (hboxList.getChildren().size() > 1) {
                 hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
             }
 
-            addLists(server.getBoard(id).lists, id);
+            addLists(lists, id);
         } else if (hboxList.getChildren().size() > 1) {
             hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
         }
@@ -311,11 +344,9 @@ public class DashboardCtrl implements Initializable {
                 hboxList.setUserData(null);
                 hboxList.getChildren().clear();
             }
-            //remove board from connectedBoards
-            connectedBoards.remove(board);
-            //delete board
-            connectedBoards.remove(board);
+            //remove board from serverBoards
             serverBoards.get(server.getServer()).remove(board);
+            //delete board
             server.deleteBoard(board.getId());
         }
     }
@@ -400,11 +431,10 @@ public class DashboardCtrl implements Initializable {
                     boardCurr.lists = new ArrayList<>();
 //                    boardCurr = server.getBoard(boardCurr.id);
 //                    System.out.println(boardCurr);
-                    connectedBoards.add(boardCurr);
                     serverBoards.get(server.getServer()).add(boardCurr);
                     addBoardLabel.setText("");
                     addBoardLabel.setVisible(false);
-                    refreshBoards(connectedBoards);
+                    refreshBoards(serverBoards.get(server.getServer()));
                 }
             }
         });
@@ -452,15 +482,18 @@ public class DashboardCtrl implements Initializable {
                     editList(vBox, label, boardId);
                 }
             });
+
             //edit list using edit button
             edit.setOnAction(e -> {
                 editList(vBox, label, boardId);
             });
+
             // Add Card Button
             label.setFont(Font.font(20));
             Button addTaskButton = new Button("Add Task");
             addTaskButton.getStyleClass().add("connectButton");
             addTaskButton.setStyle("-fx-text-fill: rgb(250,240,230)");
+
             addTaskButton.setOnMouseClicked(e -> {
                 if( e.getClickCount() == 2){
                     mainCtrl.switchTaskCreation(listCurr, boardId);
@@ -468,10 +501,13 @@ public class DashboardCtrl implements Initializable {
                     createTask(listCurr, addTask, boardId);
                 }
             });
+
             ListView<Card> listView = new ListView<>();
+
             listView.setOnDragOver(event -> {
                 event.acceptTransferModes(TransferMode.MOVE);
             });
+
             // if the drag ended on a tableview I add a new card to it
             listView.setOnDragDropped(event -> {
                 event.acceptTransferModes(TransferMode.MOVE);
@@ -480,14 +516,18 @@ public class DashboardCtrl implements Initializable {
                     var sourceListView = draggedCard.getListView();
                     var sourceItems = sourceListView.getItems();
                     int sourceIndex = draggedCard.getIndex();
+
                     listCurr.cards.add(cardDragged); // update with the card dropped
+
                     for (int i = 0; i < boardCurr.lists.size(); i++) {
                         if (boardCurr.lists.get(i).getID() == listCurr.getID()) {
                             boardCurr.lists.set(i, listCurr);
                         }
                     }
+
                     server.updateBoard(boardCurr);
                 }
+
                 event.setDropCompleted(true);
                 event.consume();
             });
@@ -587,9 +627,14 @@ public class DashboardCtrl implements Initializable {
                     HBox content = new HBox();
                     //setText(q.name);
                     setOnMouseClicked(event -> {
-                        System.out.println(event.getClickCount());
-                        if (event.getClickCount() % 2 == 0) {
-                            mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                        if (event.getClickCount() == 2) {
+                            if(server.getCardById(q.id) == null){
+                                // because of this + drag and drop we got
+                                // an error before
+                            }
+                            else{
+                                mainCtrl.switchTaskView(q, server.getBoard(boardId));
+                            }
                         }
                     });
                     //if the card has a description add the description icon
@@ -662,6 +707,9 @@ public class DashboardCtrl implements Initializable {
 
                     draggedCard = this;
                     cardDragged = getItem(); // store the Card object in a local variable
+                    if(cardDragged == null){
+                        return;
+                    }
                     List listCurr = cardDragged.getList();
                     listCurr.cards.remove(cardDragged); // remove the card from the list
 
@@ -693,6 +741,7 @@ public class DashboardCtrl implements Initializable {
                 setOnDragOver(event -> {
                     double mouseX = event.getSceneX();
                     double mouseY = event.getSceneY();
+
                     double listViewY = this.localToScene(0, 0).getY();
                     if (mouseY - listViewY >= 50) {
                         sus = false;
@@ -778,6 +827,7 @@ public class DashboardCtrl implements Initializable {
                 setPrefWidth(size);
             }
         });
+
     }
 
     /**
@@ -985,9 +1035,8 @@ public class DashboardCtrl implements Initializable {
 
                 idOfCurrentBoard = -1;
 
-                connectedBoards.remove(board);
                 serverBoards.get(server.getServer()).remove(board);
-                refreshBoards(connectedBoards);
+                refreshBoards( serverBoards.get(server.getServer()));
             }
         });
 
@@ -1043,7 +1092,7 @@ public class DashboardCtrl implements Initializable {
                     retrievedBoard = server.getBoardByKey(key);
                     if (retrievedBoard != null) {
                         boolean boardAdded = false;
-                        for (Board board : connectedBoards) {
+                        for (Board board : serverBoards.get(server.getServer())) {
                             if (board.id == retrievedBoard.id) {
                                 errorMessage.setText("Board is already added");
                                 boardAdded = true;
@@ -1051,9 +1100,8 @@ public class DashboardCtrl implements Initializable {
                         }
                         if (!boardAdded) {
                             errorMessage.setText("");
-                            connectedBoards.add(retrievedBoard);
                             serverBoards.get(server.getServer()).add(retrievedBoard);
-                            refreshBoards(connectedBoards);
+                            refreshBoards(serverBoards.get(server.getServer()));
                             ContextMenu contextMenu = addBoardButton.getContextMenu();
                             contextMenu.setY(contextMenu.getY() + 24);
                         }
@@ -1074,6 +1122,7 @@ public class DashboardCtrl implements Initializable {
         contextMenu.getItems().addAll(popUpMenu);
         contextMenu.setAutoHide(true);
         contextMenu.setHideOnEscape(true);
+
 
         addBoardButton.focusedProperty().addListener(((observable, oldValue, newValue) -> {
             if(!newValue) {
