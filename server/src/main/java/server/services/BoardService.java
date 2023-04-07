@@ -24,7 +24,14 @@ public class BoardService {
     }
 
     public Board getBoardById(long id) {
-        return boardRepository.findById(id).get();
+        Board board = boardRepository.findById(id).get();
+        for(commons.List list : board.getLists()){
+            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+            for(Card card : list.getCards()){
+                Collections.sort(card.getSubtasks() , Comparator.comparingInt(Subtask::getNumberInTheCard));
+            }
+        }
+        return board;
     }
 
     public Board saveBoard(Board board) {

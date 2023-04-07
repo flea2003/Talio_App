@@ -13,7 +13,6 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -105,9 +104,14 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         this.card = card;
         this.currCard = card;
         this.viewTasks = viewTasks;
-
     }
 
+    /**
+     * A method which sends information to our scene controller
+     * @param scene the scene that is bind to this controller
+     * @param card the card that needs to be loaded in this scene
+     * @param board the board that the cards belongs to
+     */
     public void sendData(Scene scene, Card card, Board board){
         this.taskView = scene;
         this.currCard = card;
@@ -138,8 +142,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      * @param card the card to show
      */
     public void renderInfo(Card card){
-//        borderPane.setCenter(scrollPane);
-//        BorderPane.setAlignment(scrollPane, Pos.CENTER);
         hboxButtons.getStylesheets().add("CSS/button.css");
         while(subTasks.getChildren().size() >= 2){
             subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
@@ -154,7 +156,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             TextField textField = new TextField(taskName.getText());
             if(taskName.getParent() != null) {
                 ((Pane) taskName.getParent()).getChildren().set(((Pane) taskName.getParent()).getChildren().indexOf(taskName), textField);
-                //textField.setStyle(taskName.getStyle());
                 textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                     } else {
@@ -190,9 +191,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         taskDescription.setWrappingWidth(400);
         addEditFunctionality((Pane)description.getParent(), description, taskDescription, e -> {
             TextField textField = new TextField(taskDescription.getText());
-//            textField.setPrefWidth(400);
-//            textField.setMinWidth(400);
-//            textField.setMaxWidth(400);
             int index = descriptionPane.getParent().getChildrenUnmodifiable().indexOf(descriptionPane);
             VBox vBox = (VBox) descriptionPane.getParent();
             vBox.getChildren().set(index, textField);
@@ -227,7 +225,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
             @Override
             public void processData(String data) {
-                Subtask subtask = new Subtask(data, "", subTasks.getChildren().size(), currCard, 0);
+                Subtask subtask = new Subtask(data, "", currCard.subtasks.size() + 1, currCard, 0);
                 subtask = server.saveSubtask(subtask);
                 currCard.addSubtask(subtask);
                 server.updateBoard(currCard.getList().board);
@@ -389,6 +387,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     }
 
     public void createSubtask(Subtask subtask){
+        System.out.println(subtask);
         HBox hbox = new HBox();
         CheckBox checkBox = new CheckBox(subtask.getName());
         checkBox.getStylesheets().add("CSS/button.css");
@@ -453,6 +452,12 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         });
         finalContainer1.setOnMouseClicked(e -> {
             editSubtask(subtask, checkBox);
+        });
+        finalContainer2.setOnMouseClicked(e -> {
+            moveDownSubtask(subtask);
+        });
+        finalContainer3.setOnMouseClicked(e -> {
+            moveUpSubtask(subtask);
         });
         hbox.setOnMouseEntered(event -> {
             finalContainer1.setVisible(true);
@@ -529,27 +534,45 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         }
     }
 
-    private void moveUpSubtask(){
-
+    private void moveDownSubtask(Subtask subtask){
+        if(subtask.getNumberInTheCard() == subtask.getCard().subtasks.size()){
+            return;
+        }
+        else{
+            int indx = subtask.getNumberInTheCard();
+            subtask.setNumberInTheCard(indx + 1);
+            subtask.getCard().subtasks.get(indx)
+                    .setNumberInTheCard(indx);
+            server.updateBoard(subtask.getCard().getList().board);
+        }
     }
 
-    private void moveDownSubtask(){
-
+    private void moveUpSubtask(Subtask subtask){
+        if(subtask.getNumberInTheCard() == 1){
+            return;
+        }
+        else{
+            int indx = subtask.getNumberInTheCard();
+            subtask.setNumberInTheCard(indx - 1);
+            subtask.getCard().subtasks.get(indx - 2)
+                    .setNumberInTheCard(indx);
+            server.updateBoard(subtask.getCard().getList().board);
+        }
     }
 
     private void editSubtask(Subtask subtask, CheckBox checkBox){
         TextField textField = new TextField(subtask.getName());
 
         int labelIndex = -1;
-        subTasks.getChildren().indexOf(checkBox);
-        for(int i=0;i<subTasks.getChildren().size();i++){
-            HBox hBox = (HBox) (subTasks.getChildren().get(i));
+        actualSubtasks.getChildren().indexOf(checkBox);
+        for(int i=0;i<actualSubtasks.getChildren().size();i++){
+            HBox hBox = (HBox) (actualSubtasks.getChildren().get(i));
             if(hBox.getChildren().get(0).equals(checkBox)){
                 labelIndex = i;
             }
         }
-        Node node = subTasks.getChildren().remove(labelIndex);
-        subTasks.getChildren().add(labelIndex, textField);
+        Node node = actualSubtasks.getChildren().remove(labelIndex);
+        actualSubtasks.getChildren().add(labelIndex, textField);
         textField.requestFocus();
         int finalLabelIndex = labelIndex;
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -559,12 +582,12 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                     subtask.setName(txt);
                     server.updateBoard(subtask.getCard().getList().board);//send the text to the database
                 }
-                subTasks.getChildren().set(finalLabelIndex, node);
+                actualSubtasks.getChildren().set(finalLabelIndex, node);
             }
         });
         textField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                subTasks.getChildren().set(finalLabelIndex, node);
+                actualSubtasks.getChildren().set(finalLabelIndex, node);
             }
         });
     }

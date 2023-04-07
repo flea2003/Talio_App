@@ -458,13 +458,12 @@ public class ServerUtils {
      * @return the updated subtask
      */
     public commons.Subtask updateSubtask(commons.Subtask subtask){
-        String endpoint = String.format("api/subtasks/update");
+        String endpoint = String.format("api/subtask/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(subtask, APPLICATION_JSON), commons.Subtask.class);
-
     }
 
     /**

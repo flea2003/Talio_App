@@ -16,7 +16,7 @@ public abstract class ButtonTalio extends Button {
         super();
         Pane node = addButton();
         setOnAction(e -> {
-           generateTextField(textLabel, node);
+            generateTextField(textLabel, node);
         });
     }
 
