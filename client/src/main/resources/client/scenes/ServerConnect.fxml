@@ -12,6 +12,8 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
+<?import javafx.scene.control.skin.ColorPalette.ColorSquare?>
+<?import javafx.scene.shape.Rectangle?>
 <BorderPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #e5e3f1;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.ServerConnectCtrl">
    <center>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #e5e3f1;">
@@ -36,6 +38,7 @@
                <Font size="28.0" />
             </font>
          </Text>
+         <Rectangle fx:id="passwordSquare" height="24.0" width="25.0" layoutX="504.0" layoutY="8.0" fill="transparent" arcWidth="100" arcHeight="50" visible="false"/>
             <ImageView fx:id="seePassword" fitHeight="24.0" fitWidth="25.0" layoutX="504.0" layoutY="8.0" visible="false">
                <image>
                   <Image url="/pictures/open_eye.png" />

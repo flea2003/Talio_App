@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import javax.inject.Inject;
@@ -46,6 +47,8 @@ public class ServerConnectCtrl implements Initializable {
 
     @FXML
     private TextField showPassword;
+    @FXML
+    private Rectangle passwordSquare;
     @FXML
     private javafx.scene.control.Button connectAdmin;
 
@@ -167,6 +170,15 @@ public class ServerConnectCtrl implements Initializable {
             connectButton.setVisible(false);
             connectUser.setVisible(true);
             connectAdmin.setVisible(false);
+            passwordSquare.setVisible(true);
+
+            passwordSquare.setOnMousePressed( e -> {
+                seePassword.setVisible(false);
+                hidePassword.setVisible(true);
+                password.setVisible(false);
+                showPassword.setVisible(true);
+                showPassword.setText(password.getText());
+            });
 
             seePassword.setOnMousePressed( e -> {
                 seePassword.setVisible(false);
@@ -174,6 +186,13 @@ public class ServerConnectCtrl implements Initializable {
                 password.setVisible(false);
                 showPassword.setVisible(true);
                 showPassword.setText(password.getText());
+            });
+
+            passwordSquare.setOnMouseReleased( e -> {
+                seePassword.setVisible(true);
+                hidePassword.setVisible(false);
+                password.setVisible(true);
+                showPassword.setVisible(false);
             });
 
             seePassword.setOnMouseReleased( e -> {
@@ -194,6 +213,7 @@ public class ServerConnectCtrl implements Initializable {
             connectButton.setVisible(true);
             connectUser.setVisible(false);
             connectAdmin.setVisible(true);
+            passwordSquare.setVisible(false);
         }
     }
     @Override
