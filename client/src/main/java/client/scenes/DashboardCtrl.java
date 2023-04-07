@@ -780,6 +780,9 @@ public class DashboardCtrl implements Initializable {
                 });
 
                 setOnDragDropped(event -> { // if the drag ends on a card we update the table
+                    if(server.getCardById(q.id) == null){
+                        return;
+                    }
                     if (draggedCard != null) {
                         done = true;
                         var sourceListView = draggedCard.getListView();
