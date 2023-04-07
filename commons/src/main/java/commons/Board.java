@@ -164,4 +164,12 @@ public class Board {
     public void setTags(java.util.List<Tag> tags) {
         this.tags = tags;
     }
+
+    /**
+     * setter for the string key
+     * @param key the string to set the key into
+     */
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

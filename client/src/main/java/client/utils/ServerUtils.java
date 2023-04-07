@@ -15,8 +15,11 @@
  */
 package client.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
+import commons.Subtask;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -104,6 +107,7 @@ public class ServerUtils {
      */
     public Card updateCard(Card card){
         String endpoint = String.format("api/cards");
+
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -138,10 +142,10 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.List>>() {});
-        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
-        for(commons.List list : res){
-            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
-        }
+//        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
+//        for(commons.List list : res){
+//            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+//        }
         return res;
     }
 
@@ -247,7 +251,7 @@ public class ServerUtils {
      * @return the gotten board
      */
     public commons.Board getBoard(long id){
-        String endpoint = String.format("api/boards/%2d", id);
+        String endpoint = String.format("api/boards/%d", id);
         var res = ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
                 .request(APPLICATION_JSON)
@@ -309,7 +313,6 @@ public class ServerUtils {
                 }
             }
         }
-
         String endpoint = String.format("api/boards/update");
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path(endpoint)
@@ -346,6 +349,24 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(board, APPLICATION_JSON), Board.class);
+    }
+
+    public void deleteSubtask(Subtask subtask){
+        String endpoint = String.format("api/subtasks/", subtask);
+        ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
+    }
+
+    public Subtask saveSubtask(Subtask subtask){
+        String endpoint = String.format("api/subtasks/", subtask);
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 
     private StompSession session ;
@@ -415,4 +436,99 @@ public class ServerUtils {
     public void send(String destination,Object o){
         session.send(destination, o);
     }
+
+    /**
+     * sends a post request to trigger the respective method in subtaskController
+     * adds a subtask
+     * @param subtask the subtask to be added
+     * @return the added subtask
+     */
+    public Subtask addSubtask(Subtask subtask){
+        String endpoint = String.format("api/subtasks", subtask.id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON).accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
+    }
+
+    /**
+     * sends a post request to trigger the respective method in SubtaskController
+     * updates a subtask with a new one
+     * @param subtask the new subtask
+     * @return the updated subtask
+     */
+    public commons.Subtask updateSubtask(commons.Subtask subtask){
+        String endpoint = String.format("api/subtasks/update");
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(subtask, APPLICATION_JSON), commons.Subtask.class);
+    }
+
+    /**
+     * sends a get request to trigger the respective method in subtaskController
+     * gets a specific subtask from the database
+     * @param id the id of the subtask to be gotten
+     * @return the gotten subtask
+     */
+    public commons.Subtask getSubtaskById(long id){
+        String endpoint = String.format("/api/subtasks/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(commons.Subtask.class);
+    }
+
+    /**
+     * sends a delete request to trigger the respective method in subtaskController
+     * deletes a subtask
+     * @param id the id of the subtask to be deleted
+     * @return the deleted subtask
+     */
+    public commons.Subtask deleteSubtask(long id){
+        String endpoint = String.format("api/subtasks/delete/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete(new GenericType<commons.Subtask>() {});
+    }
+
+    /**
+     * sends a get request to trigger the respective method in subtaskController
+     * gets all the subtasks from the database
+     * @return the subtasks
+     */
+    public List<Subtask> getSubtasks(){
+        String endpoint = String.format("api/subtasks");
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Subtask>>() {});
+    }
+
+    /**
+     * sends a get request to trigger the respective method in cardController
+     * gets a specific card from the database
+     * @param id the id of the card to be gotten
+     * @return the gotten card
+     */
+    public commons.Card getCardById(long id){
+        String endpoint = String.format("/api/cards/%d", id);
+        try{
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(server).path(endpoint)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .get(commons.Card.class);
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+
+
 }

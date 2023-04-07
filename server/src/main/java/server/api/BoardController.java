@@ -1,32 +1,23 @@
 package server.api;
 
 import commons.Board;
+import commons.Card;
+import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import server.database.BoardRepository;
+import server.services.BoardService;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
-    private final SimpMessagingTemplate messagingTemplate;
     @Autowired
-    BoardRepository repo;
-
-    /**
-     * constructor
-     * @param messagingTemplate the messagingTemplate used to trigger the websocket
-     * @param repo the board repository
-     */
-    public BoardController(SimpMessagingTemplate messagingTemplate, BoardRepository repo) {
-        this.messagingTemplate = messagingTemplate;
-        this.repo = repo;
-    }
+    BoardService boardService;
 
     /**
      * gets all the boards
@@ -34,7 +25,7 @@ public class BoardController {
      */
     @GetMapping(path = { "", "/" })
     public List<Board> getAll() {
-        return repo.findAll();
+        return boardService.getAllBoards();
     }
 
     /**
@@ -44,10 +35,11 @@ public class BoardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Board> getById(@PathVariable("id") long id) {
-        if (id < 0 || !repo.existsById(id)) {
+        Board board = boardService.getBoardById(id);
+        if (id < 0 || board == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return ResponseEntity.ok(board);
     }
 
     /**
@@ -57,11 +49,11 @@ public class BoardController {
      */
     @GetMapping("/key/{key}")
     public ResponseEntity<Board> getByKey(@PathVariable("key") String key) {
-        Optional<Board> board = repo.findBoardByKey(key);
-        if(board.isEmpty()) {
+        Board board = boardService.getBoardByKey(key);
+        if(board == null) {
             return ResponseEntity.ok(null);
         }
-        return ResponseEntity.ok(board.get());
+        return ResponseEntity.ok(board);
 
     }
 
@@ -76,8 +68,7 @@ public class BoardController {
         if (board.name == null) {
             return ResponseEntity.badRequest().build();
         }
-        Board saved = repo.save(board);
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        Board saved = boardService.saveBoard(board);
         return ResponseEntity.ok(saved);
     }
 
@@ -88,13 +79,12 @@ public class BoardController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
+        Board board = boardService.getBoardById(id);
 
-        if (id < 0 || !repo.existsById(id)) {
+        if (id < 0 || board == null) {
             return ResponseEntity.badRequest().build();
         }
-        Board board = repo.getById(id);
-        repo.delete(board);
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        boardService.deleteBoard(board);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -106,12 +96,12 @@ public class BoardController {
      */
     @PostMapping("/changeName/{id}")
     public ResponseEntity<Board> changeName(@PathVariable("id") long id,@RequestBody String name){
-        if (id < 0 || !repo.existsById(id)) {
+        Board board = boardService.getBoardById(id);
+
+        if (id < 0 || board == null) {
             return ResponseEntity.badRequest().build();
         }
-        Board board=repo.getById(id);
-        repo.getById(id).setName(name);
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        boardService.getBoardById(id).setName(name);
         return ResponseEntity.ok(board);
     }
 
@@ -122,8 +112,7 @@ public class BoardController {
      */
     @PostMapping("/update")
     public ResponseEntity<Board> updateBoard(@RequestBody Board board){
-        repo.save(board);
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        boardService.saveBoard(board);
         return ResponseEntity.ok(board);
     }
 
