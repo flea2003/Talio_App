@@ -30,6 +30,10 @@ public class Subtask {
     @JsonBackReference
     private Card card;
 
+    public Integer completed;
+
+    public Subtask() {}
+
     /**
      * A subtask's constructor
      * @param id the task's id long
@@ -44,6 +48,25 @@ public class Subtask {
         this.description = description;
         this.numberInTheCard = numberInTheCard;
         this.card = card;
+        this.completed = 0;
+    }
+
+    public Subtask(String name, String description, int numberInTheCard, Card card, int completed) {
+        this.name = name;
+        this.numberInTheCard = numberInTheCard;
+        this.card = card;
+        this.description = description;
+        this.completed = 0;
+    }
+
+    /**
+     * A subtask's constructor used for testing
+     * @param id the task's id long
+     * @param numberInTheCard its order in the card
+     */
+    public Subtask(long id, int numberInTheCard) {
+        this.id = id;
+        this.numberInTheCard = numberInTheCard;
     }
 
     /**
@@ -154,4 +177,15 @@ public class Subtask {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 
+    public void switchState(){
+        completed = 1 - completed;
+    }
+
+    public int isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(int completed) {
+        this.completed = completed;
+    }
 }

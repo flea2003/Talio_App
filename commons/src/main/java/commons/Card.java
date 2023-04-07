@@ -58,6 +58,15 @@ public class Card {
     public Card() {}
 
     /**
+     * constructor used for testing
+     * @param name the name of the card
+     */
+    public Card(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    /**
      * gets the list the card is in
      * @return the list the card is in
      */
@@ -171,6 +180,14 @@ public class Card {
      */
     public long getId() {
         return id;
+    }
+
+    /**
+     * adds a new subtask to the list of subtasks
+     * @param subtask
+     */
+    public void addSubtask(Subtask subtask){
+        subtasks.add(subtask);
     }
 }
 

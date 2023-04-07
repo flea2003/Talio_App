@@ -14,17 +14,31 @@
  * limitations under the License.
  */
 package client.scenes;
-import client.scenes.services.*;
+
+import client.scenes.services.taskCreations;
+import client.scenes.services.taskEdits;
+import client.scenes.services.taskViews;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Pair;
+
+import java.awt.*;
+import java.util.Stack;
 
 import static client.Main.FXML;
 
@@ -142,8 +156,6 @@ public class MainCtrl {
     public void switchTaskView(Card q, Board boardCurr){
         if(taskViews.getInstance().isOpened(q))
             return;
-
-
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("client/src/main/resources/client/scenes/TaskView.fxml"));
 //        Parent root = null;
 //        try {
