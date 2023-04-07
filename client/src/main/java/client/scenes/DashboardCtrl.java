@@ -469,8 +469,12 @@ public class DashboardCtrl implements Initializable {
                 }
             });
             ListView<Card> listView = new ListView<>();
+            listView.setOnDragOver(event -> {
+                event.acceptTransferModes(TransferMode.MOVE);
+            });
             // if the drag ended on a tableview I add a new card to it
             listView.setOnDragDropped(event -> {
+                event.acceptTransferModes(TransferMode.MOVE);
                 if (draggedCard != null) {
                     done = true; // the dragged ended succesfully
                     var sourceListView = draggedCard.getListView();
