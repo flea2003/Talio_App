@@ -44,7 +44,7 @@ public class Card {
      */
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private java.util.List<Subtask> subtasks;
+    public java.util.List<Subtask> subtasks;
 
     /**
      * constructor
