@@ -49,6 +49,7 @@ public class Tag {
      * @param board the board it connects to
      */
     public Tag(long id, String name, Color color, Board board) {
+        cards = new ArrayList<>();
         this.id = id;
         this.name = name;
         this.color = color;
