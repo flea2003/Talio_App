@@ -38,6 +38,18 @@ class ListTest {
     }
 
     @Test
+    void testConstructor2() {
+        List list1 = new List("name", board);
+        assertNotNull(list1);
+    }
+
+    @Test
+    void testConstructor3() {
+        List list1 = new List(cards, "name", board, 1);
+        assertNotNull(list1);
+    }
+
+    @Test
     void getCards() {
         assertEquals(list.getCards(), cards);
     }
@@ -76,6 +88,19 @@ class ListTest {
     void setName() {
         list.setName("new");
         assertTrue(list.getName().equals("new"));
+    }
+
+    @Test
+    void setNumberInTheBoard() { // also tests getNumberInTheBoard
+        list.setNumberInTheBoard(5);
+        assertEquals(5, list.getNumberInTheBoard());
+    }
+
+    @Test
+    void setBoard() { // also tests getBoard
+        Board board2 = new Board();
+        list.setBoard(board2);
+        assertEquals(board2, list.getBoard());
     }
 
     @Test

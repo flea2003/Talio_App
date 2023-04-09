@@ -1,14 +1,11 @@
 package server.api;
 
 import commons.Card;
-import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.services.CardService;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -34,7 +31,6 @@ public class CardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Card> getById (@PathVariable long id){
-        System.out.println(id);
         Card card = cardService.getCardById(id);
         if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();

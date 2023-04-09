@@ -216,10 +216,3 @@ public class Card {
         subtasks.add(subtask);
     }
 }
-
-
-
-
-
-
-
