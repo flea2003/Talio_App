@@ -109,7 +109,34 @@ public class BoardServiceTest {
 
     @Test
     public void getBoardByIdTest(){
-        Board board = new Board(1, new ArrayList<>(), "board 1");
+        List<Subtask> subtasks = new ArrayList<>();
+        Subtask subtask1 = new Subtask(1, 2);
+        Subtask subtask2 = new Subtask(2, 1);
+        subtasks.add(subtask1);
+        subtasks.add((subtask2));
+
+        List<Card> cards = new ArrayList<>();
+
+        Card card1 = new Card();
+        card1.setNumberInTheList(2);
+        card1.setSubtasks(subtasks);
+
+        Card card2 = new Card();
+        card2.setNumberInTheList(1);
+        card2.setSubtasks(new ArrayList<>());
+
+        cards.add(card1);
+        cards.add(card2);
+
+        commons.List list1 = new commons.List(1, (ArrayList<Card>) cards, "list 1", new Board());
+        commons.List list2 = new commons.List(2, new ArrayList<>(), "list 2", new Board());
+        list1.setNumberInTheBoard(2);
+        list2.setNumberInTheBoard(1);
+        List<commons.List> lists = new ArrayList<>();
+        lists.add(list1);
+        lists.add(list2);
+
+        Board board = new Board(1, (ArrayList<commons.List>) lists, "board 1");
 
         when(boardRepository.findById(1L)).thenReturn(Optional.of(board));
 
@@ -118,6 +145,14 @@ public class BoardServiceTest {
         verify(boardRepository, times(1)).findById(1L);
 
         assertEquals(board, response);
+
+        //check that the cards are sorted by their number in the list
+        assertEquals(card2, list1.getCards().get(0));
+        assertEquals(card1, list1.getCards().get(1));
+
+        //check that the subtasks are sorted by their number in the card
+        assertEquals(subtask2, card1.getSubtasks().get(0));
+        assertEquals(subtask1, card1.getSubtasks().get(1));
     }
 
     @Test
