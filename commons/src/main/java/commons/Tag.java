@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.persistence.*;
 import java.awt.Color;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Tag {
