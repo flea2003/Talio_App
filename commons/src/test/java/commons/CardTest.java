@@ -52,6 +52,21 @@ class CardTest {
     }
 
     @Test
+    void getList() {
+        assertEquals(list, card.getList());
+    }
+
+    @Test
+    void getSubtasks() {
+        assertEquals(card.subtasks, card.getSubtasks());
+    }
+
+    @Test
+    void getId() {
+        assertEquals(card.id, card.getId());
+    }
+
+    @Test
     void setDescription() {
         card.setDescription("new");
         assertTrue(card.getDescription().equals("new"));
@@ -62,4 +77,25 @@ class CardTest {
         card.setName("new");
         assertTrue(card.getName().equals("new"));
     }
+
+    @Test
+    void setList() {
+        List list2 = new List();
+        card.setList(list2);
+        assertEquals(list2, card.getList());
+    }
+
+    @Test
+    void setSubtasks() {
+        ArrayList<Subtask> subtasks2 = new ArrayList<>();
+        card.setSubtasks(subtasks2);
+        assertEquals(subtasks2, card.getSubtasks());
+    }
+
+    @Test
+    void setNumberInTheList() { // also tests getNumberInTheList
+        card.setNumberInTheList(5);
+        assertEquals(5, card.getNumberInTheList());
+    }
+
 }
