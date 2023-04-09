@@ -36,10 +36,10 @@ public class Tag {
      * a tag has a list of cards
      */
     @ManyToMany
-    @JoinTable(name = "card_tag",
+    @JoinTable(name = "tag_card",
         joinColumns = @JoinColumn(name = "tag_id"),
         inverseJoinColumns = @JoinColumn(name = "card_id"))
-    @JsonManagedReference
+    @JsonBackReference(value = "defaultReference2")
     public java.util.List<Card> cards;
 
     /**

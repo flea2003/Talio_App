@@ -33,11 +33,11 @@ public class Card {
      * link the card to its tags
      */
     @ManyToMany
-    @JoinTable(name = "card_tag",
+    @JoinTable(name = "tag_card",
         joinColumns = @JoinColumn(name = "card_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    @JsonManagedReference
-    private java.util.List<Tag> tags;
+    @JsonBackReference(value = "defaultReference2")
+    public java.util.List<Tag> tags;
 
     /**
      * link the card to its subtasks
