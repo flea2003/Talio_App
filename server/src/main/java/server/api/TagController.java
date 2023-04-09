@@ -65,11 +65,11 @@ public class TagController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
-        commons.Subtask subtask = tagService.getTagById(id);
-        if (id < 0 || subtask == null) {
+        commons.Tag tag = tagService.getTagById(id).getBody();
+        if (id < 0 || tag == null) {
             return ResponseEntity.badRequest().build();
         }
-        tagService.deleteTag(Objects.requireNonNull(getById(id).getBody()));
+        tagService.deleteTag(Objects.requireNonNull(tag));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

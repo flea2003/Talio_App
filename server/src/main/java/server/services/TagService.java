@@ -22,12 +22,12 @@ public class TagService {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getById(@PathVariable("id") long id) {
+    public ResponseEntity<Tag> getTagById(@PathVariable("id") long id) {
         Tag tag = tagRepository.getById(id);
         if (id < 0 || tag == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(tag.getSubtaskById(id));
+        return ResponseEntity.ok(tag);
     }
 
     public java.util.List<Tag> getAll(){
