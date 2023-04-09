@@ -1,12 +1,11 @@
 package commons;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 
 @Entity
@@ -38,7 +37,7 @@ public class Tag {
     @JoinTable(name = "card_tag",
         joinColumns = @JoinColumn(name = "tag_id"),
         inverseJoinColumns = @JoinColumn(name = "card_id"))
-    @JsonManagedReference
+    @JsonBackReference(value = "defaultReference2")
     public java.util.List<Card> cards;
 
     /**
@@ -153,4 +152,5 @@ public class Tag {
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
+
 }
