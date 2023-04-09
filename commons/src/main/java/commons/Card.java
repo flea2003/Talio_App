@@ -30,6 +30,16 @@ public class Card {
     private List list;
 
     /**
+     * link the card to its tags
+     */
+    @ManyToMany
+    @JoinTable(name = "card_tag",
+        joinColumns = @JoinColumn(name = "card_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JsonManagedReference
+    private java.util.List<Tag> tags;
+
+    /**
      * link the card to its subtasks
      */
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
@@ -45,6 +55,7 @@ public class Card {
      */
     public Card(String description, String name, List list, int numberInTheList) {
         subtasks = new ArrayList<>();
+        tags = new ArrayList<>();
         this.description = description;
         this.name = name;
         this.list = list;
@@ -180,6 +191,22 @@ public class Card {
      */
     public long getId() {
         return id;
+    }
+
+    /**
+     * getter for tags
+     * @return the list of tags
+     */
+    public java.util.List<Tag> getTags() {
+        return tags;
+    }
+
+    /**
+     * setter for tags
+     * @param tags the list of a card's tags
+     */
+    public void setTags(java.util.List<Tag> tags) {
+        this.tags = tags;
     }
 
     /**
