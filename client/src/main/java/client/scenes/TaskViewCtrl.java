@@ -9,6 +9,8 @@ import commons.Board;
 import commons.Card;
 import commons.List;
 import commons.Subtask;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -24,10 +26,21 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static org.springframework.boot.context.properties.ConfigurationPropertiesBean.getAll;
 
 public class TaskViewCtrl extends Application implements CardControllerState {
 
@@ -133,9 +146,64 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             }
         });
         newStage.show();
-
-//        taskView.setOnKeyPressed(e -> this.keyPressed(e));
+        System.out.println(server);
+        startLongPolling();
     }
+
+    private void startLongPolling() {
+        while (true) {
+            try {
+                String id = String.valueOf(currCard.getId());
+                URL url = new URL("http://localhost:8080//api/cards/"+id+"?longPoll=true");
+                System.out.println(url);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+
+                // Set up a long timeout to wait for a response
+                connection.setConnectTimeout(30000);
+                connection.setReadTimeout(30000);
+
+                // Check if the connection was successful
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    // Process the response and update the client-side view
+//                    processLongPollingResponse(connection.getInputStream());
+                    renderInfo(currCard);
+
+                    // Start a new long polling cycle
+                    continue;
+                }
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            } catch (ProtocolException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+//             Wait a short period of time before retrying the request
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+//    private void processLongPollingResponse(InputStream inputStream) throws IOException {
+//        // Read the data from the input stream
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+//        StringBuilder responseBuilder = new StringBuilder();
+//        String line;
+//
+//        while ((line = reader.readLine()) != null) {
+//            responseBuilder.append(line);
+//        }
+//
+//        String response = responseBuilder.toString();
+//
+//        // Update the client-side view with the new data
+//        updateView(response);
+//    }
+
 
     /**
      * show the information of the card in th UI

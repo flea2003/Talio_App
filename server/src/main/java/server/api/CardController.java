@@ -31,16 +31,32 @@ public class CardController {
      * gets a card by its id
      * @param id the id of the card
      * @return a response (bad request or ok)
+     * @throws InterruptedException if the long polling is interrupted
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Card> getById (@PathVariable long id){
+    public ResponseEntity<Card> getById (@PathVariable long id, @RequestParam(value = "longPoll", required = false) boolean longPoll) throws InterruptedException {
         System.out.println(id);
         Card card = cardService.getCardById(id);
         if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
         }
+        if (!longPoll) {
+            // If long polling is not enabled, return the card immediately
+            return ResponseEntity.ok(card);
+        }
+        // Wait for a change in the data or timeout after 30 seconds
+        long startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < 30000) {
+            Card updatedCard = cardService.getCardById(id);
+            if (!card.equals(updatedCard)) {
+                return ResponseEntity.ok(updatedCard);
+            }
+            Thread.sleep(1000);
+        }
+        // Timeout
         return ResponseEntity.ok(card);
     }
+
 
     /**
      * deletes a card

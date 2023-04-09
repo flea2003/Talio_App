@@ -5,6 +5,8 @@ import client.scenes.services.ButtonTalio;
 import client.scenes.services.taskEdits;
 import client.scenes.services.taskViews;
 import client.utils.ServerUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.Card;
@@ -34,9 +36,15 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.http.HttpMethod;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 
 public class DashboardCtrl implements Initializable {
@@ -889,8 +897,8 @@ public class DashboardCtrl implements Initializable {
      * @param listView a listview to add the cards in
      */
     public void addCards(List list, VBox vBox, ListView listView){// Set the card in our lists
-        java.util.List<Card> cardlist = list.cards;
-        listView.setItems(FXCollections.observableList(cardlist));
+        ObservableList<Card> observableList = FXCollections.observableList(list.getCards());
+        listView.setItems(observableList);
         int index = 0;
         if (hboxList.getChildren().size() > 0) {
             index = hboxList.getChildren().size() - 1;
@@ -908,7 +916,63 @@ public class DashboardCtrl implements Initializable {
         // (assuming each item is 24 pixels high)
         listView.setPrefHeight(Math.min(screenHeight - screenHeight/4,
                 listView.getItems().size() * 100));
+        // initiate the long-polling request to get updates
+//        Thread thread = new Thread(() -> {
+//            while (true) {
+//                try {
+//                    java.util.List<Card> updatedCards = getCardUpdates();
+//                    Platform.runLater(() -> {
+//                        // update the UI with the new data
+//                        observableList.setAll(updatedCards);
+//                        listView.setPrefHeight(Math.min(screenHeight - screenHeight / 4,
+//                                listView.getItems().size() * 100));
+//                    });
+//                } catch (Exception e) {
+//                    // handle the exception
+//                }
+//            }
+//        });
+//        thread.start();
     }
+
+//    private java.util.List<Card> getCardUpdates() throws Exception {
+//        // create a new HTTP client and send a long-polling request
+//        HttpClient httpClient = new HttpClient();
+//        httpClient.start();
+//
+//        String url = "http://your.server.com/CardController/getAll?Poll=true"; // API endpoint
+//        Request request = httpClient.newRequest(url)
+//                .method(HttpMethod.GET)
+//                .header("Connection", "keep-alive");
+//
+//        try {
+//            ContentResponse response = request.send();
+//            String responseBody = response.getContentAsString();
+//            // parse the response body to get the updated cards
+//            java.util.List<Card> updatedCards = parseResponse(responseBody);
+//            return updatedCards;
+//        } catch (InterruptedException | TimeoutException e) {
+//            // handle the timeout or other exceptions
+//            return Collections.emptyList();
+//        } finally {
+//            // close the HTTP client
+//            try { httpClient.stop();
+//            } catch (Exception e) {
+//                // handle the exception
+//            }
+//        }
+//    }
+//    private java.util.List<Card> parseResponse(String responseBody) {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        try {
+//            // parse the JSON array into a list of Card objects
+//            java.util.List<Card> updatedCards = objectMapper.readValue(responseBody,
+//                    new TypeReference<java.util.List<Card>>() {});
+//            return updatedCards;
+//        } catch (IOException e) {
+//            return Collections.emptyList();
+//        }
+//    }
 
     /**
      * disconnects from the server
@@ -1207,5 +1271,7 @@ public class DashboardCtrl implements Initializable {
         });
 
     }
+
+
 }
 
