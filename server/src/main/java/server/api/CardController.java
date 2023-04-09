@@ -34,7 +34,6 @@ public class CardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Card> getById (@PathVariable long id){
-        System.out.println(id);
         Card card = cardService.getCardById(id);
         if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
