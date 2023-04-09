@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.persistence.*;
 import java.awt.Color;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Tag {
@@ -35,10 +36,10 @@ public class Tag {
      * a tag has a list of cards
      */
     @ManyToMany
-    @JoinTable(name = "card_tag",
+    @JoinTable(name = "tag_card",
         joinColumns = @JoinColumn(name = "tag_id"),
         inverseJoinColumns = @JoinColumn(name = "card_id"))
-//    @JsonManagedReference
+    @JsonBackReference(value = "defaultReference2")
     public java.util.List<Card> cards;
 
     /**
@@ -49,6 +50,7 @@ public class Tag {
      * @param board the board it connects to
      */
     public Tag(long id, String name, Color color, Board board) {
+        cards = new ArrayList<>();
         this.id = id;
         this.name = name;
         this.color = color;

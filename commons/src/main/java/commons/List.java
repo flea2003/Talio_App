@@ -63,7 +63,7 @@ public class List {
      * @param name the name of the list
      * @param board the board the list is in
      */
-    public List(String name,Board board){
+    public List(String name, Board board){
         this.name = name;
         this.board = board;
     }
