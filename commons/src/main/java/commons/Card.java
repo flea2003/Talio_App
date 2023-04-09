@@ -70,6 +70,7 @@ public class Card {
 
     /**
      * constructor used for testing
+     * @param id the id of the card
      * @param name the name of the card
      */
     public Card(long id, String name) {
