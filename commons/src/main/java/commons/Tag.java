@@ -38,7 +38,7 @@ public class Tag {
     @JoinTable(name = "card_tag",
         joinColumns = @JoinColumn(name = "tag_id"),
         inverseJoinColumns = @JoinColumn(name = "card_id"))
-    @JsonManagedReference
+//    @JsonManagedReference
     public java.util.List<Card> cards;
 
     /**
