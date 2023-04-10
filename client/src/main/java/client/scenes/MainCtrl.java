@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 package client.scenes;
-import client.scenes.services.*;
+
+import client.scenes.services.taskCreations;
+import client.scenes.services.taskEdits;
+import client.scenes.services.taskViews;
 import commons.Board;
 import commons.Card;
 import commons.List;
@@ -140,22 +143,9 @@ public class MainCtrl {
      * @param boardCurr the board the card is in
      */
     public void switchTaskView(Card q, Board boardCurr){
-        if(taskViews.getInstance().isOpened(q))
+        if(taskViews.getInstance().isOpened(q)) {
             return;
-
-
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("client/src/main/resources/client/scenes/TaskView.fxml"));
-//        Parent root = null;
-//        try {
-//            root = loader.load();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        TaskViewCtrl controller = loader.getController();
-//
-//        controller.sendData(new Scene(root), q, boardCurr);
-//        controller.start(null);
-//        taskViews.getInstance().add(controller);
+        }
 
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
@@ -171,8 +161,9 @@ public class MainCtrl {
     public void switchEdit(Card q, Board boardCurr){
         TaskViewCtrl controller = taskViews.getInstance().getCotroller(q);
         Stage viewStage = controller.getStage();
-        if(viewStage == null)
+        if(viewStage == null) {
             return;
+        }
         taskViews.getInstance().remove(controller);
         var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
         taskEdit.getKey().sendData(new Scene(taskEdit.getValue()), q, boardCurr);
@@ -188,9 +179,16 @@ public class MainCtrl {
         switchDashboard("deleted!");
     }
 
+    /**
+     * sets the scene to dashboard with deleted as the user
+     * @param q the card that was deleted
+     * @param boardCurr the board the card was in
+     * @param stage the stage to be closed
+     */
     public void reallySwitchTaskView(Card q, Board boardCurr, Stage stage) {
-        if(taskViews.getInstance().isOpened(q))
-        return;
+        if(taskViews.getInstance().isOpened(q)) {
+            return;
+        }
 
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
@@ -198,6 +196,10 @@ public class MainCtrl {
         taskViews.getInstance().add(taskView.getKey());
     }
 
+    /**
+     * closes all of the stages that were instantiated as our TaskView and TaskEdit controllers are not singletons
+     * and we need to close them when the user logs out
+     */
     public void closeStages() {
         taskCreations.getInstance().closeAll();
         taskViews.getInstance().closeAll();

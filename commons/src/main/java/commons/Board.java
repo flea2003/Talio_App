@@ -20,9 +20,19 @@ public class Board {
 
     public String key;
 
+    /**
+     * to link the board to its list of lists
+     */
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     @JsonManagedReference
     public java.util.List<List> lists;
+
+    /**
+     * to link the board to its list of tags
+     */
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    public java.util.List<Tag> tags;
 
     public String name;
 
@@ -41,6 +51,7 @@ public class Board {
      * @param name the name of the board
      */
     public Board(long id, ArrayList<List> lists, String name) {
+        tags = new ArrayList<>();
         this.id = id;
         this.lists = lists;
         this.name = name;
@@ -136,5 +147,29 @@ public class Board {
      */
     public java.util.List<List> getLists() {
         return this.lists;
+    }
+
+    /**
+     * getter for tags
+     * @return the list of tags
+     */
+    public java.util.List<Tag> getTags() {
+        return tags;
+    }
+
+    /**
+     * setter for tags
+     * @param tags the list of tags
+     */
+    public void setTags(java.util.List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    /**
+     * setter for the string key
+     * @param key the string to set the key into
+     */
+    public void setKey(String key) {
+        this.key = key;
     }
 }

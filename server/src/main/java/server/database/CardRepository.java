@@ -8,10 +8,10 @@ import java.util.Optional;
 
 public interface CardRepository extends JpaRepository<Card, Long> {
     /**
-     * finds a list using its id
+     * finds a card using its list id
      * @param id the id of the list
-     * @return the list or null
+     * @return the card or null
      */
-    Optional<List<Card>> findAllByListId(long id);
+    Optional<List<Card>> findAllByListId(Long id);
 
 }

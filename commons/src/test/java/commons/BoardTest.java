@@ -19,6 +19,12 @@ public class BoardTest {
     }
 
     @Test
+    public void checkConstructor2() {
+        Board board = new Board("name");
+        assertNotNull(board);
+    }
+
+    @Test
     public void equalsHashCode() {
         var list = new ArrayList<commons.List>();
         var a = new Board(1, list,"a" );
@@ -48,6 +54,19 @@ public class BoardTest {
         assertTrue(actual.contains(Board.class.getSimpleName()));
         assertTrue(actual.contains("\n"));
         assertTrue(actual.contains("name"));
+    }
+
+    @Test
+    public void testGetId() {
+        Board board = new Board(1, new ArrayList<List>(), "name");
+        assertEquals(1, board.getId());
+    }
+
+    @Test
+    public void testGetKey() { // also tests onCreate
+        Board board = new Board(1, new ArrayList<List>(), "name");
+        board.onCreate();
+        assertTrue(board.key.equals(board.getKey()));
     }
 
     @Test

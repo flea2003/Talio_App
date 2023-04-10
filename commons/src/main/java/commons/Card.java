@@ -30,6 +30,16 @@ public class Card {
     private List list;
 
     /**
+     * link the card to its tags
+     */
+    @ManyToMany
+    @JoinTable(name = "tag_card",
+        joinColumns = @JoinColumn(name = "card_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JsonBackReference(value = "defaultReference2")
+    public java.util.List<Tag> tags;
+
+    /**
      * link the card to its subtasks
      */
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
@@ -45,6 +55,7 @@ public class Card {
      */
     public Card(String description, String name, List list, int numberInTheList) {
         subtasks = new ArrayList<>();
+        tags = new ArrayList<>();
         this.description = description;
         this.name = name;
         this.list = list;
@@ -56,6 +67,16 @@ public class Card {
      */
     @SuppressWarnings("unused")
     public Card() {}
+
+    /**
+     * constructor used for testing
+     * @param name the name of the card
+     * @param id the id of the card
+     */
+    public Card(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     /**
      * gets the list the card is in
@@ -171,6 +192,30 @@ public class Card {
      */
     public long getId() {
         return id;
+    }
+
+    /**
+     * getter for tags
+     * @return the list of tags
+     */
+    public java.util.List<Tag> getTags() {
+        return tags;
+    }
+
+    /**
+     * setter for tags
+     * @param tags the list of a card's tags
+     */
+    public void setTags(java.util.List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    /**
+     * adds a new subtask to the list of subtasks
+     * @param subtask
+     */
+    public void addSubtask(Subtask subtask){
+        subtasks.add(subtask);
     }
 }
 

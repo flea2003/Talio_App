@@ -56,27 +56,19 @@ public class TaskCreationCtrl  {
         this.mainCtrl = mainCtrl;
     }
 
+    /**
+     * initializes the data for the controller
+     * @param stage the stage that the controller will have
+     * @param taskCreation the scene that the controller will have
+     * @param boardId the id of the board
+     * @param listCurr the current list
+     */
     public void sendData(Stage stage, Scene taskCreation, long boardId, List listCurr){
         newStage = stage;
         this.taskCreation = taskCreation;
         this.boardId = boardId;
         this.listCurr = listCurr;
     }
-//    @Override
-//    public void start(javafx.stage.Stage primaryStage)  {
-//        newStage = new Stage();
-//        newStage.setTitle("Task Creation");
-//        newStage.setScene(taskCreation);
-//        newStage.show();
-//
-//        newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//            @Override
-//            public void handle(WindowEvent event) {
-//                taskCreations.getInstance().remove(TaskCreationCtrl.this);
-//            }
-//        });
-//        taskCreation.setOnKeyPressed(e -> this.keyPressed(e));
-//    }
 
     /**
      * processes the click of the addTask button
@@ -88,25 +80,25 @@ public class TaskCreationCtrl  {
         String valueDes = "";
         setError("");
 
-            valueName = extractValue(taskName);
-            valueDes = extractValue(taskDescription);
-            if (valueName.strip().length() == 0) {
-                setError("Task Name cannot be empty. Please try again!");
-                return;
-            }
+        valueName = extractValue(taskName);
+        valueDes = extractValue(taskDescription);
+        if (valueName.strip().length() == 0) {
+            setError("Task Name cannot be empty. Please try again!");
+            return;
+        }
         listCurr = server.getList(listCurr.id);
         Board boardCurr=server.getBoard(boardId);
 
-                Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
-                listCurr.cards.add(card);
+        Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
 
-                for(int i=0; i<boardCurr.lists.size(); i++){
-                    if(boardCurr.lists.get(i).getID()==listCurr.getID()){
-                        boardCurr.lists.set(i,listCurr);
-                    }
-                }
+        listCurr.cards.add(card);
 
-                server.updateBoard(boardCurr);
+        for(int i=0; i<boardCurr.lists.size(); i++){
+            if(Objects.equals(boardCurr.lists.get(i).getID(), listCurr.getID())){
+                boardCurr.lists.set(i,listCurr);
+            }
+        }
+        server.updateBoard(boardCurr);
 
         taskName.setText("");
         taskDescription.setText("");
@@ -129,10 +121,19 @@ public class TaskCreationCtrl  {
         }
     }
 
+    /**
+     * extracts the value from the text field
+     * @param curr the text field
+     * @return the value of the text field
+     */
     private String extractValue(TextField curr){
         return curr.getText();
     }
 
+    /**
+     * sets the error message
+     * @param err the error message
+     */
     private void setError(String err){
         error.setText(err);
     }
@@ -152,6 +153,7 @@ public class TaskCreationCtrl  {
     public void setBoardId(long boardId) {
         this.boardId = boardId;
     }
+
 
     public Card getCard() {
         return null;
