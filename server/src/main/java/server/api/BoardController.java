@@ -56,7 +56,17 @@ public class BoardController {
         return ResponseEntity.ok(board);
 
     }
-
+//    String endpoint = String.format("api/boards/%d", id);
+//    var res = ClientBuilder.newClient(new ClientConfig())
+//            .target(server).path(endpoint)
+//            .request(APPLICATION_JSON)
+//            .accept(APPLICATION_JSON)
+//            .get(new GenericType<commons.Board>() {});
+//        Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+//        for(commons.List list : res.getLists()){
+//        Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+//    }
+//        return res;
     /**
      * adds a board
      * @param board the board to be added
@@ -114,6 +124,21 @@ public class BoardController {
     public ResponseEntity<Board> updateBoard(@RequestBody Board board){
         boardService.saveBoard(board);
         return ResponseEntity.ok(board);
+    }
+
+    /**
+     * checks if the password is correct
+     * @param password the password to be checked
+     * @return a response (bad request or ok)
+     */
+    @GetMapping("/password/{password}")
+    public ResponseEntity<Boolean> checkPassword(@PathVariable("password") String password) {
+
+        if(!boardService.checkPassword(password)) {
+            return ResponseEntity.ok(false);
+        }
+        return ResponseEntity.ok(true);
+
     }
 
 }

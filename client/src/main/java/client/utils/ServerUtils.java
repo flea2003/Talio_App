@@ -530,5 +530,22 @@ public class ServerUtils {
     }
 
 
+    /**
+     * sends a get request to check if the entered passsword is correct
+     * @return the a boolean value representing if the password is correct or not
+     */
+    public boolean checkPassword(String password) {
+        String endpoint = String.format("/api/boards/password/%s", password);
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(server).path(endpoint)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .get(new GenericType<Boolean>() {
+                    });
+        }catch (Error e){
+            return false;
+        }
+    }
 
 }

@@ -74,6 +74,8 @@ public class DashboardCtrl implements Initializable {
     private java.util.List<commons.Board> localBoards;
     private Board focusedBoard;
     Map<String, java.util.List<Board>> serverBoards;
+
+    Map<String, java.util.List<Board>> previousStateServerBoards;
     @FXML
     private Button addBoard;
     @FXML
@@ -108,7 +110,9 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String currentServer = server.getServer();
-        if(serverBoards ==null) {
+        System.out.println(adminAccess);
+
+        if (serverBoards == null) {
             serverBoards = new HashMap<>();
         }
         if (serverBoards.get(currentServer) == null) {
@@ -117,6 +121,18 @@ public class DashboardCtrl implements Initializable {
         }
         addBoardLabel.setVisible(false);
 
+        //make a local map with all of the boards
+        //save the state of serverBoards somewhere
+        //set server board to this map
+        //in disconnect if you are an admin restore serverBoards state
+        if(adminAccess){
+            Map<String, java.util.List<Board>> adminBoards = new HashMap();
+            adminBoards.put(server.getServer(), server.getBoards());
+
+            //swap
+            previousStateServerBoards = serverBoards;
+            serverBoards = adminBoards;
+        }
 
         openShare();
         openAddBoard();
@@ -146,16 +162,13 @@ public class DashboardCtrl implements Initializable {
     public void setBoards(){
         String currentServer = server.getServer();
         java.util.List<Board> serBoards = server.getBoards();
-
-        if(adminAccess==false){
-            System.out.println("false");
-        }else{
-            System.out.println("true");
-            boardsHeader.setText("All Boards");
-        }                                         
-
         //Get the list of boards for the current server
         java.util.List<Board> localBoards = serverBoards.get(currentServer);
+
+//        if(adminAccess){
+//            boardsHeader.setText("All Boards");
+//            localBoards = serBoards;
+//        }
 
         //Create a set of board IDs for the server boards
         Set<Long> serverIds = new HashSet<>();
@@ -931,6 +944,9 @@ public class DashboardCtrl implements Initializable {
         hboxList.setUserData(null);
         mainCtrl.getPrimaryStage().close();
         mainCtrl.closeStages();
+        if(adminAccess){
+            serverBoards = previousStateServerBoards;
+        }
         main.start(new Stage());
     }
 

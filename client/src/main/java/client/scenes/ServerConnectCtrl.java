@@ -151,9 +151,14 @@ public class ServerConnectCtrl implements Initializable {
         return false;
     }
 
+    /**
+     * checks if the password is correct
+     * @param event the event that triggers the method
+     * @return if the password is correct
+     */
     public boolean checkPassword(javafx.event.ActionEvent event) {
         if (event.getSource() == connectButton2) {
-            if (!password.getText().equals("admin12")) {
+            if (!server.checkPassword(password.getText())) {
                 message.setText("Incorrect Password");
             } else {
                 dashboardCtrl.adminAccess = true;
