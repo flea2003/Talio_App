@@ -72,7 +72,12 @@ public class DashboardCtrl implements Initializable {
     @FXML
     private BorderPane innerBoardsPane;
     private java.util.List<commons.Board> localBoards;
+
+    //this is the variable that keeps track of the board that is currently being viewed
     private Board focusedBoard;
+
+    //allows us to keep track of the boards the user connected to in this client session
+    //allows for the user to reconnect to the board and still have same data
     Map<String, java.util.List<Board>> serverBoards;
     @FXML
     private Button addBoard;
@@ -977,44 +982,6 @@ public class DashboardCtrl implements Initializable {
         MenuItem edit = new MenuItem("Rename board");
         MenuItem remove = new MenuItem(("Leave board"));
         MenuItem delete = new MenuItem("Delete board");
-
-
-////            hBox.getChildren().get(3).setVisible(false);
-//        hBox.getChildren().get(2).setVisible(false);
-//        hBox.setOnMouseEntered(e ->{
-//            hBox.getChildren().get(3).setVisible(true);
-//            hBox.getChildren().get(2).setVisible(true);
-//        });
-//        hBox.setOnMouseExited(e ->{
-//            hBox.getChildren().get(3).setVisible(false);
-//            hBox.getChildren().get(2).setVisible(false);
-//        });
-
-
-//        //Make it noticable when hovering on delete icon
-//        deleteBoard.setOnMouseEntered(e ->{
-//            backroundDelete.setFill(Color.rgb(255,99,71));
-//        });
-//        deleteBoard.setOnMouseExited(e ->{
-//            backroundDelete.setFill(Color.TRANSPARENT);
-//        });
-
-//        //Make it noticable when hovering on edit icon
-//        editBoard.setOnMouseEntered(e ->{
-//            backroundEdit.setFill(Color.YELLOW);
-//        });
-//        editBoard.setOnMouseExited(e ->{
-//            backroundEdit.setFill(Color.TRANSPARENT);
-//        });
-
-
-//        delete.setOnMouseClicked(e ->{
-//            deleteBoard((Board) label.getUserData());
-//        });
-//
-//        editBoard.setOnMouseClicked(e ->{
-//            editBoard(label);
-//        });
 
         edit.setOnAction(new EventHandler<ActionEvent>() {
             @Override

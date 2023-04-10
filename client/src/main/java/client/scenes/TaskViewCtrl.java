@@ -118,6 +118,9 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         this.boardCurr = board;
     }
 
+    /**
+     * A method which start the controller that extends Application
+     */
     @Override
     public void start(javafx.stage.Stage primaryStage)  {
         if(primaryStage != null)
@@ -133,8 +136,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             }
         });
         newStage.show();
-
-//        taskView.setOnKeyPressed(e -> this.keyPressed(e));
     }
 
     /**
@@ -265,7 +266,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         addSubtask.setOnMouseExited(e -> {
             addSubtask.setStyle("-fx-background-color: transparent;");
         });
-        return;
     }
 
     /**
@@ -304,7 +304,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             server.deleteCard(currCard.id);
             newStage.close();
             taskViews.getInstance().remove(this);
-//            mainCtrl.switchDelete(currCard);
         }
 
     }
@@ -345,10 +344,14 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         this.boardCurr = boardCurr;
     }
 
+    /**
+     * returns the current card
+     */
     @Override
     public Card getCard() {
         return currCard;
     }
+
     @FXML
     public void addSubtask(){
         if(hasTextField){
@@ -590,6 +593,9 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         });
     }
 
+    /**
+     * @return the stage
+     */
     public Stage getStage(){return newStage;}
 }
 

@@ -77,7 +77,6 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         if (valueName.strip().length() == 0) {
             setError("Task Name cannot be empty. Please try again!");
         } else {
-//            server.updateCard(setCard(card));
             setError("");
             currCard.name = valueName;
             currCard.description = valueDes;
@@ -91,9 +90,6 @@ public class TaskEditCtrl extends Application implements CardControllerState {
             }
 
             server.updateBoard(boardCurr);
-//            server.updateList(currCard.getList());
-//            server.updateCard(card);
-//            mainCtrl.switchDashboard("LOL");
             taskEdits.getInstance().remove(this);
             mainCtrl.reallySwitchTaskView(currCard, boardCurr, this.stage);
         }
@@ -113,6 +109,11 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         return card;
     }
 
+    /**
+     * extracts the value of the given text area
+     * @param curr the text area
+     * @return the value of the text area
+     */
     private String extractValue(TextArea curr){
         return curr.getText();
     }
@@ -137,16 +138,25 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         this.boardCurr = boardCurr;
     }
 
+    /**
+     * gets the current card
+     */
     @Override
     public Card getCard() {
         return currCard;
     }
 
+    /**
+     * gets the current stage
+     */
     @Override
     public Stage getStage() {
-        return null;
+        return stage;
     }
 
+    /**
+     * intializes the data for the controller
+     */
     public void sendData(Scene scene, Card q, Board boardCurr) {
         this.boardCurr = boardCurr;
         this.currCard = q;
@@ -155,6 +165,9 @@ public class TaskEditCtrl extends Application implements CardControllerState {
     }
 
 
+    /**
+     * starts the scene
+     */
     @Override
     public void start(Stage primaryStage)  {
         this.stage = primaryStage;

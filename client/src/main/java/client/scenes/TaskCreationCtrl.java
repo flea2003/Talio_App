@@ -56,27 +56,15 @@ public class TaskCreationCtrl  {
         this.mainCtrl = mainCtrl;
     }
 
+    /**
+     * initializes the data for the controller
+     */
     public void sendData(Stage stage, Scene taskCreation, long boardId, List listCurr){
         newStage = stage;
         this.taskCreation = taskCreation;
         this.boardId = boardId;
         this.listCurr = listCurr;
     }
-//    @Override
-//    public void start(javafx.stage.Stage primaryStage)  {
-//        newStage = new Stage();
-//        newStage.setTitle("Task Creation");
-//        newStage.setScene(taskCreation);
-//        newStage.show();
-//
-//        newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//            @Override
-//            public void handle(WindowEvent event) {
-//                taskCreations.getInstance().remove(TaskCreationCtrl.this);
-//            }
-//        });
-//        taskCreation.setOnKeyPressed(e -> this.keyPressed(e));
-//    }
 
     /**
      * processes the click of the addTask button
@@ -129,10 +117,19 @@ public class TaskCreationCtrl  {
         }
     }
 
+    /**
+     * extracts the value from the text field
+     * @param curr the text field
+     * @return the value of the text field
+     */
     private String extractValue(TextField curr){
         return curr.getText();
     }
 
+    /**
+     * sets the error message
+     * @param err the error message
+     */
     private void setError(String err){
         error.setText(err);
     }
@@ -152,6 +149,7 @@ public class TaskCreationCtrl  {
     public void setBoardId(long boardId) {
         this.boardId = boardId;
     }
+
 
     public Card getCard() {
         return null;
