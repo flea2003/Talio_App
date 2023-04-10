@@ -7,8 +7,8 @@ import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import server.services.SubtaskService;
 
 import server.database.ListRepository;
 import server.database.SubtaskRepository;
@@ -16,21 +16,9 @@ import server.database.SubtaskRepository;
 @RestController
 @RequestMapping("/api/subtasks")
 public class SubtaskController {
-    private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    SubtaskRepository repo;
-
-    /**
-     * constructor
-     * @param repo the subtask repository
-     * @param messagingTemplate the messagingTemplate used to trigger the websocket
-     */
-    public SubtaskController(SubtaskRepository repo,
-                          SimpMessagingTemplate messagingTemplate) {
-        this.repo = repo;
-        this.messagingTemplate = messagingTemplate;
-    }
+    SubtaskService subtaskService;
 
     /**
      * gets all the subtasks in the database
@@ -38,7 +26,7 @@ public class SubtaskController {
      */
     @GetMapping(path = { "", "/" })
     public java.util.List<Subtask> getAll() {
-        return repo.findAll();
+        return subtaskService.getAllSubtasks();
     }
 
     /**
@@ -48,10 +36,11 @@ public class SubtaskController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<commons.Subtask> getById(@PathVariable("id") long id) {
-        if (id < 0 || !repo.existsById(id)) {
+        Subtask subtask = subtaskService.getSubtaskById(id);
+        if (id < 0 || subtask == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return ResponseEntity.ok(subtaskService.getSubtaskById(id));
     }
 
     /**
@@ -64,8 +53,7 @@ public class SubtaskController {
         if (subtask.getName() == null|| subtask.getName().strip().length() == 0) {
             return ResponseEntity.badRequest().build();
         }
-        commons.Subtask saved = repo.save(subtask);
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        commons.Subtask saved = subtaskService.saveSubtask(subtask);
         return ResponseEntity.ok(subtask);
     }
 
@@ -76,12 +64,11 @@ public class SubtaskController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
-        if (id < 0 || !repo.existsById(id)) {
+        commons.Subtask subtask = subtaskService.getSubtaskById(id);
+        if (id < 0 || subtask == null) {
             return ResponseEntity.badRequest().build();
         }
-        commons.Subtask subtask=repo.getById(id);
-        repo.delete(Objects.requireNonNull(getById(id).getBody()));
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        subtaskService.deleteSubtask(Objects.requireNonNull(getById(id).getBody()));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -92,8 +79,7 @@ public class SubtaskController {
      */
     @PostMapping("/update")
     public ResponseEntity<commons.Subtask> updateSubtask(@RequestBody commons.Subtask subtask){
-        repo.save(subtask);
-        messagingTemplate.convertAndSend("/topic/updates", true);
+        subtaskService.saveSubtask(subtask);
         return ResponseEntity.ok(subtask);
     }
 
