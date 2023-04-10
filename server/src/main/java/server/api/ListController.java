@@ -14,6 +14,8 @@ import java.util.Objects;
 public class ListController {
     @Autowired
     ListService listService;
+    @Autowired
+    CardController cardController;
 
     /**
      * gets a list by its id
@@ -55,6 +57,9 @@ public class ListController {
             return ResponseEntity.badRequest().build();
         }
         listService.deleteList(Objects.requireNonNull(list));
+        for(commons.Card card : list.getCards()){
+            cardController.activateListeners(card);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -67,6 +72,9 @@ public class ListController {
     public ResponseEntity<commons.List> updateList(@RequestBody commons.List list){
         System.out.println(list.getBoard());
         listService.saveList(list);
+        for(commons.Card card : list.getCards()){
+            cardController.activateListeners(card);
+        }
         return ResponseEntity.ok(list);
     }
 

@@ -23,6 +23,7 @@ import commons.Subtask;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -38,6 +39,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -252,16 +256,21 @@ public class ServerUtils {
      */
     public commons.Board getBoard(long id){
         String endpoint = String.format("api/boards/%d", id);
-        var res = ClientBuilder.newClient(new ClientConfig())
-                .target(server).path(endpoint)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(new GenericType<commons.Board>() {});
-        Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
-        for(commons.List list : res.getLists()){
-            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+        try{
+            var res = ClientBuilder.newClient(new ClientConfig())
+                    .target(server).path(endpoint)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .get(new GenericType<commons.Board>() {});
+            Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+            for(commons.List list : res.getLists()){
+                Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+            }
+            return res;
         }
-        return res;
+        catch (Exception e){
+            return null;
+        }
     }
 
     /**
@@ -529,6 +538,28 @@ public class ServerUtils {
         }
     }
 
+    public void longPolling(ExecutorService EXEC, Consumer<Card> consumer, Card card1){
+        EXEC.submit(()->{
+            while(!EXEC.isShutdown()){
+                var res = ClientBuilder.newClient(new ClientConfig())
+                        .target(server).path("api/cards/longPoll")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .post(Entity.entity(card1, APPLICATION_JSON), Response.class);
+                if(res.getStatus()==204){
+                    res.close();
+                    continue;
+                }else{
+                    var q = res.readEntity(Card.class);
+                    res.close();
+                    consumer.accept(q);
+                }
+            }
+        });
 
+    }
+    public void stopThread(ExecutorService EXEC){
+        EXEC.shutdown();
+    }
 
 }

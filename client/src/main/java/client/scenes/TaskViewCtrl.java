@@ -4,12 +4,16 @@ import client.scenes.services.ButtonTalio;
 import client.scenes.services.CardControllerState;
 import client.scenes.services.taskViews;
 import client.utils.ServerUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import commons.List;
 import commons.Subtask;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -26,10 +30,24 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+
+import static org.springframework.boot.context.properties.ConfigurationPropertiesBean.getAll;
 
 public class TaskViewCtrl extends Application implements CardControllerState {
 
@@ -90,6 +108,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
     private taskViews viewTasks;
 
+    private ExecutorService EXEC;
 
     @FXML
     private VBox actualSubtasks;
@@ -139,27 +158,11 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             @Override
             public void handle(WindowEvent event) {
                 taskViews.getInstance().remove(TaskViewCtrl.this);
+                newStage.hide();
+                server.stopThread(EXEC);
             }
         });
         newStage.show();
-
-//        taskView.setOnKeyPressed(e -> this.keyPressed(e));
-    }
-
-    /**
-     * show the information of the card in th UI
-     * @param card the card to show
-     */
-    public void renderInfo(Card card){
-        hboxButtons.getStylesheets().add("CSS/button.css");
-        while(subTasks.getChildren().size() >= 2){
-            subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
-        }
-        currCard = card;
-        taskName.setText(card.name);
-        if(taskName.layoutBoundsProperty().get().getWidth() >= 400){
-            taskName.setWrappingWidth(400);
-        }
         addEditFunctionality((Pane)taskName.getParent(), taskName, taskName, e -> {
             TextField textField = new TextField(taskName.getText());
             if(taskName.getParent() != null) {
@@ -195,8 +198,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
         });
 
-        taskDescription.setText(card.description);
-        taskDescription.setWrappingWidth(400);
         addEditFunctionality((Pane)description.getParent(), description, taskDescription, e -> {
             TextField textField = new TextField(taskDescription.getText());
             int index = descriptionPane.getParent().getChildrenUnmodifiable().indexOf(descriptionPane);
@@ -223,13 +224,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             });
         });
 
-        if(taskNo==null){
-            taskNo=new Text();
-        }
-        taskNo.setText("Task No. " + card.getNumberInTheList());
-        for(Subtask subtask : currCard.getSubtasks()){
-            createSubtask(subtask);
-        }
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
             /**
              * processes the new information
@@ -238,6 +232,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             @Override
             public void processData(String data) {
                 Subtask subtask = new Subtask(data, "", currCard.subtasks.size() + 1, currCard, 0);
+
                 subtask = server.saveSubtask(subtask);
                 currCard.addSubtask(subtask);
                 server.updateBoard(currCard.getList().board);
@@ -290,7 +285,63 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         addSubtask.setOnMouseExited(e -> {
             addSubtask.setStyle("-fx-background-color: transparent;");
         });
-        return;
+
+    }
+
+    /**
+     * show the information of the card in th UI
+     * @param card the card to show
+     */
+    public void renderInfo(Card card){
+        Board board = server.getBoard(currCard.getList().board.id);
+        for(List list : board.getLists()){
+            for(Card cardCurr : list.getCards()){
+                if(cardCurr.id == card.id){
+                    currCard = cardCurr;
+                }
+            }
+        }
+        EXEC = Executors.newSingleThreadExecutor();
+        server.longPolling(EXEC, q -> {
+            var exists = server.getCardById(q.id);
+            if(exists == null){
+                Platform.runLater(() -> {
+                    try{
+                        newStage.fireEvent(new javafx.stage.WindowEvent(newStage, javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }else{
+                server.stopThread(EXEC);
+                renderInfo(currCard);
+            }
+        }, currCard);
+        Platform.runLater(() -> {
+            hboxButtons.getStylesheets().add("CSS/button.css");
+            while(subTasks.getChildren().size() >= 2){
+                subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
+            }
+            actualSubtasks.getChildren().clear();
+
+            taskName.setText(card.name);
+            if(taskName.layoutBoundsProperty().get().getWidth() >= 400){
+                taskName.setWrappingWidth(400);
+            }
+
+            taskDescription.setText(card.description);
+            taskDescription.setWrappingWidth(400);
+
+            if(taskNo==null){
+                taskNo=new Text();
+            }
+            taskNo.setText("Task No. " + card.getNumberInTheList());
+            for(Subtask subtask : currCard.getSubtasks()){
+                createSubtask(subtask);
+            }
+            return;
+
+        });
     }
 
     /**
@@ -377,10 +428,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      */
     @FXML
     public void setDone(){
-//        System.out.println(currCard.name);
-//        mainCtrl.switchDashboard("LOL");
-//        System.out.println("XD");
         taskViews.getInstance().remove(TaskViewCtrl.this);
+        server.stopThread(EXEC);
         newStage.close();
     }
 
@@ -453,6 +502,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      * @param subtask the new subtask
      */
     public void createSubtask(Subtask subtask){
+
         HBox hbox = new HBox();
         CheckBox checkBox = new CheckBox(subtask.getName());
         checkBox.getStylesheets().add("CSS/button.css");

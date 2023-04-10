@@ -1,15 +1,21 @@
 package server.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import commons.Card;
 import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.services.CardService;
+import server.services.Pair;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -34,14 +40,48 @@ public class CardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Card> getById (@PathVariable long id){
-        System.out.println(id);
-        Card card = cardService.getCardById(id);
+        Card card = null;
+        try {
+            card = cardService.getCardById(id);
+        }
+        catch (Exception e){
+            ResponseEntity.badRequest().build();
+        }
         if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(card);
     }
 
+    private Map<Pair<Object, Card>, Consumer<Card>> listeners = new ConcurrentHashMap<>();
+
+    /**
+     * Long Polling Method
+     * @return res
+     */
+    @PostMapping("/longPoll")
+    public DeferredResult<ResponseEntity<Card>> getUpdates(@RequestBody Card card){
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<Card>>(3000L, noContent);
+
+        var key = new Object();
+        System.out.println(listeners.size());
+        listeners.put(new Pair<>(key, card), q -> {
+            res.setResult(ResponseEntity.ok(q));
+        });
+        res.onCompletion(() -> {
+            listeners.remove(new Pair<>(key, card));
+        });
+        return res;
+    }
+
+    public void activateListeners(Card card){
+        listeners.forEach((k, l) -> {
+            if(k.getB().id == card.id) {
+                  l.accept(card);
+            }
+        });
+    }
     /**
      * deletes a card
      * @param id the id of the card to be deleted
@@ -55,6 +95,7 @@ public class CardController {
         }
 
         cardService.deleteCard(card);
+        activateListeners(card);
         return ResponseEntity.ok(card);
     }
 
@@ -86,6 +127,7 @@ public class CardController {
         }
 
         cardService.saveCard(card);
+        activateListeners(card);
         return ResponseEntity.ok(card);
     }
 
