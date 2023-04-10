@@ -1,15 +1,18 @@
 package server.api;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import commons.Card;
 import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.services.CardService;
+import server.services.Pair;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -31,33 +34,47 @@ public class CardController {
      * gets a card by its id
      * @param id the id of the card
      * @return a response (bad request or ok)
-     * @throws InterruptedException if the long polling is interrupted
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Card> getById (@PathVariable long id, @RequestParam(value = "longPoll", required = false) boolean longPoll) throws InterruptedException {
+    public ResponseEntity<Card> getById (@PathVariable long id){
         System.out.println(id);
         Card card = cardService.getCardById(id);
         if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
         }
-        if (!longPoll) {
-            // If long polling is not enabled, return the card immediately
-            return ResponseEntity.ok(card);
-        }
-        // Wait for a change in the data or timeout after 30 seconds
-        long startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime < 30000) {
-            Card updatedCard = cardService.getCardById(id);
-            if (!card.equals(updatedCard)) {
-                return ResponseEntity.ok(updatedCard);
-            }
-            Thread.sleep(1000);
-        }
-        // Timeout
         return ResponseEntity.ok(card);
     }
 
+    private Map<Pair<Object,Card>, Consumer<Card>> listeners = new HashMap<>();
 
+    /**
+     * Long Polling Method
+     * @return res
+     */
+    @PostMapping("/longPoll")
+    public DeferredResult<ResponseEntity<Card>> getUpdates(Card card){
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<Card>>(3000L, noContent);
+
+        var key = new Object();
+
+        listeners.put(new Pair<>(key, card), q -> {
+            res.setResult(ResponseEntity.ok(q));
+        });
+        res.onCompletion(() -> {
+            listeners.remove(new Pair<>(key, card));
+        });
+        return res;
+    }
+
+    public void activateListeners(Card card){
+        listeners.forEach((k, l) -> {
+            System.out.println(card.id + " " + k.getB().id);
+            if(k.getB().id == card.id) {
+                l.accept(k.getB());
+            }
+        });
+    }
     /**
      * deletes a card
      * @param id the id of the card to be deleted
@@ -71,6 +88,7 @@ public class CardController {
         }
 
         cardService.deleteCard(card);
+        activateListeners(card);
         return ResponseEntity.ok(card);
     }
 
@@ -102,6 +120,7 @@ public class CardController {
         }
 
         cardService.saveCard(card);
+        activateListeners(card);
         return ResponseEntity.ok(card);
     }
 

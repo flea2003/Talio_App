@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
 import static org.springframework.boot.context.properties.ConfigurationPropertiesBean.getAll;
@@ -143,66 +144,21 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             @Override
             public void handle(WindowEvent event) {
                 taskViews.getInstance().remove(TaskViewCtrl.this);
+                server.stopThread();
             }
         });
         newStage.show();
-        System.out.println(server);
-        startLongPolling();
+        server.longPolling(q -> {
+            if(server.getCardById(q.id) == null){
+                primaryStage.fireEvent(new javafx.stage.WindowEvent(primaryStage, javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST));
+            }else{
+                var r = server.getBoard(q.getList().getBoard().id);
+                renderInfo(q);
+            }
+        }, currCard);
+
     }
 
-    private void startLongPolling() {
-        while (true) {
-            try {
-                String id = String.valueOf(currCard.getId());
-                URL url = new URL("http://localhost:8080//api/cards/"+id+"?longPoll=true");
-                System.out.println(url);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-
-                // Set up a long timeout to wait for a response
-                connection.setConnectTimeout(30000);
-                connection.setReadTimeout(30000);
-
-                // Check if the connection was successful
-                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    // Process the response and update the client-side view
-//                    processLongPollingResponse(connection.getInputStream());
-                    renderInfo(currCard);
-
-                    // Start a new long polling cycle
-                    continue;
-                }
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            } catch (ProtocolException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-//             Wait a short period of time before retrying the request
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-//    private void processLongPollingResponse(InputStream inputStream) throws IOException {
-//        // Read the data from the input stream
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//        StringBuilder responseBuilder = new StringBuilder();
-//        String line;
-//
-//        while ((line = reader.readLine()) != null) {
-//            responseBuilder.append(line);
-//        }
-//
-//        String response = responseBuilder.toString();
-//
-//        // Update the client-side view with the new data
-//        updateView(response);
-//    }
 
 
     /**
