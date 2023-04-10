@@ -534,7 +534,7 @@ public class ServerUtils {
      * sends a get request to check if the entered passsword is correct
      * @return the a boolean value representing if the password is correct or not
      */
-    public boolean checkPassword(String password) {
+    public boolean checkPassword(String server, String password) {
 //        String endpoint = "/api/boards/password";
         String endpoint = String.format("/api/admin/password/%s", password);
         try {

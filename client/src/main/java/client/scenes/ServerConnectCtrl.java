@@ -158,7 +158,7 @@ public class ServerConnectCtrl implements Initializable {
      */
     public boolean checkPassword(javafx.event.ActionEvent event) {
         if (event.getSource() == connectButton2) {
-            if (!server.checkPassword(password.getText())) {
+            if (!server.checkPassword( "http://"+serverAddress.getText()+":8080", password.getText())) {
                 message.setText("Incorrect Password");
             } else {
                 dashboardCtrl.adminAccess = true;
