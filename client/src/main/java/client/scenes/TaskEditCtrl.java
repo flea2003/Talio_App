@@ -162,4 +162,6 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         primaryStage.setScene(scene);
 
     }
+
+
 }

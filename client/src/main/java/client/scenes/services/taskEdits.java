@@ -32,7 +32,7 @@ public  class taskEdits {
 
     public boolean isOpened(Card card) {
         for (TaskEditCtrl controller : controllers) {
-            if (controller.getCard().id == card.id) {
+            if (controller.getCard().getId() == card.getId()) {
                 controller.getStage().requestFocus();
                 return true;
             }
@@ -42,8 +42,10 @@ public  class taskEdits {
 
     public void closeAll() {
         for(TaskEditCtrl controller: controllers)
-            controller.getStage().close();
-        
+            if(controller.getStage() != null)
+                controller.getStage().close();
+        controllers = new ArrayList<>();
+
     }
 
     public void checkClosed(List<commons.List> lists) {
@@ -51,11 +53,16 @@ public  class taskEdits {
             boolean wasDeleted = true;
             for (var list : lists)
                 for (var card : list.getCards())
-                    if(controller.getCard().id == card.id)
+                    if(controller.getCard().getId() == card.getId())
                         wasDeleted = false;
             if(wasDeleted)
                 controller.getStage().close();
         }
 
+    }
+
+
+    public List<TaskEditCtrl> getControllers() {
+        return controllers;
     }
 }

@@ -30,7 +30,7 @@ public class Subtask {
     @JsonBackReference
     private Card card;
 
-    public Integer completed;
+    private int completed;
 
     public Subtask() {}
 
@@ -185,7 +185,12 @@ public class Subtask {
         return completed;
     }
 
+    /**
+     * setter for the int completed
+     * @param completed an int
+     */
     public void setCompleted(int completed) {
         this.completed = completed;
     }
+
 }
