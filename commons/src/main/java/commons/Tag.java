@@ -1,7 +1,6 @@
 package commons;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -56,6 +55,12 @@ public class Tag {
         this.color = color;
         this.board = board;
     }
+
+    /**
+     * constructor used for testing
+     */
+    @SuppressWarnings("unused")
+    public Tag() {}
 
     /**
      * getter for an id
@@ -154,5 +159,20 @@ public class Tag {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    /**
+     * to string representation of a tag
+     * @return a string of its variables
+     */
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", color=" + color +
+                ", board=" + board +
+                ", cards=" + cards +
+                '}';
     }
 }
