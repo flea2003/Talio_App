@@ -123,9 +123,12 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      */
     @Override
     public void start(javafx.stage.Stage primaryStage)  {
-        if(primaryStage != null)
+        if(primaryStage != null) {
             newStage = primaryStage;
-        else newStage = new Stage();
+        }
+        else {
+            newStage = new Stage();
+        }
         newStage.setTitle("Task View");
         newStage.setScene(taskView);
         renderInfo(currCard);
@@ -313,9 +316,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      */
     @FXML
     public void setDone(){
-//        System.out.println(currCard.name);
-//        mainCtrl.switchDashboard("LOL");
-//        System.out.println("XD");
         taskViews.getInstance().remove(TaskViewCtrl.this);
         newStage.close();
     }
@@ -596,6 +596,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     /**
      * @return the stage
      */
-    public Stage getStage(){return newStage;}
+    public Stage getStage(){
+        return newStage;
+    }
 }
 

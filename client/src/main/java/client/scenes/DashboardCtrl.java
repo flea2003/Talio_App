@@ -1023,15 +1023,17 @@ public class DashboardCtrl implements Initializable {
 
         int[] clickCount = {0};
         label.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue)
+            if (!newValue) {
                 contextMenu.hide();
+            }
         });
 
         button.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(),
                                                                button.getLayoutY());
-            if (event.getButton() == MouseButton.PRIMARY)
+            if (event.getButton() == MouseButton.PRIMARY) {
                 contextMenu.show(pane, absoluteCoordinates.getX() - 21, absoluteCoordinates.getY() + button.getHeight() - 33);
+            }
         });
 
         return contextMenu;
@@ -1104,8 +1106,9 @@ public class DashboardCtrl implements Initializable {
             Point2D absoluteCoordinates = addBoardButton.
                     localToScreen(boardsVBox.getBoundsInLocal().getMinX() + 150,
                             addBoardLabel.getBoundsInLocal().getMaxY() - 68);
-            if(event.getButton() == MouseButton.PRIMARY)
+            if(event.getButton() == MouseButton.PRIMARY) {
                 contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
+            }
 
         });
 

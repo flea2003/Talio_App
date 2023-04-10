@@ -21,8 +21,9 @@ public  class taskViews {
      * @return the instance of the singleton
      */
     public synchronized static taskViews getInstance() {
-        if (INSTANCE == null)
+        if (INSTANCE == null) {
             INSTANCE = new taskViews();
+        }
         return INSTANCE;
     }
 
@@ -33,6 +34,7 @@ public  class taskViews {
 
     /**
      * @return the list of controllers
+     * @param controller the controller to add
      */
     public void add(TaskViewCtrl controller) {
         controllers.add(controller);
@@ -40,6 +42,7 @@ public  class taskViews {
 
     /**
      * @return the list of controllers
+     * @param controller the controller to remove
      */
     public void remove(TaskViewCtrl controller) {
         controllers.remove(controller);
@@ -63,8 +66,9 @@ public  class taskViews {
      * Close all the opened windows
      */
     public void closeAll() {
-        for(TaskViewCtrl controller: controllers)
+        for(TaskViewCtrl controller: controllers) {
             controller.getStage().close();
+        }
 
     }
 
@@ -73,9 +77,11 @@ public  class taskViews {
      * @return the stage of the card
      */
     public Stage getStage(Card card) {
-        for(TaskViewCtrl controller: controllers)
-            if(controller.getCard().getId() == card.getId())
+        for(TaskViewCtrl controller: controllers) {
+            if (controller.getCard().getId() == card.getId()) {
                 return controller.getStage();
+            }
+        }
         return null;
     }
 
@@ -84,9 +90,11 @@ public  class taskViews {
      * @return the controller of the card
      */
     public TaskViewCtrl getCotroller(Card card){
-        for(TaskViewCtrl controller: controllers)
-            if(controller.getCard().getId() == card.getId())
+        for(TaskViewCtrl controller: controllers) {
+            if (controller.getCard().getId() == card.getId()) {
                 return controller;
+            }
+        }
         return null;
     }
 
@@ -97,12 +105,16 @@ public  class taskViews {
     public void checkClosed(List<commons.List> lists) {
         for(var controller: controllers) {
             boolean wasDeleted = true;
-            for (var list : lists)
-                for (var card : list.getCards())
-                    if(controller.getCard().getId() == card.getId())
+            for (var list : lists) {
+                for (var card : list.getCards()) {
+                    if (controller.getCard().getId() == card.getId()) {
                         wasDeleted = false;
-            if(wasDeleted)
+                    }
+                }
+            }
+            if(wasDeleted) {
                 controller.getStage().close();
+            }
         }
     }
 }

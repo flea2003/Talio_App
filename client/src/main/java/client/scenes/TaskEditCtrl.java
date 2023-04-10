@@ -156,6 +156,9 @@ public class TaskEditCtrl extends Application implements CardControllerState {
 
     /**
      * intializes the data for the controller
+     * @param scene the scene to be used
+     * @param q the card to be used
+     * @param boardCurr the current board in focus
      */
     public void sendData(Scene scene, Card q, Board boardCurr) {
         this.boardCurr = boardCurr;

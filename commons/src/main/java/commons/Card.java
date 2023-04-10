@@ -71,6 +71,7 @@ public class Card {
     /**
      * constructor used for testing
      * @param name the name of the card
+     * @param id the id of the card
      */
     public Card(long id, String name) {
         this.id = id;
