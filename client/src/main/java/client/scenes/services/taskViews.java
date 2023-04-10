@@ -33,7 +33,7 @@ public  class taskViews {
 
     public boolean isOpened(Card card) {
         for (TaskViewCtrl controller : controllers) {
-            if (controller.getCard().id == card.id) {
+            if (controller.getCard().getId() == card.getId()) {
                 controller.getStage().requestFocus();
                 return true;
             }
@@ -44,20 +44,20 @@ public  class taskViews {
     public void closeAll() {
         for(TaskViewCtrl controller: controllers)
             controller.getStage().close();
-        
+
     }
 
     public Stage getStage(Card card) {
         for(TaskViewCtrl controller: controllers)
-            if(controller.getCard().id == card.id)
+            if(controller.getCard().getId() == card.getId())
                 return controller.getStage();
         return null;
     }
 
     public TaskViewCtrl getCotroller(Card card){
         for(TaskViewCtrl controller: controllers)
-        if(controller.getCard().id == card.id)
-            return controller;
+            if(controller.getCard().getId() == card.getId())
+                return controller;
         return null;
     }
 
@@ -66,7 +66,7 @@ public  class taskViews {
             boolean wasDeleted = true;
             for (var list : lists)
                 for (var card : list.getCards())
-                    if(controller.getCard().id == card.id)
+                    if(controller.getCard().getId() == card.getId())
                         wasDeleted = false;
             if(wasDeleted)
                 controller.getStage().close();

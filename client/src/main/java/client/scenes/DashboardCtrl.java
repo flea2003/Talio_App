@@ -330,19 +330,31 @@ public class DashboardCtrl implements Initializable {
      * @param board the board to be deleted
      */
     public void deleteBoard(Board board){
-        //Show a confirmation message
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete board '" + board.getName() + "'?");
-        alert.setContentText("Are you sure you want to delete board '" + board.getName() +
-                "'?\nThis will permanently delete the board from the server.");
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Delete board '" + board.getName() + "'?");
 
-        ButtonType delete = new ButtonType("Delete");
-        ButtonType cancel = new ButtonType("Cancel");
-        alert.getButtonTypes().setAll(delete, cancel);
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
 
-        Optional<ButtonType> result = alert.showAndWait();
+        //create the buttons
+        Button delete = new Button("Delete");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(delete, cancel);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
 
-        if (result.get() == delete) {
+        //set colour for the buttons and create hovering effect
+        delete.getStyleClass().add("connectButton");
+        delete.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
+
+        delete.setOnAction( e -> {
             //if the board to be deleted is selected remove its data from the interface
             if (hboxList.getUserData() != null && (long) hboxList.getUserData() == board.getId()) {
                 shareBoard.setVisible(false);
@@ -354,7 +366,33 @@ public class DashboardCtrl implements Initializable {
             serverBoards.get(server.getServer()).remove(board);
             //delete board
             server.deleteBoard(board.getId());
-        }
+            stage.close();
+        });
+
+        cancel.setOnAction(e -> {
+            stage.close();
+        });
+
+        ImageView deletion = new ImageView(new Image("/pictures/deletion.png"));
+        deletion.maxHeight(30);
+        deletion.maxWidth(30);
+
+        VBox message = new VBox();
+        Label sure = new Label("Are you sure you want to delete board '" + board.getName() + "'?");
+        sure.setStyle("-fx-font-size: 16px");
+        message.getChildren().addAll(sure,
+                new Label("This will permanently delete the board from the server.")
+        );
+        message.setAlignment(Pos.CENTER);
+        message.setSpacing(10);
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(deletion, message, buttons);
+
+        Scene scene = new Scene(vbox, 395, 250);
+        stage.setScene(scene);
+        stage.showAndWait();
+
     }
 
     /**
@@ -559,22 +597,60 @@ public class DashboardCtrl implements Initializable {
     }
 
     private void deleteList(Long listId) {
-
         List list = server.getList(listId);
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete List '" + list.getName() + "'?");
-        alert.setContentText("Are you sure you want to delete list '" + list.getName() +
-                "'?\nThis will permanently delete the list from the server.");
 
-        ButtonType delete = new ButtonType("Delete");
-        ButtonType cancel = new ButtonType("Cancel");
-        alert.getButtonTypes().setAll(delete, cancel);
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Delete List '" + list.getName() + "'?");
 
-        Optional<ButtonType> result = alert.showAndWait();
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
 
-        if (result.get() == delete) {
+        //create the buttons
+        Button delete = new Button("Delete");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(delete, cancel);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+
+        //set colour for the buttons and create hovering effect
+        delete.getStyleClass().add("connectButton");
+        delete.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
+
+        delete.setOnAction( e -> {
             server.deleteList(listId);
-        }
+            stage.close();
+        });
+
+        cancel.setOnAction(e -> {
+            stage.close();
+        });
+
+        ImageView deletion = new ImageView(new Image("/pictures/deletion.png"));
+        deletion.maxHeight(30);
+        deletion.maxWidth(30);
+
+        VBox message = new VBox();
+        Label sure = new Label("Are you sure you want to delete list '" + list.getName() + "'?");
+        sure.setStyle("-fx-font-size: 16px");
+        message.getChildren().addAll(sure,
+                new Label("This will permanently delete the list from the server.")
+        );
+        message.setAlignment(Pos.CENTER);
+        message.setSpacing(10);
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(deletion, message, buttons);
+
+        Scene scene = new Scene(vbox, 395, 250);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
     private void editList(VBox vBox, Label label, Long boardId) {

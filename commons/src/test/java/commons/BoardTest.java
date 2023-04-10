@@ -83,4 +83,19 @@ public class BoardTest {
         board.setName("new");
         assertTrue(board.getName().equals("new"));
     }
+
+    @Test
+    public void testGetTags() { // also tests set tags
+        Board board = new Board(1, new ArrayList<List>(), "name");
+        ArrayList<Tag> tags2 = new ArrayList<>();
+        board.setTags(tags2);
+        assertEquals(tags2, board.getTags());
+    }
+
+    @Test
+    public void testSetKey() {
+        Board board = new Board(1, new ArrayList<List>(), "name");
+        board.setKey("key2");
+        assertTrue("key2".equals(board.getKey()));
+    }
 }

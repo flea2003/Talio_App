@@ -82,9 +82,13 @@ public class Tag {
         this.red = red;
     }
 
-    public Tag() {
 
-    }
+    /**
+     * default constructor
+     */
+    @SuppressWarnings("unused")
+    public Tag() {}
+
 
     /**
      * getter for an id
@@ -180,11 +184,6 @@ public class Tag {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
-    }
-
     public void setGreen(int green) {
         this.green = green;
     }
@@ -195,5 +194,23 @@ public class Tag {
 
     public void setRed(int red) {
         this.red = red;
+    }
+
+    /**
+     * to string representation of a tag
+     *
+     * @return a string of its variables
+     */
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", green=" + green +
+                ", blue=" + blue +
+                ", red=" + red +
+                ", board=" + board +
+                ", cards=" + cards +
+                '}';
     }
 }
