@@ -62,7 +62,7 @@
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="326.0" prefWidth="135.0" style="-fx-background-color: rgb(123,104,238); -fx-border-color: #5c5a5b; -fx-border-width: 0 2 0 0;" BorderPane.alignment="CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="My Boards">
+            <Text fx:id="boardsHeader" strokeType="OUTSIDE" strokeWidth="0.0" text="My Boards">
                <font>
                   <Font name="Cambria Italic" size="27.0" />
                </font>

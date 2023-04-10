@@ -77,7 +77,10 @@ public class DashboardCtrl implements Initializable {
     private Button addBoard;
     @FXML
     private TextField addBoardLabel;
+    public boolean adminAccess;
 
+    @FXML
+    private Text boardsHeader;
     /**
      * constructor
      * @param main a reference to the main method of the client side
@@ -114,7 +117,15 @@ public class DashboardCtrl implements Initializable {
         }
         addBoardLabel.setVisible(false);
         connectedBoards = new ArrayList<>();
-        connectedBoards.addAll(serverBoards.get(currentServer));
+        if(adminAccess==false){
+            System.out.println("false");
+            connectedBoards.addAll(serverBoards.get(currentServer));
+        }else{
+            System.out.println("true");
+            connectedBoards.addAll(server.getBoards());
+            boardsHeader.setText("All Boards");
+        }
+
         openShare();
         openAddBoard();
         addBoard.setOnAction(e -> {
@@ -1051,5 +1062,6 @@ public class DashboardCtrl implements Initializable {
         });
 
     }
+
 }
 

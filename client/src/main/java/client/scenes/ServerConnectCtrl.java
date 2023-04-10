@@ -24,6 +24,7 @@ public class ServerConnectCtrl implements Initializable {
     private final ServerUtils server;
 
     private final MainCtrl mainCtrl;
+    private final DashboardCtrl dashboardCtrl;
 
     @FXML
     private javafx.scene.control.TextField serverAddress;
@@ -54,15 +55,18 @@ public class ServerConnectCtrl implements Initializable {
     @FXML
     private Text message;
 
+
     /**
      * constructor
      * @param server the current server
      * @param mainCtrl a reference to the MainCtrl
      */
     @Inject
-    public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl, DashboardCtrl dashboardCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.dashboardCtrl = dashboardCtrl;
+        dashboardCtrl.adminAccess=false;
     }
 
     /**
@@ -149,6 +153,7 @@ public class ServerConnectCtrl implements Initializable {
             if (!password.getText().equals("admin12")) {
                 message.setText("Incorrect Password");
             } else {
+                dashboardCtrl.adminAccess = true;
                 connectButton.fire();
                 return true;
             }
@@ -194,6 +199,7 @@ public class ServerConnectCtrl implements Initializable {
             connectButton.setVisible(true);
             connectUser.setVisible(false);
             connectAdmin.setVisible(true);
+            dashboardCtrl.adminAccess=false;
         }
     }
     @Override
