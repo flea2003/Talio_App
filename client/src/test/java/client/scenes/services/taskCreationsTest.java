@@ -2,59 +2,65 @@ package client.scenes.services;
 
 import client.scenes.TaskCreationCtrl;
 import commons.Card;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class taskCreationsTest {
-
-    private TaskCreationCtrl taskCreationCtrl;
-    private TaskCreationCtrl taskCreationCtrl1;
+    private TaskCreationCtrl mockController;
+    private Card mockCard;
 
     @BeforeEach
     void setUp() {
-         taskCreationCtrl = new TaskCreationCtrl(null, null);
-         taskCreationCtrl.sendData(null, null, 10, null);
-         taskCreationCtrl1 = new TaskCreationCtrl(null, null);
-    }
+        mockController = Mockito.mock(TaskCreationCtrl.class);
+        when(mockController.getStage()).thenReturn(Mockito.mock(javafx.stage.Stage.class));
 
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void getInstance() {
-        Assertions.assertEquals(taskCreations.getInstance(), taskCreations.getInstance());
-
+        mockCard = Mockito.mock(Card.class);
+        when(mockController.getCard()).thenReturn(mockCard);
+        when(mockCard.getId()).thenReturn(1L);
     }
 
     @Test
-    void add() {
-        taskCreations.getInstance().add(taskCreationCtrl);
-        taskCreations.getInstance().add(taskCreationCtrl1);
-        Assertions.assertEquals(taskCreations.getInstance().getArray().size(), 3);
-
+    void testIsOpened() {
+        taskCreations instance = taskCreations.getInstance();
+        instance.add(mockController);
+        assertTrue(instance.isOpened(mockCard));
     }
 
     @Test
-    void remove() {
-        taskCreations.getInstance().add(taskCreationCtrl);
-        taskCreations.getInstance().add(taskCreationCtrl1);
-        taskCreations.getInstance().remove(taskCreationCtrl);
-        Assertions.assertEquals(taskCreations.getInstance().getArray().size(), 1);
+    void testAdd() {
+        taskCreations instance = taskCreations.getInstance();
+        instance.add(mockController);
+        assertTrue(instance.getArray().contains(mockController));
     }
 
     @Test
-    void isOpened() {
-        Card card = new Card( "test", "t", null, 3);
-        card.id = 1;
-//        taskCreations.getInstance().isOpened(card);
+    void testRemove() {
+        taskCreations instance = taskCreations.getInstance();
+        instance.add(mockController);
+        instance.remove(mockController);
+        assertFalse(instance.getArray().contains(mockController));
+    }
 
+
+    @Test
+    void testCloseAll() {
+        taskCreations instance = taskCreations.getInstance();
+        instance.add(mockController);
+        instance.closeAll();
+        verify(mockController.getStage()).close();
     }
 
     @Test
-    void closeAll() {
-//        taskCreations.getInstance().closeAll();
+    void testGetArray() {
+        taskCreations instance = taskCreations.getInstance();
+        instance.add(mockController);
+        List<TaskCreationCtrl> controllers = instance.getArray();
+        assertTrue(controllers.contains(mockController));
     }
 }
