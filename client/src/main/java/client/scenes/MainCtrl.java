@@ -140,7 +140,7 @@ public class MainCtrl {
     }
 
     /**
-     * switches the scene to the create a board
+     * switches the scene to create a board
      */
     public void switchCreateBoard() {
         primaryStage.setTitle("Create a Board");
@@ -156,18 +156,6 @@ public class MainCtrl {
     public void switchTaskView(Card q, Board boardCurr){
         if(taskViews.getInstance().isOpened(q))
             return;
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("client/src/main/resources/client/scenes/TaskView.fxml"));
-//        Parent root = null;
-//        try {
-//            root = loader.load();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        TaskViewCtrl controller = loader.getController();
-//
-//        controller.sendData(new Scene(root), q, boardCurr);
-//        controller.start(null);
-//        taskViews.getInstance().add(controller);
 
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
@@ -210,6 +198,9 @@ public class MainCtrl {
         taskViews.getInstance().add(taskView.getKey());
     }
 
+    /**
+     * method to end the program
+     */
     public void closeStages() {
         taskCreations.getInstance().closeAll();
         taskViews.getInstance().closeAll();
