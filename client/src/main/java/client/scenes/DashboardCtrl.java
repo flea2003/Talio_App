@@ -135,8 +135,9 @@ public class DashboardCtrl implements Initializable {
     }
 
     /**
-     * checks that the changes on each board have been updated and
-     * if not, it updates them
+     *  * checks that the changes on each board have been updated and
+     *      * if not, it updates them
+     *      no parameters
      */
     public void setBoards(){
         String currentServer = server.getServer();
@@ -261,6 +262,10 @@ public class DashboardCtrl implements Initializable {
         // Created a new Interface, where we provide the methods of where
         // to put the button, where the label should appear, and
         ButtonTalio addListButton = new ButtonTalio("Create List", "Add List Name") {
+            /**
+             * processing the new information
+             * @param data the string that should be sent to the database
+             */
             @Override
             public void processData(String data) {
                 Board boardCurr = server.getBoard(id);
@@ -271,6 +276,10 @@ public class DashboardCtrl implements Initializable {
                 server.updateBoard(boardCurr);
             }
 
+            /**
+             * add the label to the VBox
+             * @param vboxEnd the structure where the node is added
+             */
             @Override
             public void addLabel(Pane vboxEnd) {
                 if(vboxEnd.getChildren().size()>1){
@@ -285,6 +294,10 @@ public class DashboardCtrl implements Initializable {
                 vboxEnd.getChildren().add(textField);
             }
 
+            /**
+             * delete the label from the VBox
+             * @param vboxEnd pane where the label is right now
+             */
             @Override
             public void deleteLabel(Pane vboxEnd) {
                 vboxEnd.getChildren().remove(textField);
@@ -293,6 +306,10 @@ public class DashboardCtrl implements Initializable {
                 vboxEnd.getChildren().remove(spacer);
             }
 
+            /**
+             * add Button to the dashboard
+             * @return Pane
+             */
             @Override
             public Pane addButton() {
                 VBox vboxEnd = new VBox();
@@ -403,8 +420,6 @@ public class DashboardCtrl implements Initializable {
         cancel.setOnAction(e -> {
             stage.close();
         });
-
-        //add all the fields in the vbox and show the scene
         vbox.getChildren().addAll(new Label("Enter new name for board '" +
                 boardCurr.getName() + "':"), textField, error, buttons);
 
@@ -552,6 +567,10 @@ public class DashboardCtrl implements Initializable {
         }
     }
 
+    /**
+     * method that deletes lists
+     * @param listId
+     */
     private void deleteList(Long listId) {
 
         List list = server.getList(listId);
@@ -571,6 +590,12 @@ public class DashboardCtrl implements Initializable {
         }
     }
 
+    /**
+     * method to edit the List name
+     * @param vBox
+     * @param label
+     * @param boardId
+     */
     private void editList(VBox vBox, Label label, Long boardId) {
         TextField textField = new TextField(label.getText());
 
@@ -968,8 +993,8 @@ public class DashboardCtrl implements Initializable {
      * This method creates the ThreeDotContextMenu, which appears near
      * each Board into My Boards overview, where we can choose to either
      * detele, leave or rename a board
-     * @param label
-     * @param button
+     * @param label label
+     * @param button button
      * @return the context menu itself
      */
     public ContextMenu createThreeDotContextMenu(Label label, Button button) {
@@ -978,43 +1003,6 @@ public class DashboardCtrl implements Initializable {
         MenuItem remove = new MenuItem(("Leave board"));
         MenuItem delete = new MenuItem("Delete board");
 
-
-////            hBox.getChildren().get(3).setVisible(false);
-//        hBox.getChildren().get(2).setVisible(false);
-//        hBox.setOnMouseEntered(e ->{
-//            hBox.getChildren().get(3).setVisible(true);
-//            hBox.getChildren().get(2).setVisible(true);
-//        });
-//        hBox.setOnMouseExited(e ->{
-//            hBox.getChildren().get(3).setVisible(false);
-//            hBox.getChildren().get(2).setVisible(false);
-//        });
-
-
-//        //Make it noticable when hovering on delete icon
-//        deleteBoard.setOnMouseEntered(e ->{
-//            backroundDelete.setFill(Color.rgb(255,99,71));
-//        });
-//        deleteBoard.setOnMouseExited(e ->{
-//            backroundDelete.setFill(Color.TRANSPARENT);
-//        });
-
-//        //Make it noticable when hovering on edit icon
-//        editBoard.setOnMouseEntered(e ->{
-//            backroundEdit.setFill(Color.YELLOW);
-//        });
-//        editBoard.setOnMouseExited(e ->{
-//            backroundEdit.setFill(Color.TRANSPARENT);
-//        });
-
-
-//        delete.setOnMouseClicked(e ->{
-//            deleteBoard((Board) label.getUserData());
-//        });
-//
-//        editBoard.setOnMouseClicked(e ->{
-//            editBoard(label);
-//        });
 
         edit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -1149,9 +1137,9 @@ public class DashboardCtrl implements Initializable {
      * Methods adds a label where we can enter the name of a
      * new task we would like to create
      * Sets an error if the name is empty
-     * @param list
-     * @param vboxEnd
-     * @param boardId
+     * @param list list
+     * @param vboxEnd vbox
+     * @param boardId id of the board
      */
     public void createTask(List list, VBox vboxEnd, long boardId){
         vboxEnd.setVisible(true);

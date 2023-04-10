@@ -118,6 +118,13 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         this.boardCurr = board;
     }
 
+    /**
+     * Start bt making the Task View Window appear
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     */
     @Override
     public void start(javafx.stage.Stage primaryStage)  {
         if(primaryStage != null)
@@ -222,6 +229,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             createSubtask(subtask);
         }
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
+            /**
+             * processes the new information
+             * @param data the string that should be sent to the database
+             */
             @Override
             public void processData(String data) {
                 Subtask subtask = new Subtask(data, "", currCard.subtasks.size() + 1, currCard, 0);
@@ -230,6 +241,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 server.updateBoard(currCard.getList().board);
             }
 
+            /**
+             * adds the label
+             * @param node the structure where the node is added
+             */
             @Override
             public void addLabel(Pane node) {
                 if(node.getChildren().size() == 0){
@@ -244,11 +259,19 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 this.textField.setStyle("-fx-background-color: #e5e3f1;");
             }
 
+            /**
+             * deletes the label
+             * @param node pane where the label is right now
+             */
             @Override
             public void deleteLabel(Pane node) {
                 node.getChildren().remove(this.textField);
             }
 
+            /**
+             * add Button
+             * @return Pane
+             */
             @Override
             public Pane addButton() {
                 this.setPadding(new Insets(0, 0, 10, 0));
@@ -385,6 +408,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
     }
 
+    /**
+     * method to create a new Subtask within the Task
+     * @param subtask the new subtask
+     */
     public void createSubtask(Subtask subtask){
         HBox hbox = new HBox();
         CheckBox checkBox = new CheckBox(subtask.getName());
@@ -479,9 +506,9 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
     /**
      * This method takes
-     * @param pane
-     * @param control
-     * @param consumer
+     * @param pane Pane
+     * @param control Node
+     * @param consumer Consumer
      */
     void addEditFunctionality(Pane pane, Node afterWhat, Node control, Consumer consumer){
         Image edit = new Image("pictures/edit_icon.png");
@@ -510,6 +537,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         editView.setOnMouseClicked(consumer::accept);
     }
 
+    /**
+     * method that deletes a subtask
+     * @param subtask the subtasks the user wants to delete
+     */
     private void deleteSubtask(Subtask subtask) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Delete Subtask '" + subtask.getName() + "'?");
@@ -532,6 +563,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         }
     }
 
+    /**
+     * move Subtask in a different Card
+     * @param subtask used Subtask
+     */
     private void moveDownSubtask(Subtask subtask){
         if(subtask.getNumberInTheCard() == subtask.getCard().subtasks.size()){
             return;
@@ -544,7 +579,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             server.updateBoard(subtask.getCard().getList().board);
         }
     }
-
+    /**
+     * move Subtask in a different Card
+     * @param subtask used Subtask
+     */
     private void moveUpSubtask(Subtask subtask){
         if(subtask.getNumberInTheCard() == 1){
             return;
@@ -558,6 +596,11 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         }
     }
 
+    /**
+     * edits a subtasks and updates it
+     * @param subtask current Subtask to be updated
+     * @param checkBox ckeckbox
+     */
     private void editSubtask(Subtask subtask, CheckBox checkBox){
         TextField textField = new TextField(subtask.getName());
 
@@ -590,6 +633,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         });
     }
 
+    /**
+     * get the Stage
+     * @return
+     */
     public Stage getStage(){return newStage;}
 }
 

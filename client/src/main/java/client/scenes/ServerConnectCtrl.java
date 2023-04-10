@@ -147,6 +147,12 @@ public class ServerConnectCtrl implements Initializable {
         return false;
     }
 
+    /**
+     * It is checked if the password was correctly written
+     * in case of connecting as an admin
+     * @param event event
+     * @return boolean value
+     */
     public boolean checkPassword(javafx.event.ActionEvent event) {
         if (event.getSource() == connectButton2) {
             if (!password.getText().equals("admin12")) {
@@ -159,7 +165,11 @@ public class ServerConnectCtrl implements Initializable {
         return false;
     }
 
-
+    /**
+     * method for when "connect as an admin" button is clicked
+     * it creates a new field to enter the password
+     * @param event event
+     */
     public void openAdminConnect(javafx.event.ActionEvent event) {
         if (event.getSource() == connectAdmin) {
             seePassword.setVisible(true);
@@ -202,7 +212,11 @@ public class ServerConnectCtrl implements Initializable {
             });
         }
     }
-
+    /**
+     * method for when "connect as a user" button is clicked
+     * it removes the field to enter the password
+     * @param event event
+     */
     public void openUserConnect(javafx.event.ActionEvent event){
         if (event.getSource() == connectUser) {
             seePassword.setVisible(false);
@@ -215,6 +229,17 @@ public class ServerConnectCtrl implements Initializable {
             passwordSquare.setVisible(false);
         }
     }
+
+    /**
+     * initialize method
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         serverAddress.setOnKeyPressed(new EventHandler<KeyEvent>() {

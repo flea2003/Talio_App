@@ -77,7 +77,6 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         if (valueName.strip().length() == 0) {
             setError("Task Name cannot be empty. Please try again!");
         } else {
-//            server.updateCard(setCard(card));
             setError("");
             currCard.name = valueName;
             currCard.description = valueDes;
@@ -91,9 +90,6 @@ public class TaskEditCtrl extends Application implements CardControllerState {
             }
 
             server.updateBoard(boardCurr);
-//            server.updateList(currCard.getList());
-//            server.updateCard(card);
-//            mainCtrl.switchDashboard("LOL");
             taskEdits.getInstance().remove(this);
             mainCtrl.reallySwitchTaskView(currCard, boardCurr, this.stage);
         }
@@ -113,6 +109,11 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         return card;
     }
 
+    /**
+     * extract value written in the TextArea
+     * @param curr textArea
+     * @return text
+     */
     private String extractValue(TextArea curr){
         return curr.getText();
     }
