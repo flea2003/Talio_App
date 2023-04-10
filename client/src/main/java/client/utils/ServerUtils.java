@@ -538,31 +538,28 @@ public class ServerUtils {
         }
     }
 
-    public ExecutorService EXEC;
-    public void longPolling(Consumer<Card> consumer, Card card){
-        EXEC = Executors.newSingleThreadExecutor();
+    public void longPolling(ExecutorService EXEC, Consumer<Card> consumer, Card card1){
         EXEC.submit(()->{
             while(!EXEC.isShutdown()){
                 var res = ClientBuilder.newClient(new ClientConfig())
                         .target(server).path("api/cards/longPoll")
                         .request(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
-                        .post(Entity.entity(card, APPLICATION_JSON), Response.class);
+                        .post(Entity.entity(card1, APPLICATION_JSON), Response.class);
                 if(res.getStatus()==204){
+                    res.close();
                     continue;
                 }else{
                     var q = res.readEntity(Card.class);
+                    res.close();
                     consumer.accept(q);
                 }
             }
         });
 
     }
-    public void stopThread(){
-        EXEC.shutdownNow();
+    public void stopThread(ExecutorService EXEC){
+        EXEC.shutdown();
     }
-
-
-
 
 }
