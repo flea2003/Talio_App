@@ -126,19 +126,4 @@ public class BoardController {
         return ResponseEntity.ok(board);
     }
 
-    /**
-     * checks if the password is correct
-     * @param password the password to be checked
-     * @return a response (bad request or ok)
-     */
-    @GetMapping("/password/{password}")
-    public ResponseEntity<Boolean> checkPassword(@PathVariable("password") String password) {
-
-        if(!boardService.checkPassword(password)) {
-            return ResponseEntity.ok(false);
-        }
-        return ResponseEntity.ok(true);
-
-    }
-
 }

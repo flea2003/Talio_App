@@ -535,7 +535,8 @@ public class ServerUtils {
      * @return the a boolean value representing if the password is correct or not
      */
     public boolean checkPassword(String password) {
-        String endpoint = String.format("/api/boards/password/%s", password);
+//        String endpoint = "/api/boards/password";
+        String endpoint = String.format("/api/admin/password/%s", password);
         try {
             return ClientBuilder.newClient(new ClientConfig())
                     .target(server).path(endpoint)
@@ -546,6 +547,14 @@ public class ServerUtils {
         }catch (Error e){
             return false;
         }
+//        String endpoint = "/api/boards/password";
+//        ExampleService service = ClientBuilder.newBuilder()
+//                .baseUrl(url)
+//                .build(ExampleService.class);
+//
+//        String requestBody = "Hello, World!";
+//        Entity<String> entity = Entity.entity(requestBody, MediaType.TEXT_PLAIN_TYPE);
+
     }
 
 }
