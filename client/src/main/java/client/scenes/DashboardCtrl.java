@@ -434,8 +434,6 @@ public class DashboardCtrl implements Initializable {
                     Board boardCurr = new Board(newText);
                     boardCurr = server.addBoard(boardCurr);
                     boardCurr.lists = new ArrayList<>();
-//                    boardCurr = server.getBoard(boardCurr.id);
-//                    System.out.println(boardCurr);
                     serverBoards.get(server.getServer()).add(boardCurr);
                     addBoardLabel.setText("");
                     addBoardLabel.setVisible(false);

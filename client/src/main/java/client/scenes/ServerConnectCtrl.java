@@ -94,13 +94,11 @@ public class ServerConnectCtrl implements Initializable {
             String server="http://"+IP+":8080";
             message.setText("Searching for the server...");
             if (serverExists(server)) {
-                System.out.print("exists");
                 message.setText("Connecting to the Server...");
                 this.server.setServer(server);                      //set the server
                 this.server.initialiseSession(IP);                  //set the websocket session
                 return true;
             } else if (event.getSource() == connectButton) {
-                System.out.println("here");
             }
         }
         return false;
