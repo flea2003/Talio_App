@@ -116,15 +116,7 @@ public class DashboardCtrl implements Initializable {
             serverBoards.put(currentServer, boards);
         }
         addBoardLabel.setVisible(false);
-        connectedBoards = new ArrayList<>();
-        if(adminAccess==false){
-            System.out.println("false");
-            connectedBoards.addAll(serverBoards.get(currentServer));
-        }else{
-            System.out.println("true");
-            connectedBoards.addAll(server.getBoards());
-            boardsHeader.setText("All Boards");
-        }
+
 
         openShare();
         openAddBoard();
@@ -154,6 +146,13 @@ public class DashboardCtrl implements Initializable {
     public void setBoards(){
         String currentServer = server.getServer();
         java.util.List<Board> serBoards = server.getBoards();
+
+        if(adminAccess==false){
+            System.out.println("false");
+        }else{
+            System.out.println("true");
+            boardsHeader.setText("All Boards");
+        }                                         
 
         //Get the list of boards for the current server
         java.util.List<Board> localBoards = serverBoards.get(currentServer);
