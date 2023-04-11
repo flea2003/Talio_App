@@ -70,7 +70,6 @@ public class ListController {
      */
     @PostMapping("/update")
     public ResponseEntity<commons.List> updateList(@RequestBody commons.List list){
-        System.out.println(list.getBoard());
         listService.saveList(list);
         for(commons.Card card : list.getCards()){
             cardController.activateListeners(card);

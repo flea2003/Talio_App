@@ -607,6 +607,8 @@ public class ServerUtils {
     }
 
     /**
+     * @param server string containg the ip of the server
+     * @param password password entered by user
      * sends a get request to check if the entered passsword is correct
      * @return the a boolean value representing if the password is correct or not
      */

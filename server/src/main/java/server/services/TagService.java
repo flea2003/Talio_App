@@ -48,7 +48,6 @@ public class TagService {
         return tagRepository.findAll();
     }
 
-
     /**
      * gets all cards' tags
      * @param id the id used to get the tags

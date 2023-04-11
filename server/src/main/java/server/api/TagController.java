@@ -23,7 +23,6 @@ public class TagController {
     public java.util.List<Tag> getAll() {
         return tagService.getAll();
     }
-
     /**
      * gets all the tags for a given card in the database
      * @param id an id
@@ -65,10 +64,10 @@ public class TagController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
-        commons.Tag tag = tagService.getTagById(id).getBody();
-        if (id < 0 || tag == null) {
+        if (id < 0 || tagService.getTagById(id) == null) {
             return ResponseEntity.badRequest().build();
         }
+        commons.Tag tag = tagService.getTagById(id).getBody();
         tagService.deleteTag(Objects.requireNonNull(tag));
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -83,4 +82,5 @@ public class TagController {
         tagService.saveTag(tag);
         return ResponseEntity.ok(tag);
     }
+
 }
