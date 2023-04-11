@@ -12,4 +12,12 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
 	implementation project(":commons")
 	testImplementation 'org.mockito:mockito-core:4.1.0'
+	implementation 'org.eclipse.jetty:jetty-client:9.4.43.v20210629'
+	implementation 'org.eclipse.jetty:jetty-client:10.0.6'
+	implementation 'org.eclipse.jetty:jetty-http:10.0.6'
+	implementation 'org.eclipse.jetty:jetty-util:10.0.6'
+	implementation 'org.eclipse.jetty:jetty-client:9.4.44.v20210927'
+	implementation 'org.eclipse.jetty:jetty-http:9.4.44.v20210927'
+	implementation 'org.eclipse.jetty:jetty-util:9.4.44.v20210927'
+	implementation 'org.eclipse.jetty.websocket:websocket-client:9.4.44.v20210927'
 }

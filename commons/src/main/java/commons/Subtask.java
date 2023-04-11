@@ -30,7 +30,7 @@ public class Subtask {
     @JsonBackReference
     private Card card;
 
-    private int completed;
+    public int completed;
 
     public Subtask() {}
 

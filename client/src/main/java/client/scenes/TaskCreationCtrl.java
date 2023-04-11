@@ -62,21 +62,6 @@ public class TaskCreationCtrl  {
         this.boardId = boardId;
         this.listCurr = listCurr;
     }
-//    @Override
-//    public void start(javafx.stage.Stage primaryStage)  {
-//        newStage = new Stage();
-//        newStage.setTitle("Task Creation");
-//        newStage.setScene(taskCreation);
-//        newStage.show();
-//
-//        newStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//            @Override
-//            public void handle(WindowEvent event) {
-//                taskCreations.getInstance().remove(TaskCreationCtrl.this);
-//            }
-//        });
-//        taskCreation.setOnKeyPressed(e -> this.keyPressed(e));
-//    }
 
     /**
      * processes the click of the addTask button
@@ -129,10 +114,19 @@ public class TaskCreationCtrl  {
         }
     }
 
+    /**
+     * retrieves the value written in a TextField
+     * @param curr TextField
+     * @return
+     */
     private String extractValue(TextField curr){
         return curr.getText();
     }
 
+    /**
+     * sets the display text of the error message
+     * @param err error
+     */
     private void setError(String err){
         error.setText(err);
     }
@@ -153,10 +147,18 @@ public class TaskCreationCtrl  {
         this.boardId = boardId;
     }
 
+    /**
+     * get card method
+     * @return null
+     */
     public Card getCard() {
         return null;
     }
 
+    /**
+     * get the stage
+     * @return null
+     */
     public Stage getStage() {
         return null;
     }

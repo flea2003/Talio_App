@@ -2,6 +2,7 @@ package server.api;
 
 import commons.Board;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,9 @@ import java.util.List;
 public class BoardController {
     @Autowired
     BoardService boardService;
+
+    @Autowired
+    CardController cardController;
 
     /**
      * gets all the boards
@@ -81,6 +85,11 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
         boardService.deleteBoard(board);
+        for(commons.List list : board.getLists()){
+            for(commons.Card card : list.getCards()){
+                cardController.activateListeners(card);
+            }
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -109,6 +118,11 @@ public class BoardController {
     @PostMapping("/update")
     public ResponseEntity<Board> updateBoard(@RequestBody Board board){
         boardService.saveBoard(board);
+        for(commons.List list : board.getLists()){
+            for(commons.Card card : list.getCards()){
+                cardController.activateListeners(card);
+            }
+        }
         return ResponseEntity.ok(board);
     }
 
