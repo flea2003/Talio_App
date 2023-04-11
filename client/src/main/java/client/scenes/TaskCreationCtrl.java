@@ -56,6 +56,13 @@ public class TaskCreationCtrl  {
         this.mainCtrl = mainCtrl;
     }
 
+    /**
+     * a setter for some data
+     * @param stage a Stage
+     * @param taskCreation a scene
+     * @param boardId a long for a board's id
+     * @param listCurr the current list
+     */
     public void sendData(Stage stage, Scene taskCreation, long boardId, List listCurr){
         newStage = stage;
         this.taskCreation = taskCreation;
@@ -73,25 +80,25 @@ public class TaskCreationCtrl  {
         String valueDes = "";
         setError("");
 
-            valueName = extractValue(taskName);
-            valueDes = extractValue(taskDescription);
-            if (valueName.strip().length() == 0) {
-                setError("Task Name cannot be empty. Please try again!");
-                return;
-            }
+        valueName = extractValue(taskName);
+        valueDes = extractValue(taskDescription);
+        if (valueName.strip().length() == 0) {
+            setError("Task Name cannot be empty. Please try again!");
+            return;
+        }
         listCurr = server.getList(listCurr.id);
         Board boardCurr=server.getBoard(boardId);
 
-                Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
+        Card card = new Card(valueDes, valueName, listCurr, listCurr.cards.size() + 1);
 
-                listCurr.cards.add(card);
+        listCurr.cards.add(card);
 
-                for(int i=0; i<boardCurr.lists.size(); i++){
-                    if(Objects.equals(boardCurr.lists.get(i).getID(), listCurr.getID())){
-                        boardCurr.lists.set(i,listCurr);
-                    }
-                }
-                server.updateBoard(boardCurr);
+        for(int i=0; i<boardCurr.lists.size(); i++){
+            if(Objects.equals(boardCurr.lists.get(i).getID(), listCurr.getID())){
+                boardCurr.lists.set(i,listCurr);
+            }
+        }
+        server.updateBoard(boardCurr);
 
         taskName.setText("");
         taskDescription.setText("");

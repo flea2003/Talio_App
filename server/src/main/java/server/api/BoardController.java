@@ -2,7 +2,6 @@ package server.api;
 
 import commons.Board;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +55,17 @@ public class BoardController {
         return ResponseEntity.ok(board);
 
     }
-
+//    String endpoint = String.format("api/boards/%d", id);
+//    var res = ClientBuilder.newClient(new ClientConfig())
+//            .target(server).path(endpoint)
+//            .request(APPLICATION_JSON)
+//            .accept(APPLICATION_JSON)
+//            .get(new GenericType<commons.Board>() {});
+//        Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+//        for(commons.List list : res.getLists()){
+//        Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+//    }
+//        return res;
     /**
      * adds a board
      * @param board the board to be added

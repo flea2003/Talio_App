@@ -25,6 +25,7 @@ public class ServerConnectCtrl implements Initializable {
     private final ServerUtils server;
 
     private final MainCtrl mainCtrl;
+    private final DashboardCtrl dashboardCtrl;
 
     @FXML
     private javafx.scene.control.TextField serverAddress;
@@ -57,15 +58,18 @@ public class ServerConnectCtrl implements Initializable {
     @FXML
     private Text message;
 
+
     /**
      * constructor
      * @param server the current server
      * @param mainCtrl a reference to the MainCtrl
      */
     @Inject
-    public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl, DashboardCtrl dashboardCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.dashboardCtrl = dashboardCtrl;
+        dashboardCtrl.adminAccess=false;
     }
 
     /**
@@ -148,16 +152,16 @@ public class ServerConnectCtrl implements Initializable {
     }
 
     /**
-     * It is checked if the password was correctly written
-     * in case of connecting as an admin
-     * @param event event
-     * @return boolean value
+     * checks if the password is correct
+     * @param event the event that triggers the method
+     * @return if the password is correct
      */
     public boolean checkPassword(javafx.event.ActionEvent event) {
         if (event.getSource() == connectButton2) {
-            if (!password.getText().equals("admin12")) {
+            if (!server.checkPassword( "http://"+serverAddress.getText()+":8080", password.getText())) {
                 message.setText("Incorrect Password");
             } else {
+                dashboardCtrl.adminAccess = true;
                 connectButton.fire();
                 return true;
             }
@@ -226,6 +230,7 @@ public class ServerConnectCtrl implements Initializable {
             connectButton.setVisible(true);
             connectUser.setVisible(false);
             connectAdmin.setVisible(true);
+            dashboardCtrl.adminAccess=false;
             passwordSquare.setVisible(false);
         }
     }
@@ -245,8 +250,9 @@ public class ServerConnectCtrl implements Initializable {
         serverAddress.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(event.getCode() == KeyCode.ENTER)
+                if(event.getCode() == KeyCode.ENTER) {
                     connectButton.fire();
+                }
             }
         });
     }

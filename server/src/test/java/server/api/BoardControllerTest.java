@@ -1,7 +1,9 @@
 package server.api;
 
 import commons.Board;
+import commons.Card;
 import commons.List;
+import commons.Subtask;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,8 @@ public class BoardControllerTest {
 
     @Mock
     BoardService boardService;
+    @Mock
+    CardController cardController;
 
     @InjectMocks
     BoardController boardController;
@@ -110,7 +114,34 @@ public class BoardControllerTest {
 
     @Test
     public void deleteTest(){
-        Board board1 = new Board(1, new ArrayList<List>(), "Board 1");
+        java.util.List<Subtask> subtasks = new ArrayList<>();
+        Subtask subtask1 = new Subtask(1, 2);
+        Subtask subtask2 = new Subtask(2, 1);
+        subtasks.add(subtask1);
+        subtasks.add((subtask2));
+
+        java.util.List<Card> cards = new ArrayList<>();
+
+        Card card1 = new Card();
+        card1.setNumberInTheList(2);
+        card1.setSubtasks(subtasks);
+
+        Card card2 = new Card();
+        card2.setNumberInTheList(1);
+        card2.setSubtasks(new ArrayList<>());
+
+        cards.add(card1);
+        cards.add(card2);
+
+        commons.List list1 = new commons.List(1, (ArrayList<Card>) cards, "list 1", new Board());
+        commons.List list2 = new commons.List(2, new ArrayList<>(), "list 2", new Board());
+        list1.setNumberInTheBoard(2);
+        list2.setNumberInTheBoard(1);
+        java.util.List<List> lists = new ArrayList<>();
+        lists.add(list1);
+        lists.add(list2);
+
+        Board board1 = new Board(1, (ArrayList<commons.List>) lists, "Board 1");
         Board board2 = new Board(2, new ArrayList<List>(), null);
 
         when(boardService.getBoardById(1)).thenReturn(board1);
@@ -120,6 +151,7 @@ public class BoardControllerTest {
         ResponseEntity<Void> responseBad2 = boardController.delete(-1);
 
         verify(boardService, times(1)).deleteBoard(board1);
+        verify(cardController, times(1)).activateListeners(card1);
 
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(HttpStatus.BAD_REQUEST, responseBad1.getStatusCode());
@@ -145,11 +177,39 @@ public class BoardControllerTest {
 
     @Test
     public void updateTest(){
-        Board board = new Board(1, new ArrayList<List>(), "Board 1");
+        java.util.List<Subtask> subtasks = new ArrayList<>();
+        Subtask subtask1 = new Subtask(1, 2);
+        Subtask subtask2 = new Subtask(2, 1);
+        subtasks.add(subtask1);
+        subtasks.add((subtask2));
+
+        java.util.List<Card> cards = new ArrayList<>();
+
+        Card card1 = new Card();
+        card1.setNumberInTheList(2);
+        card1.setSubtasks(subtasks);
+
+        Card card2 = new Card();
+        card2.setNumberInTheList(1);
+        card2.setSubtasks(new ArrayList<>());
+
+        cards.add(card1);
+        cards.add(card2);
+
+        commons.List list1 = new commons.List(1, (ArrayList<Card>) cards, "list 1", new Board());
+        commons.List list2 = new commons.List(2, new ArrayList<>(), "list 2", new Board());
+        list1.setNumberInTheBoard(2);
+        list2.setNumberInTheBoard(1);
+        java.util.List<List> lists = new ArrayList<>();
+        lists.add(list1);
+        lists.add(list2);
+
+        Board board = new Board(1, (ArrayList<commons.List>) lists, "Board 1");
 
         ResponseEntity<Board> response = boardController.updateBoard(board);
 
         verify(boardService, times(1)).saveBoard(board);
+        verify(cardController, times(1)).activateListeners(card1);
 
         assertEquals(board, response.getBody());
     }

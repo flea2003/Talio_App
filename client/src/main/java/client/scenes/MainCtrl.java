@@ -21,24 +21,13 @@ import client.scenes.services.taskViews;
 import commons.Board;
 import commons.Card;
 import commons.List;
-import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Pair;
-
-import java.awt.*;
-import java.util.Stack;
 
 import static client.Main.FXML;
 
@@ -154,8 +143,9 @@ public class MainCtrl {
      * @param boardCurr the board the card is in
      */
     public void switchTaskView(Card q, Board boardCurr){
-        if(taskViews.getInstance().isOpened(q))
+        if(taskViews.getInstance().isOpened(q)) {
             return;
+        }
 
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);
@@ -171,8 +161,9 @@ public class MainCtrl {
     public void switchEdit(Card q, Board boardCurr){
         TaskViewCtrl controller = taskViews.getInstance().getCotroller(q);
         Stage viewStage = controller.getStage();
-        if(viewStage == null)
+        if(viewStage == null) {
             return;
+        }
         taskViews.getInstance().remove(controller);
         var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
         taskEdit.getKey().sendData(new Scene(taskEdit.getValue()), q, boardCurr);
@@ -188,9 +179,16 @@ public class MainCtrl {
         switchDashboard("deleted!");
     }
 
+    /**
+     * switches the task view
+     * @param q a Card
+     * @param boardCurr a Board
+     * @param stage a Stage
+     */
     public void reallySwitchTaskView(Card q, Board boardCurr, Stage stage) {
-        if(taskViews.getInstance().isOpened(q))
-        return;
+        if (taskViews.getInstance().isOpened(q)) {
+            return;
+        }
 
         var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
         taskView.getKey().sendData(new Scene(taskView.getValue()), q, boardCurr);

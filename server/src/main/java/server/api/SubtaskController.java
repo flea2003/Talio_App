@@ -2,16 +2,12 @@ package server.api;
 
 import java.util.*;
 
-import commons.List;
 import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.services.SubtaskService;
-
-import server.database.ListRepository;
-import server.database.SubtaskRepository;
 
 @RestController
 @RequestMapping("/api/subtasks")

@@ -25,6 +25,29 @@ public class TagController {
     }
 
     /**
+<<<<<<< server/src/main/java/server/api/TagController.java
+=======
+     * gets all the tags for a given card in the database
+     * @param id an id
+     * @return a list of the tags for a given card
+     */
+    @PostMapping(path = { "/card" })
+    public java.util.List<Tag> getAllTagsForCard(long id) {
+        return tagService.getAllTagsForCard(id);
+    }
+
+    /**
+     * gets all the tags for a given board in the database
+     * @param id an id
+     * @return a list of the tags for a given board
+     */
+    @GetMapping(path = { "/board/{id}" })
+    public java.util.List<Tag> getAllTagsForBoard(@PathVariable long id) {
+        return tagService.getAllTagsForBoard(id);
+    }
+
+    /**
+>>>>>>> server/src/main/java/server/api/TagController.java
      * adds a tag
      * @param tag the tag to be added
      * @return a response (bad request or ok)

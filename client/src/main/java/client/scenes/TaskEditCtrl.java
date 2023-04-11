@@ -138,16 +138,30 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         this.boardCurr = boardCurr;
     }
 
+    /**
+     * gets a card
+     * @return the current card
+     */
     @Override
     public Card getCard() {
         return currCard;
     }
 
+    /**
+     * gets a stage
+     * @return null
+     */
     @Override
     public Stage getStage() {
         return null;
     }
 
+    /**
+     * sends data to render a scene
+     * @param scene the scene
+     * @param q a Card
+     * @param boardCurr a Board
+     */
     public void sendData(Scene scene, Card q, Board boardCurr) {
         this.boardCurr = boardCurr;
         this.currCard = q;
@@ -155,14 +169,18 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         renderInfo(q);
     }
 
-
+    /**
+     * starts a primary stage
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     */
     @Override
     public void start(Stage primaryStage)  {
         this.stage = primaryStage;
         primaryStage.setTitle("Edit Task");
         primaryStage.setScene(scene);
-
     }
-
 
 }
