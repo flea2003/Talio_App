@@ -314,7 +314,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 });
             }else{
                 server.stopThread(EXEC);
-                renderInfo(currCard);
+                renderInfo(exists);
             }
         }, currCard);
         Platform.runLater(() -> {
