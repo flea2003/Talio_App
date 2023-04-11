@@ -251,7 +251,10 @@ public class ServerConnectCtrl implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 if(event.getCode() == KeyCode.ENTER) {
-                    connectButton.fire();
+//                    if(dashboardCtrl.adminAccess){
+//                        connectAdmin.fire();
+//                    }
+//                    else connectButton.fire();
                 }
             }
         });
