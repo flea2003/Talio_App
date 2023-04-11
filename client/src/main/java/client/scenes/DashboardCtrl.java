@@ -8,10 +8,8 @@ import client.utils.ServerUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
-import commons.Board;
-import commons.Card;
 import commons.List;
-import commons.Subtask;
+import commons.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,6 +29,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -86,6 +86,8 @@ public class DashboardCtrl implements Initializable {
     private Button addBoard;
     @FXML
     private TextField addBoardLabel;
+    @FXML
+    private Button viewTags;
 
     /**
      * constructor
@@ -197,6 +199,7 @@ public class DashboardCtrl implements Initializable {
                 hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
             }
             shareBoard.setVisible(false);
+            viewTags.setVisible(false);
         }
 
         if (boardsVBox.getChildren().size() > 0) {
@@ -262,7 +265,9 @@ public class DashboardCtrl implements Initializable {
      * @param id the id of the boards of which its lists will be used
      */
     public void refreshSpecificBoard(long id) {
+        openTags(id);
         shareBoard.setVisible(true);
+        viewTags.setVisible(true);
         hboxList.setUserData(id);
         if (hboxList.getChildren().size() > 0) {
             hboxList.getChildren().subList(0, hboxList.getChildren().size()).clear();
@@ -378,6 +383,7 @@ public class DashboardCtrl implements Initializable {
             //if the board to be deleted is selected remove its data from the interface
             if (hboxList.getUserData() != null && (long) hboxList.getUserData() == board.getId()) {
                 shareBoard.setVisible(false);
+                viewTags.setVisible(false);
                 hboxList.setUserData(null);
                 hboxList.getChildren().clear();
             }
@@ -459,7 +465,7 @@ public class DashboardCtrl implements Initializable {
                 stage.close();
             } else {
                 error.setText("The name of the board can not be empty");
-                error.setStyle("-fx-text-fill: red");
+                error.setStyle("-fx-text-fill: rgb(178,34,34)");
             }
         });
 
@@ -490,8 +496,8 @@ public class DashboardCtrl implements Initializable {
                     Board boardCurr = new Board(newText);
                     boardCurr = server.addBoard(boardCurr);
                     boardCurr.lists = new ArrayList<>();
-//                    boardCurr = server.getBoard(boardCurr.id);
-//                    System.out.println(boardCurr);
+                    boardCurr.tags = new ArrayList<>();
+
                     serverBoards.get(server.getServer()).add(boardCurr);
                     addBoardLabel.setText("");
                     addBoardLabel.setVisible(false);
@@ -1161,6 +1167,7 @@ public class DashboardCtrl implements Initializable {
                         && (long) hboxList.getUserData() == board.getId()) {
                     hboxList.setUserData(null);
                     shareBoard.setVisible(false);
+                    viewTags.setVisible(false);
                     hboxList.getChildren().clear();
                 }
 
@@ -1336,6 +1343,285 @@ public class DashboardCtrl implements Initializable {
 
     }
 
+    public void openTags(long boardId) {
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.setStyle("-fx-background-color: #a29cf4");
 
+        for(Tag tag: server.getBoard(boardId).tags){
+            Circle circle = new Circle(10);
+            circle.setStrokeType(StrokeType.OUTSIDE);
+            circle.setStroke(Color.BLACK);
+            circle.setStrokeWidth(1);
+            circle.setFill(Color.rgb(tag.getRed(), tag.getGreen(), tag.getBlue()));
+
+            HBox hBox = new HBox(circle, new Label(tag.getName()));
+            CustomMenuItem customMenuItem = new CustomMenuItem(hBox);
+
+            contextMenu.getItems().add(customMenuItem);
+
+            customMenuItem.setOnAction( e -> {
+                openTag(tag, boardId);
+            });
+        }
+
+        Image add = new Image("pictures/plus_icon.png");
+        ImageView addView = new ImageView(add);
+        addView.setFitWidth(16);
+        addView.setFitHeight(16);
+
+        Button addButton = new Button();
+        addButton.setGraphic(addView);
+        CustomMenuItem addMenuItem = new CustomMenuItem(addButton);
+
+        contextMenu.getItems().add(addMenuItem);
+        contextMenu.setAutoHide(true);
+        contextMenu.setHideOnEscape(true);
+
+        viewTags.setOnMouseClicked(event -> {
+            Point2D absoluteCoordinates = viewTags.localToScreen(viewTags.getLayoutX(),
+                    viewTags.getLayoutY());
+            if (event.getButton() == MouseButton.PRIMARY) {
+                contextMenu.show(pane, absoluteCoordinates.getX() - 75,
+                        absoluteCoordinates.getY() + shareBoard.getHeight() + 10);
+            }
+        });
+
+        addMenuItem.setOnAction( e-> {
+            addTag(boardId);
+        });
+        viewTags.setContextMenu(contextMenu);
+    }
+
+    private void openTag(Tag tag, long boardId) {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Tag '" + tag.getName() + "'");
+
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
+
+        //create the fields of the scene
+        Text title = new Text(tag.getName());
+        title.setStyle("-fx-font-size: 30 px");
+        Circle circle = new Circle(20);
+        circle.setFill(Color.rgb(tag.getRed(), tag.getGreen(), tag.getBlue()));
+        Label error = new Label("");
+
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setValue(Color.rgb(tag.getRed(), tag.getGreen(), tag.getBlue()));
+        colorPicker.setOnAction(e -> {
+            circle.setFill(colorPicker.getValue());
+        });
+
+        Image edit = new Image("pictures/edit_icon.png");
+        ImageView editView = new ImageView(edit);
+        editView.setFitWidth(16);
+        editView.setFitHeight(16);
+
+        Button editButton = new Button();
+        editButton.setGraphic(editView);
+
+        HBox titleBox = new HBox(circle, title,editButton);
+        titleBox.setSpacing(10);
+        titleBox.setAlignment(Pos.CENTER);
+        //create the buttons
+        Button delete = new Button("Delete");
+        Button ok = new Button("Save Changes");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(delete, ok, cancel);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+
+        //set colour for the buttons and create hovering effect
+        ok.getStyleClass().add("connectButton");
+        ok.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
+        delete.getStyleClass().add("connectButton");
+        delete.setStyle("-fx-text-fill: rgb(250,240,230)");
+
+        cancel.setOnAction(e -> {
+            stage.close();
+        });
+
+        ok.setOnAction(e -> {
+            tag.setGreen((int)(colorPicker.getValue().getGreen()*255));
+            tag.setBlue((int)(colorPicker.getValue().getBlue()*255));
+            tag.setRed((int)(colorPicker.getValue().getRed()*255));
+            tag.setName(title.getText());
+            Board board = server.getBoard(boardId);
+            for(int i=0; i<board.getTags().size(); i++){
+                if(board.getTags().get(i).getId() == tag.getId()){
+                    board.getTags().set(i, tag);
+                }
+            }
+            server.updateBoard(board);
+            stage.close();
+        });
+
+        delete.setOnAction(e -> {
+            deleteTag(tag, boardId, stage);
+        });
+
+        editButton.setOnAction( e -> {
+            TextField textField = new TextField(title.getText());
+
+            int labelIndex = titleBox.getChildren().indexOf(title);
+            titleBox.getChildren().remove(labelIndex);
+            titleBox.getChildren().add(labelIndex, textField);
+
+            textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (oldValue) {
+                    String txt = textField.getText();
+
+                    if (txt.strip().length() == 0) {
+                        textField.setText(title.getText());
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setHeaderText("Empty tag name");
+                        alert.setContentText("Can not have a tag without a name. Please enter a valid name.");
+                        alert.showAndWait();
+                    } else {
+                        title.setText(textField.getText());
+                        titleBox.getChildren().remove(labelIndex);
+                        titleBox.getChildren().add(labelIndex, title);
+                    }
+                }
+            });
+        });
+
+        HBox.setHgrow(titleBox, Priority.ALWAYS);
+
+        //add all the fields in the vbox and show the scene
+        vbox.setAlignment(Pos.CENTER);
+        vbox.getChildren().addAll(titleBox, error,colorPicker,new Label(" "), buttons);
+
+        Scene scene = new Scene(vbox, 411, 266);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    private void deleteTag(Tag tag, long boardId, Stage tagStage) {
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Delete tag '" + tag.getName() + "'?");
+
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
+
+        //create the buttons
+        Button delete = new Button("Delete");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(delete, cancel);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+
+        //set colour for the buttons and create hovering effect
+        delete.getStyleClass().add("connectButton");
+        delete.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
+
+        cancel.setOnAction(e -> {
+            stage.close();
+        });
+
+        delete.setOnAction(e -> {
+            server.deleteTag(tag.getId());
+            tagStage.close();
+            stage.close();
+        });
+
+        ImageView deletion = new ImageView(new Image("/pictures/deletion.png"));
+        deletion.maxHeight(30);
+        deletion.maxWidth(30);
+
+        VBox message = new VBox();
+        Label sure = new Label("Are you sure you want to delete tag '" + tag.getName() + "'?");
+        sure.setStyle("-fx-font-size: 16px");
+        message.getChildren().addAll(sure,
+                new Label("This will permanently delete the tag from the server.")
+        );
+        message.setAlignment(Pos.CENTER);
+        message.setSpacing(10);
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(deletion, message, buttons);
+
+        Scene scene = new Scene(vbox, 395, 250);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    private void addTag(long boardId) {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Add a tag");
+
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
+
+        //create the fields of the scene
+        TextField name = new TextField();
+        name.setStyle("-fx-background-color: rgb(204,204,255)");
+        Label error = new Label("");
+
+        ColorPicker colorPicker = new ColorPicker();
+
+        //create the buttons
+        Button ok = new Button("Create");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(ok, cancel);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+
+        //set colour for the buttons and create hovering effect
+        ok.getStyleClass().add("connectButton");
+        ok.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
+
+        cancel.setOnAction(e -> {
+            stage.close();
+        });
+
+        ok.setOnAction(e -> {
+            if(name.getText().strip().length() == 0){
+                error.setText("Tag name can not be empty");
+                error.setStyle("-fx-text-fill: rgb(178,34,34)");
+            } else {
+                Board board = server.getBoard(boardId);
+                System.out.println(colorPicker.getValue().getBlue());
+                Tag tag = new Tag(name.getText(), (int) (colorPicker.getValue().getGreen()*255),
+                        (int) (colorPicker.getValue().getBlue()*255),
+                        (int) (colorPicker.getValue().getRed()*255), board, new ArrayList<>());
+
+                tag.setBoard(board);
+                board.getTags().add(tag);
+                server.addTag(tag);
+                System.out.println(board);
+                server.updateBoard(board);
+                stage.close();
+            }
+        });
+
+        //add all the fields in the vbox and show the scene
+        vbox.setAlignment(Pos.CENTER);
+        vbox.getChildren().addAll(new Label("Tag name"), name,
+                error,new Label("Color"), colorPicker, new Label(" "), buttons);
+
+        Scene scene = new Scene(vbox, 377, 233);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
 }
 

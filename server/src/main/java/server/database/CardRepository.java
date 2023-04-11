@@ -13,5 +13,4 @@ public interface CardRepository extends JpaRepository<Card, Long> {
      * @return the card or null
      */
     Optional<List<Card>> findAllByListId(Long id);
-
 }

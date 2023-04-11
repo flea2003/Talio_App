@@ -15,11 +15,10 @@
  */
 package client.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import commons.Subtask;
+import commons.Tag;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -360,6 +359,11 @@ public class ServerUtils {
                 .post(Entity.entity(board, APPLICATION_JSON), Board.class);
     }
 
+    /**
+     * sends a post request to trigger the respective method in subtaskController
+     * deletes a subtask from the database
+     * @param subtask the subtask to be deleted
+     */
     public void deleteSubtask(Subtask subtask){
         String endpoint = String.format("api/subtasks/", subtask);
         ClientBuilder.newClient(new ClientConfig())
@@ -369,6 +373,12 @@ public class ServerUtils {
                 .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 
+    /**
+     * sends a post request to trigger the respective method in subtaskController
+     * updates a subtask in the database
+     * @param subtask - the subtask to be updated with the same id as the previous one
+     * @return the updated subtask in the database
+     */
     public Subtask saveSubtask(Subtask subtask){
         String endpoint = String.format("api/subtasks/", subtask);
         return  ClientBuilder.newClient(new ClientConfig())
@@ -537,6 +547,94 @@ public class ServerUtils {
             return null;
         }
     }
+    /**
+     * sends a get request to trigger the respective method in tagController
+     * gets a specific tag from the database
+     * @param id the id of the tag to be gotten
+     * @return the gotten tag
+     */
+    public commons.Tag getTagById(long id){
+        String endpoint = String.format("/api/tags/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(commons.Tag.class);
+    }
+
+    /**
+     * sends a post request to trigger the respective method in TagController
+     * updates a tag with a new one with the same id
+     * @param tag the new Tag
+     * @return the updated Tag
+     */
+    public commons.Tag updateTag(commons.Tag tag){
+        String endpoint = String.format("api/tags/update/%s", tag);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(tag, APPLICATION_JSON), commons.Tag.class);
+    }
+    /**
+     * sends a post request to trigger the respective method in tagController
+     * adds a tag
+     * @param tag the tag to be added
+     * @return the added tag
+     */
+    public commons.Tag addTag(Tag tag){
+        String endpoint = String.format("api/tags");
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
+
+    /**
+     * sends a delete request to trigger the respective method in tagController
+     * deletes a tag
+     * @param id the id of the tag to be deleted
+     * @return the deleted tag
+     */
+    public commons.Tag deleteTag(long id){
+        String endpoint = String.format("api/tags/delete/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete(new GenericType<commons.Tag>() {});
+    }
+
+    /**
+     * sends a get request to trigger the respective method in tagController
+     * gets all the tags from the database
+     * @return the tags
+     */
+    public List<Tag> getTags(){
+        String endpoint = "api/tags";
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Tag>>() {});
+    }
+
+    /**
+     *
+     * sends a get request to trigger the respective method in tagController
+     * gets all the tag from the database for a respective card
+     * @param id - the id of the card that we are interested in
+     * @return the tags for a respective card
+     */
+    public List<Tag> getTagsByCard(long id){
+        String endpoint = String.format("api/tags/card/%d", id);
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Tag>>() {});
+    }
 
     public void longPolling(ExecutorService EXEC, Consumer<Card> consumer, Card card1){
         EXEC.submit(()->{
@@ -562,4 +660,18 @@ public class ServerUtils {
         EXEC.shutdown();
     }
 
+    /**
+     * sends a get request to trigger the respective method in tagController
+     * gets all the tag from the database for a respective board
+     * @param id - the id of the board that we are interested in
+     * @return the subtasks for a respective board
+     */
+    public List<Tag> getTagsByBoard(long id){
+        String endpoint = String.format("api/tags/board/%d", id);
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Tag>>() {});
+    }
 }

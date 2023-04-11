@@ -3,10 +3,6 @@ package commons;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.ArrayList;
-import java.util.zip.ZipEntry;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {

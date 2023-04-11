@@ -3,7 +3,6 @@ package commons;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +15,7 @@ class TagTest {
     private Tag tag1;
     private Tag tag2;
     private Tag tag3;
+    private Tag tag4;
     private Tag emptyTag;
 
     /**
@@ -27,10 +27,10 @@ class TagTest {
         board = new Board();
         board2 = new Board();
         cardsTest = new ArrayList<>();
-        tag1 = new Tag(1, "name", new Color(255, 0, 0), board);
-        tag2 = new Tag(1, "name", new Color(255, 0, 0), board);
-        tag3 = new Tag(1, "name", new Color(169, 118, 231), board);
-        
+        tag1 = new Tag( "name", 255, 0, 0, board, new ArrayList<>());
+        tag2 = new Tag( "name", 255, 0, 0, board, new ArrayList<>());
+        tag3 = new Tag( "name", 169, 118, 231, board, new ArrayList<>());
+        tag4 = new Tag(1, "name", board);
     }
 
     @Test
@@ -41,7 +41,7 @@ class TagTest {
 
     @Test
     void getId() {
-        assertEquals(1, tag1.getId());
+        assertEquals(1, tag4.getId());
     }
 
     @Test
@@ -61,16 +61,6 @@ class TagTest {
         assertTrue("tag".equals(tag1.getName()));
     }
 
-    @Test
-    void getColor() {
-        assertEquals(new Color(255, 0, 0), tag1.getColor());
-    }
-
-    @Test
-    void setColor() {
-        tag1.setColor(new Color(139, 182, 232));
-        assertEquals(new Color(139, 182, 232), tag1.getColor());
-    }
 
     @Test
     void getBoard() {

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import commons.Card;
-import commons.Subtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import server.services.CardService;
 import server.services.Pair;
+
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +40,7 @@ public class CardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Card> getById (@PathVariable long id){
+
         Card card = null;
         try {
             card = cardService.getCardById(id);
@@ -47,6 +48,7 @@ public class CardController {
         catch (Exception e){
             ResponseEntity.badRequest().build();
         }
+
         if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
         }
