@@ -110,9 +110,9 @@ public class TaskEditCtrl extends Application implements CardControllerState {
     }
 
     /**
-     * extracts the value of the given text area
-     * @param curr the text area
-     * @return the value of the text area
+     * extract value written in the TextArea
+     * @param curr textArea
+     * @return text
      */
     private String extractValue(TextArea curr){
         return curr.getText();
@@ -139,7 +139,8 @@ public class TaskEditCtrl extends Application implements CardControllerState {
     }
 
     /**
-     * gets the current card
+     * gets a card
+     * @return the current card
      */
     @Override
     public Card getCard() {
@@ -147,18 +148,19 @@ public class TaskEditCtrl extends Application implements CardControllerState {
     }
 
     /**
-     * gets the current stage
+     * gets a stage
+     * @return null
      */
     @Override
     public Stage getStage() {
-        return stage;
+        return null;
     }
 
     /**
-     * intializes the data for the controller
-     * @param scene the scene to be used
-     * @param q the card to be used
-     * @param boardCurr the current board in focus
+     * sends data to render a scene
+     * @param scene the scene
+     * @param q a Card
+     * @param boardCurr a Board
      */
     public void sendData(Scene scene, Card q, Board boardCurr) {
         this.boardCurr = boardCurr;
@@ -167,17 +169,18 @@ public class TaskEditCtrl extends Application implements CardControllerState {
         renderInfo(q);
     }
 
-
     /**
-     * starts the scene
+     * starts a primary stage
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
      */
     @Override
     public void start(Stage primaryStage)  {
         this.stage = primaryStage;
         primaryStage.setTitle("Edit Task");
         primaryStage.setScene(scene);
-
     }
-
 
 }

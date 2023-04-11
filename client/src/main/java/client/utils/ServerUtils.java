@@ -18,9 +18,11 @@ package client.utils;
 import commons.Board;
 import commons.Card;
 import commons.Subtask;
+import commons.Tag;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -36,6 +38,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -140,6 +143,10 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .get(new GenericType<List<commons.List>>() {});
+//        Collections.sort(res, Comparator.comparingInt(commons.List::getNumberInTheBoard));
+//        for(commons.List list : res){
+//            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+//        }
         return res;
     }
 
@@ -246,16 +253,23 @@ public class ServerUtils {
      */
     public commons.Board getBoard(long id){
         String endpoint = String.format("api/boards/%d", id);
-        var res = ClientBuilder.newClient(new ClientConfig())
-                .target(server).path(endpoint)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(new GenericType<commons.Board>() {});
-        Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
-        for(commons.List list : res.getLists()){
-            Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+        try{
+            var res = ClientBuilder.newClient(new ClientConfig())
+                    .target(server).path(endpoint)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .get(new GenericType<commons.Board>() {});
+            Collections.sort(res.getLists(),
+                    Comparator.comparingInt(commons.List::getNumberInTheBoard));
+            for(commons.List list : res.getLists()){
+                Collections.sort(list.getCards(),
+                        Comparator.comparingInt(Card::getNumberInTheList));
+            }
+            return res;
         }
-        return res;
+        catch (Exception e){
+            return null;
+        }
     }
 
     /**
@@ -345,6 +359,11 @@ public class ServerUtils {
                 .post(Entity.entity(board, APPLICATION_JSON), Board.class);
     }
 
+    /**
+     * sends a post request to trigger the respective method in subtaskController
+     * deletes a subtask from the database
+     * @param subtask the subtask to be deleted
+     */
     public void deleteSubtask(Subtask subtask){
         String endpoint = String.format("api/subtasks/", subtask);
         ClientBuilder.newClient(new ClientConfig())
@@ -354,6 +373,12 @@ public class ServerUtils {
                 .post(Entity.entity(subtask, APPLICATION_JSON), Subtask.class);
     }
 
+    /**
+     * sends a post request to trigger the respective method in subtaskController
+     * updates a subtask in the database
+     * @param subtask - the subtask to be updated with the same id as the previous one
+     * @return the updated subtask in the database
+     */
     public Subtask saveSubtask(Subtask subtask){
         String endpoint = String.format("api/subtasks/", subtask);
         return  ClientBuilder.newClient(new ClientConfig())
@@ -387,8 +412,8 @@ public class ServerUtils {
      * @return a StompSession to send and receive messages between the client and the server
      */
     private StompSession connect(String url){
-        var client=new StandardWebSocketClient();
-        var stomp=new WebSocketStompClient(client);
+        var client = new StandardWebSocketClient();
+        var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
         try {
             return stomp.connect(url, new StompSessionHandlerAdapter() {}).get();
@@ -521,5 +546,173 @@ public class ServerUtils {
         }catch(Exception e){
             return null;
         }
+    }
+    /**
+     * sends a get request to trigger the respective method in tagController
+     * gets a specific tag from the database
+     * @param id the id of the tag to be gotten
+     * @return the gotten tag
+     */
+    public commons.Tag getTagById(long id){
+        String endpoint = String.format("/api/tags/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(commons.Tag.class);
+    }
+
+    /**
+     * sends a post request to trigger the respective method in TagController
+     * updates a tag with a new one with the same id
+     * @param tag the new Tag
+     * @return the updated Tag
+     */
+    public commons.Tag updateTag(commons.Tag tag){
+        String endpoint = String.format("api/tags/update/%s", tag);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(tag, APPLICATION_JSON), commons.Tag.class);
+    }
+    /**
+     * sends a post request to trigger the respective method in tagController
+     * adds a tag
+     * @param tag the tag to be added
+     * @return the added tag
+     */
+    public commons.Tag addTag(Tag tag){
+        String endpoint = String.format("api/tags");
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(tag, APPLICATION_JSON), Tag.class);
+    }
+
+    /**
+     * sends a delete request to trigger the respective method in tagController
+     * deletes a tag
+     * @param id the id of the tag to be deleted
+     * @return the deleted tag
+     */
+    public commons.Tag deleteTag(long id){
+        String endpoint = String.format("api/tags/delete/%d", id);
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .delete(new GenericType<commons.Tag>() {});
+    }
+
+    /**
+     * @param server string containg the ip of the server
+     * @param password password entered by user
+     * sends a get request to check if the entered passsword is correct
+     * @return the a boolean value representing if the password is correct or not
+     */
+    public boolean checkPassword(String server, String password) {
+//        String endpoint = "/api/boards/password";
+        String endpoint = String.format("/api/admin/password/%s", password);
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(server).path(endpoint)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .get(new GenericType<Boolean>() {
+                    });
+        }catch (Error e){
+            return false;
+        }
+//        String endpoint = "/api/boards/password";
+//        ExampleService service = ClientBuilder.newBuilder()
+//                .baseUrl(url)
+//                .build(ExampleService.class);
+//
+//        String requestBody = "Hello, World!";
+//        Entity<String> entity = Entity.entity(requestBody, MediaType.TEXT_PLAIN_TYPE);
+
+    }
+    /**
+     * sends a get request to trigger the respective method in tagController
+     * gets all the tags from the database
+     * @return the tags
+     */
+    public List<Tag> getTags(){
+        String endpoint = "api/tags";
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Tag>>() {});
+    }
+
+    /**
+     *
+     * sends a get request to trigger the respective method in tagController
+     * gets all the tag from the database for a respective card
+     * @param id - the id of the card that we are interested in
+     * @return the tags for a respective card
+     */
+    public List<Tag> getTagsByCard(long id){
+        String endpoint = String.format("api/tags/card/%d", id);
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Tag>>() {});
+    }
+
+    /**
+     * using this method instead of web sockets
+     * sends a request to the server
+     * if something changes to the server, it sends back the changes
+     * @param EXEC used to create a new thread
+     * @param consumer consumes the card
+     * @param card1 a card
+     */
+    public void longPolling(ExecutorService EXEC, Consumer<Card> consumer, Card card1){
+        EXEC.submit(()->{
+            while(!EXEC.isShutdown()){
+                var res = ClientBuilder.newClient(new ClientConfig())
+                        .target(server).path("api/cards/longPoll")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .post(Entity.entity(card1, APPLICATION_JSON), Response.class);
+                if(res.getStatus()==204){
+                    res.close();
+                    continue;
+                }else{
+                    var q = res.readEntity(Card.class);
+                    res.close();
+                    consumer.accept(q);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * stops the thread
+     * @param EXEC
+     */
+    public void stopThread(ExecutorService EXEC){
+        EXEC.shutdown();
+    }
+
+    /**
+     * sends a get request to trigger the respective method in tagController
+     * gets all the tag from the database for a respective board
+     * @param id - the id of the board that we are interested in
+     * @return the subtasks for a respective board
+     */
+    public List<Tag> getTagsByBoard(long id){
+        String endpoint = String.format("api/tags/board/%d", id);
+        return  ClientBuilder.newClient(new ClientConfig())
+                .target(server).path(endpoint)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(new GenericType<List<Tag>>() {});
     }
 }

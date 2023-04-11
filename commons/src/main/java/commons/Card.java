@@ -1,16 +1,15 @@
 package commons;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.persistence.*;
 import java.util.ArrayList;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Card {
@@ -33,11 +32,11 @@ public class Card {
      * link the card to its tags
      */
     @ManyToMany
-    @JoinTable(name = "tag_card",
+    @JoinTable(name = "card_tag",
         joinColumns = @JoinColumn(name = "card_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id"))
     @JsonBackReference(value = "defaultReference2")
-    public java.util.List<Tag> tags;
+    private java.util.List<Tag> tags;
 
     /**
      * link the card to its subtasks
@@ -70,6 +69,7 @@ public class Card {
 
     /**
      * constructor used for testing
+     * @param id the id of the card
      * @param name the name of the card
      * @param id the id of the card
      */
@@ -218,10 +218,3 @@ public class Card {
         subtasks.add(subtask);
     }
 }
-
-
-
-
-
-
-

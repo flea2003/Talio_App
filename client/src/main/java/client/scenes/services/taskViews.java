@@ -10,15 +10,12 @@ import java.util.List;
 public  class taskViews {
     private static taskViews INSTANCE;
 
-
-    /**
-     * Private constructor to prevent instantiation
-     */
     private taskViews() {
     }
 
     /**
-     * @return the instance of the singleton
+     * gets an instance
+     * @return the istance
      */
     public synchronized static taskViews getInstance() {
         if (INSTANCE == null) {
@@ -27,30 +24,28 @@ public  class taskViews {
         return INSTANCE;
     }
 
-    /**
-     * @return the list of controllers
-     */
     private List<TaskViewCtrl> controllers = new ArrayList<>();
 
     /**
-     * @return the list of controllers
-     * @param controller the controller to add
+     * adds a controller
+     * @param controller the controller
      */
     public void add(TaskViewCtrl controller) {
         controllers.add(controller);
     }
 
     /**
-     * @return the list of controllers
-     * @param controller the controller to remove
+     * removes a controller
+     * @param controller the controller
      */
     public void remove(TaskViewCtrl controller) {
         controllers.remove(controller);
     }
 
     /**
-     * @param card the card to check
-     * @return true if the card is already opened
+     * checks if a Card is open
+     * @param card the card
+     * @return a boolean
      */
     public boolean isOpened(Card card) {
         for (TaskViewCtrl controller : controllers) {
@@ -63,21 +58,21 @@ public  class taskViews {
     }
 
     /**
-     * Close all the opened windows
+     * closes all stages
      */
     public void closeAll() {
-        for(TaskViewCtrl controller: controllers) {
+        for (TaskViewCtrl controller: controllers) {
             controller.getStage().close();
         }
-
     }
 
     /**
-     * @param card the card to check
-     * @return the stage of the card
+     * gets a Stage
+     * @param card a Card
+     * @return a stage
      */
     public Stage getStage(Card card) {
-        for(TaskViewCtrl controller: controllers) {
+        for (TaskViewCtrl controller: controllers) {
             if (controller.getCard().getId() == card.getId()) {
                 return controller.getStage();
             }
@@ -86,8 +81,9 @@ public  class taskViews {
     }
 
     /**
-     * @param card the card to check
-     * @return the controller of the card
+     * gets the controller
+     * @param card a Card
+     * @return the controller
      */
     public TaskViewCtrl getCotroller(Card card){
         for(TaskViewCtrl controller: controllers) {
@@ -99,8 +95,8 @@ public  class taskViews {
     }
 
     /**
-     * @param lists the lists to check
-     * @return true if the card is already opened
+     * closes all windows
+     * @param lists a list of lists
      */
     public void checkClosed(List<commons.List> lists) {
         for(var controller: controllers) {
@@ -112,9 +108,10 @@ public  class taskViews {
                     }
                 }
             }
-            if(wasDeleted) {
+            if (wasDeleted) {
                 controller.getStage().close();
             }
         }
+
     }
 }

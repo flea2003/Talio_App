@@ -5,9 +5,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import java.awt.Color;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Tag {
@@ -17,10 +16,10 @@ public class Tag {
     public long id; // the tag's id
 
     private String name; // the name of a tag
-    private Color color; // the color code of a tag
-    // ways to initialize:
-    // 1: Color red = new Color(255, 0, 0);
-    // 2: Color red = Color.decode("#FF0000");
+
+    private int green;
+    private int blue;
+    private int red;
 
     /**
      * to link the tag to a specific board
@@ -35,26 +34,74 @@ public class Tag {
      * a tag has a list of cards
      */
     @ManyToMany
-    @JoinTable(name = "tag_card",
+    @JoinTable(name = "card_tag",
         joinColumns = @JoinColumn(name = "tag_id"),
         inverseJoinColumns = @JoinColumn(name = "card_id"))
     @JsonBackReference(value = "defaultReference2")
-    public java.util.List<Card> cards;
+    public List<Card> cards;
 
     /**
      * constructs a tag
      * @param id the long id
      * @param name the string name
-     * @param color the color code
      * @param board the board it connects to
      */
-    public Tag(long id, String name, Color color, Board board) {
-        cards = new ArrayList<>();
+    public Tag(long id, String name, Board board) {
         this.id = id;
         this.name = name;
-        this.color = color;
         this.board = board;
     }
+
+
+    /**
+     * constructs a tag used for testing
+     * @param id the long id
+     * @param name the string name
+     */
+    public Tag(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    /**
+     * constructs a tag
+     * @param name the string name
+     * @param green int value for Color
+     * @param blue int value for Color
+     * @param red int value for Color
+     * @param board the board it connects to
+     * @param cards the cards of the tag
+     */
+    public Tag(String name, int green, int blue, int red, Board board, ArrayList<Card> cards) {
+        this.name = name;
+        this.green = green;
+        this.blue = blue;
+        this.red = red;
+        this.board = board;
+        this.cards = cards;
+    }
+
+    /**
+     * constructs a tag
+     * @param name the string name
+     * @param green int value for Color
+     * @param blue int value for Color
+     * @param red int value for Color
+     */
+    public Tag(String name, int green, int blue, int red) {
+        this.name = name;
+        this.green = green;
+        this.blue = blue;
+        this.red = red;
+    }
+
+
+    /**
+     * default constructor
+     */
+    @SuppressWarnings("unused")
+    public Tag() {}
+
 
     /**
      * getter for an id
@@ -89,19 +136,27 @@ public class Tag {
     }
 
     /**
-     * getter for a color
-     * @return a Color object
+     * getter for green
+     * @return the green int in RGB
      */
-    public Color getColor() {
-        return color;
+    public int getGreen(){
+        return green;
     }
 
     /**
-     * a setter for color
-     * @param color a Color object
+     * getter for blue
+     * @return the blue int in RGB
      */
-    public void setColor(Color color) {
-        this.color = color;
+    public int getBlue(){
+        return blue;
+    }
+
+    /**
+     * getter for red
+     * @return the red int in RGB
+     */
+    public int getRed(){
+        return red;
     }
 
     /**
@@ -153,5 +208,47 @@ public class Tag {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    /**
+     * setter for green
+     * @param green an int for Color
+     */
+    public void setGreen(int green) {
+        this.green = green;
+    }
+
+    /**
+     * setter for blue
+     * @param blue an int for Color
+     */
+    public void setBlue(int blue) {
+        this.blue = blue;
+    }
+
+    /**
+     * setter for red
+     * @param red an int for Color
+     */
+    public void setRed(int red) {
+        this.red = red;
+    }
+
+    /**
+     * to string representation of a tag
+     *
+     * @return a string of its variables
+     */
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", green=" + green +
+                ", blue=" + blue +
+                ", red=" + red +
+                ", board=" + board +
+                ", cards=" + cards +
+                '}';
     }
 }

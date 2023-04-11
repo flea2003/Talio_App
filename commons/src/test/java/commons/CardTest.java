@@ -33,6 +33,8 @@ class CardTest {
     @Test
     void testConstructor() {
         Card emptyCard = new Card();
+        Card card2 = new Card(1, "name");
+        assertNotNull(card2);
         assertNotNull(emptyCard);
         assertNotNull(card);
     }
@@ -96,6 +98,20 @@ class CardTest {
     void setNumberInTheList() { // also tests getNumberInTheList
         card.setNumberInTheList(5);
         assertEquals(5, card.getNumberInTheList());
+    }
+
+    @Test
+    void getTags() { // also tests setTags
+        ArrayList<Tag> tags2 = new ArrayList<>();
+        card.setTags(tags2);
+        assertEquals(tags2, card.getTags());
+    }
+
+    @Test
+    void addSubtask() {
+        Subtask subtask = new Subtask();
+        card.addSubtask(subtask);
+        assertTrue(card.getSubtasks().contains(subtask));
     }
 
 }

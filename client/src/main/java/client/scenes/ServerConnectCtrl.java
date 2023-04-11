@@ -25,6 +25,7 @@ public class ServerConnectCtrl implements Initializable {
     private final ServerUtils server;
 
     private final MainCtrl mainCtrl;
+    private final DashboardCtrl dashboardCtrl;
 
     @FXML
     private javafx.scene.control.TextField serverAddress;
@@ -57,15 +58,19 @@ public class ServerConnectCtrl implements Initializable {
     @FXML
     private Text message;
 
+
     /**
      * constructor
      * @param server the current server
      * @param mainCtrl a reference to the MainCtrl
+     * @param dashboardCtrl class which handles dashboard scene
      */
     @Inject
-    public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public ServerConnectCtrl(ServerUtils server, MainCtrl mainCtrl, DashboardCtrl dashboardCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.dashboardCtrl = dashboardCtrl;
+        dashboardCtrl.adminAccess=false;
     }
 
     /**
@@ -145,11 +150,18 @@ public class ServerConnectCtrl implements Initializable {
         return false;
     }
 
+    /**
+     * checks if the password is correct
+     * @param event the event that triggers the method
+     * @return if the password is correct
+     */
     public boolean checkPassword(javafx.event.ActionEvent event) {
         if (event.getSource() == connectButton2) {
-            if (!password.getText().equals("admin12")) {
+            if (!server.checkPassword( "http://"+serverAddress.getText()+":8080"
+                                    , password.getText())) {
                 message.setText("Incorrect Password");
             } else {
+                dashboardCtrl.adminAccess = true;
                 connectButton.fire();
                 return true;
             }
@@ -157,7 +169,11 @@ public class ServerConnectCtrl implements Initializable {
         return false;
     }
 
-
+    /**
+     * method for when "connect as an admin" button is clicked
+     * it creates a new field to enter the password
+     * @param event event
+     */
     public void openAdminConnect(javafx.event.ActionEvent event) {
         if (event.getSource() == connectAdmin) {
             seePassword.setVisible(true);
@@ -200,7 +216,11 @@ public class ServerConnectCtrl implements Initializable {
             });
         }
     }
-
+    /**
+     * method for when "connect as a user" button is clicked
+     * it removes the field to enter the password
+     * @param event event
+     */
     public void openUserConnect(javafx.event.ActionEvent event){
         if (event.getSource() == connectUser) {
             seePassword.setVisible(false);
@@ -210,9 +230,21 @@ public class ServerConnectCtrl implements Initializable {
             connectButton.setVisible(true);
             connectUser.setVisible(false);
             connectAdmin.setVisible(true);
+            dashboardCtrl.adminAccess=false;
             passwordSquare.setVisible(false);
         }
     }
+
+    /**
+     * initialize method
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         serverAddress.setOnKeyPressed(new EventHandler<KeyEvent>() {

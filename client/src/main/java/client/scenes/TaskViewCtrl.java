@@ -10,9 +10,11 @@ import commons.Card;
 import commons.List;
 import commons.Subtask;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,11 +24,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import javax.inject.Inject;
-import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class TaskViewCtrl extends Application implements CardControllerState {
@@ -88,6 +92,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
     private taskViews viewTasks;
 
+    private ExecutorService exec;
 
     @FXML
     private VBox actualSubtasks;
@@ -119,14 +124,17 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     }
 
     /**
-     * A method which start the controller that extends Application
+     * Start bt making the Task View Window appear
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
      */
     @Override
     public void start(javafx.stage.Stage primaryStage)  {
-        if(primaryStage != null) {
+        if (primaryStage != null) {
             newStage = primaryStage;
-        }
-        else {
+        } else {
             newStage = new Stage();
         }
         newStage.setTitle("Task View");
@@ -136,29 +144,17 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             @Override
             public void handle(WindowEvent event) {
                 taskViews.getInstance().remove(TaskViewCtrl.this);
+                newStage.hide();
+                server.stopThread(exec);
             }
         });
         newStage.show();
-    }
-
-    /**
-     * show the information of the card in th UI
-     * @param card the card to show
-     */
-    public void renderInfo(Card card){
-        hboxButtons.getStylesheets().add("CSS/button.css");
-        while(subTasks.getChildren().size() >= 2){
-            subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
-        }
-        currCard = card;
-        taskName.setText(card.name);
-        if(taskName.layoutBoundsProperty().get().getWidth() >= 400){
-            taskName.setWrappingWidth(400);
-        }
         addEditFunctionality((Pane)taskName.getParent(), taskName, taskName, e -> {
             TextField textField = new TextField(taskName.getText());
             if(taskName.getParent() != null) {
-                ((Pane) taskName.getParent()).getChildren().set(((Pane) taskName.getParent()).getChildren().indexOf(taskName), textField);
+                ((Pane) taskName.getParent()).getChildren()
+                        .set(((Pane) taskName.getParent())
+                                .getChildren().indexOf(taskName), textField);
                 textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                     } else {
@@ -167,12 +163,14 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                             currCard.name = data;
                             server.updateBoard(currCard.getList().getBoard());
                             if ((Pane) textField.getParent() != null) {
-                                int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                                int indx = ((Pane) textField
+                                        .getParent()).getChildren().indexOf(textField);
                                 ((Pane) textField.getParent()).getChildren().set(indx, taskName);
                             }
                         } else {
                             if ((Pane) textField.getParent() != null) {
-                                int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                                int indx = ((Pane) textField.getParent())
+                                        .getChildren().indexOf(textField);
                                 ((Pane) textField.getParent()).getChildren().set(indx, taskName);
                             }
                         }
@@ -182,7 +180,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 textField.setOnKeyPressed(event -> {
                     if (event.getCode() == KeyCode.ENTER) {
                         int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
-                        ((Pane) textField.getParent()).getChildren().set(indx, taskName);                  }
+                        ((Pane) textField.getParent()).getChildren().set(indx, taskName);
+                    }
                 });
 
                 textField.requestFocus();
@@ -190,11 +189,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
         });
 
-        taskDescription.setText(card.description);
-        taskDescription.setWrappingWidth(400);
         addEditFunctionality((Pane)description.getParent(), description, taskDescription, e -> {
             TextField textField = new TextField(taskDescription.getText());
-            int index = descriptionPane.getParent().getChildrenUnmodifiable().indexOf(descriptionPane);
+            int index = descriptionPane.getParent().getChildrenUnmodifiable()
+                    .indexOf(descriptionPane);
             VBox vBox = (VBox) descriptionPane.getParent();
             vBox.getChildren().set(index, textField);
             textField.requestFocus();
@@ -218,22 +216,24 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             });
         });
 
-        if(taskNo==null){
-            taskNo=new Text();
-        }
-        taskNo.setText("Task No. " + card.getNumberInTheList());
-        for(Subtask subtask : currCard.getSubtasks()){
-            createSubtask(subtask);
-        }
         ButtonTalio addSubtask = new ButtonTalio("+", "Enter Subtask Name") {
+            /**
+             * processes the new information
+             * @param data the string that should be sent to the database
+             */
             @Override
             public void processData(String data) {
                 Subtask subtask = new Subtask(data, "", currCard.subtasks.size() + 1, currCard, 0);
+
                 subtask = server.saveSubtask(subtask);
                 currCard.addSubtask(subtask);
                 server.updateBoard(currCard.getList().board);
             }
 
+            /**
+             * adds the label
+             * @param node the structure where the node is added
+             */
             @Override
             public void addLabel(Pane node) {
                 if(node.getChildren().size() == 0){
@@ -248,15 +248,25 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 this.textField.setStyle("-fx-background-color: #e5e3f1;");
             }
 
+            /**
+             * deletes the label
+             * @param node pane where the label is right now
+             */
             @Override
             public void deleteLabel(Pane node) {
                 node.getChildren().remove(this.textField);
             }
 
+            /**
+             * add Button
+             * @return Pane
+             */
             @Override
             public Pane addButton() {
                 this.setPadding(new Insets(0, 0, 10, 0));
-                if(!(taskListHBox.getChildren().size() >= 1 && taskListHBox.getChildren().get(taskListHBox.getChildren().size() - 1) instanceof ButtonTalio)){
+                if(!(taskListHBox.getChildren().size() >= 1 && taskListHBox.
+                        getChildren().get(taskListHBox.getChildren()
+                                .size() - 1) instanceof ButtonTalio)){
                     taskListHBox.getChildren().add(this);
                 }
                 return actualSubtasks;
@@ -268,6 +278,64 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         });
         addSubtask.setOnMouseExited(e -> {
             addSubtask.setStyle("-fx-background-color: transparent;");
+        });
+
+    }
+
+    /**
+     * show the information of the card in th UI
+     * @param card the card to show
+     */
+    public void renderInfo(Card card){
+        Board board = server.getBoard(currCard.getList().board.id);
+        for(List list : board.getLists()){
+            for(Card cardCurr : list.getCards()){
+                if(cardCurr.id == card.id){
+                    currCard = cardCurr;
+                }
+            }
+        }
+        exec = Executors.newSingleThreadExecutor();
+        server.longPolling(exec, q -> {
+            var exists = server.getCardById(q.id);
+            if(exists == null){
+                Platform.runLater(() -> {
+                    try{
+                        newStage.fireEvent(new javafx.stage.WindowEvent(newStage,
+                                javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }else{
+                server.stopThread(exec);
+                renderInfo(exists);
+            }
+        }, currCard);
+        Platform.runLater(() -> {
+            hboxButtons.getStylesheets().add("CSS/button.css");
+            while(subTasks.getChildren().size() >= 2){
+                subTasks.getChildren().remove(subTasks.getChildren().size() - 1);
+            }
+            actualSubtasks.getChildren().clear();
+
+            taskName.setText(card.name);
+            if(taskName.layoutBoundsProperty().get().getWidth() >= 400){
+                taskName.setWrappingWidth(400);
+            }
+
+            taskDescription.setText(card.description);
+            taskDescription.setWrappingWidth(400);
+
+            if(taskNo==null){
+                taskNo=new Text();
+            }
+            taskNo.setText("Task No. " + card.getNumberInTheList());
+            for(Subtask subtask : currCard.getSubtasks()){
+                createSubtask(subtask);
+            }
+            return;
+
         });
     }
 
@@ -282,18 +350,31 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      * throws a confirmation message for deleting the card and deletes the card
      */
     public void goDelete(){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete Task '" + currCard.getName() + "'?");
-        alert.setContentText("Are you sure you want to delete task '" + currCard.getName() +
-                "'?\nThis will permanently delete the task from the server.");
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Delete Task '" + currCard.getName() + "'?");
 
-        ButtonType delete = new ButtonType("Delete");
-        ButtonType cancel = new ButtonType("Cancel");
-        alert.getButtonTypes().setAll(delete, cancel);
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
 
-        Optional<ButtonType> result = alert.showAndWait();
+        //create the buttons
+        Button delete = new Button("Delete");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(delete, cancel);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
 
-        if (result.get() == delete) {
+        //set colour for the buttons and create hovering effect
+        delete.getStyleClass().add("connectButton");
+        delete.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
+
+        delete.setOnAction( e -> {
             List listCurr=currCard.getList();
             listCurr.cards.remove(currCard);
 
@@ -307,7 +388,33 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             server.deleteCard(currCard.id);
             newStage.close();
             taskViews.getInstance().remove(this);
-        }
+            stage.close();
+        });
+
+        cancel.setOnAction(e -> {
+            stage.close();
+        });
+
+        ImageView deletion = new ImageView(new Image("/pictures/deletion.png"));
+        deletion.maxHeight(30);
+        deletion.maxWidth(30);
+
+        VBox message = new VBox();
+        Label sure = new Label("Are you sure you want to delete task '" +
+                currCard.getName() + "'?");
+        sure.setStyle("-fx-font-size: 16px");
+        message.getChildren().addAll(sure,
+                new Label("This will permanently delete the task from the server.")
+        );
+        message.setAlignment(Pos.CENTER);
+        message.setSpacing(10);
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(deletion, message, buttons);
+
+        Scene scene = new Scene(vbox, 395, 250);
+        stage.setScene(scene);
+        stage.showAndWait();
 
     }
 
@@ -317,6 +424,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     @FXML
     public void setDone(){
         taskViews.getInstance().remove(TaskViewCtrl.this);
+        server.stopThread(exec);
         newStage.close();
     }
 
@@ -345,17 +453,21 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     }
 
     /**
-     * returns the current card
+     * gets a card
+     * @return the current card
      */
     @Override
     public Card getCard() {
         return currCard;
     }
 
+    /**
+     * adds a subtask
+     */
     @FXML
     public void addSubtask(){
         if(hasTextField){
-           return;
+            return;
         }
         else{
             hasTextField = true;
@@ -388,12 +500,17 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
     }
 
+    /**
+     * method to create a new Subtask within the Task
+     * @param subtask the new subtask
+     */
     public void createSubtask(Subtask subtask){
         HBox hbox = new HBox();
         CheckBox checkBox = new CheckBox(subtask.getName());
         checkBox.getStylesheets().add("CSS/button.css");
         checkBox.getStyleClass().add("checkBox-custom");
-        checkBox.setStyle("-fx-font-size: 18px; -fx-font-style: italic; -fx-font-family: 'Candara Light';");
+        checkBox.setStyle("-fx-font-size: 18px; -fx-font-style: italic;" +
+                " -fx-font-family: 'Candara Light';");
         checkBox.setSelected(subtask.isCompleted() != 0);
         hbox.getChildren().add(checkBox);
         ImageView imageView = new ImageView(new Image("pictures/edit_icon.png"));
@@ -482,9 +599,9 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
     /**
      * This method takes
-     * @param pane
-     * @param control
-     * @param consumer
+     * @param pane Pane
+     * @param control Node
+     * @param consumer Consumer
      */
     void addEditFunctionality(Pane pane, Node afterWhat, Node control, Consumer consumer){
         Image edit = new Image("pictures/edit_icon.png");
@@ -504,7 +621,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         if(pane.getChildren().size() == pane.getChildren().indexOf(afterWhat) + 1){
             pane.getChildren().add(container);
         }
-        else if(pane.getChildren().get(pane.getChildren().indexOf(afterWhat) + 1) instanceof StackPane){
+        else if(pane.getChildren().get(pane.getChildren().indexOf(afterWhat) + 1)
+                instanceof StackPane){
             return;
         }
         else {
@@ -513,28 +631,74 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         editView.setOnMouseClicked(consumer::accept);
     }
 
+    /**
+     * method that deletes a subtask
+     * @param subtask the subtasks the user wants to delete
+     */
     private void deleteSubtask(Subtask subtask) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete Subtask '" + subtask.getName() + "'?");
-        alert.setContentText("Are you sure you want to delete subtask '" + subtask.getName() +
-                "'?\nThis will permanently delete the subtask from the server.");
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Delete Subtask '" + subtask.getName() + "'?");
 
-        ButtonType delete = new ButtonType("Delete");
-        ButtonType cancel = new ButtonType("Cancel");
-        alert.getButtonTypes().setAll(delete, cancel);
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
 
-        Optional<ButtonType> result = alert.showAndWait();
+        //create the buttons
+        Button delete = new Button("Delete");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(delete, cancel);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
 
-        if (result.get() == delete) {
-            //currCard.subtasks.remove(subtask);
+        //set colour for the buttons and create hovering effect
+        delete.getStyleClass().add("connectButton");
+        delete.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
+
+        cancel.setOnAction(e -> {
+            stage.close();
+        });
+
+        delete.setOnAction(e -> {
             ObjectMapper objectMapper = new ObjectMapper();
             currCard.subtasks.remove(subtask);
             subtask.setCard(null);
             server.deleteSubtask(subtask);
             server.updateBoard(currCard.getList().board);
-        }
+            stage.close();
+        });
+
+        ImageView deletion = new ImageView(new Image("/pictures/deletion.png"));
+        deletion.maxHeight(30);
+        deletion.maxWidth(30);
+
+        VBox message = new VBox();
+        Label sure = new Label("Are you sure you want to delete subtask '" +
+                subtask.getName() + "'?");
+        sure.setStyle("-fx-font-size: 16px");
+        message.getChildren().addAll(sure,
+                new Label("This will permanently delete the subtask from the server.")
+        );
+        message.setAlignment(Pos.CENTER);
+        message.setSpacing(10);
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(deletion, message, buttons);
+
+        Scene scene = new Scene(vbox, 395, 250);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
+    /**
+     * move Subtask in a different Card
+     * @param subtask used Subtask
+     */
     private void moveDownSubtask(Subtask subtask){
         if(subtask.getNumberInTheCard() == subtask.getCard().subtasks.size()){
             return;
@@ -547,7 +711,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             server.updateBoard(subtask.getCard().getList().board);
         }
     }
-
+    /**
+     * move Subtask in a different Card
+     * @param subtask used Subtask
+     */
     private void moveUpSubtask(Subtask subtask){
         if(subtask.getNumberInTheCard() == 1){
             return;
@@ -561,6 +728,11 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         }
     }
 
+    /**
+     * edits a subtasks and updates it
+     * @param subtask current Subtask to be updated
+     * @param checkBox ckeckbox
+     */
     private void editSubtask(Subtask subtask, CheckBox checkBox){
         TextField textField = new TextField(subtask.getName());
 
@@ -581,7 +753,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 String txt = textField.getText();
                 if(txt.length() > 0) {
                     subtask.setName(txt);
-                    server.updateBoard(subtask.getCard().getList().board);//send the text to the database
+                    //send the text to the database
+                    server.updateBoard(subtask.getCard().getList().board);
                 }
                 actualSubtasks.getChildren().set(finalLabelIndex, node);
             }
@@ -594,9 +767,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     }
 
     /**
-     * @return the stage
+     * get the Stage
+     * @return a stage
      */
-    public Stage getStage(){
+    public Stage getStage() {
         return newStage;
     }
 }

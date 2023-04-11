@@ -3,8 +3,6 @@ package commons;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {
@@ -14,20 +12,26 @@ class SubtaskTest {
     private Subtask subtask1;
     private Subtask subtask2;
     private Subtask subtask3;
+    private Subtask subtaskCompleted;
+    private int completed;
 
     /**
      * initializes all attributes for convenience and to avoid repetition
      */
     @BeforeEach
     void initialize() {
+        completed = 1;
         subtask1 = new Subtask(1, "name", "description", 1, card);
         subtask2 = new Subtask(1, "name", "description", 1, card);
         subtask3 = new Subtask(1, "subtask", "description", 1, card);
+        subtaskCompleted = new Subtask("subtask", "description", 1, card, completed);
     }
 
     @Test
     void testConstructor() {
+        Subtask subtask4 = new Subtask(1, 1);
         assertNotNull(subtask1);
+        assertNotNull(subtask4);
     }
 
     @Test
@@ -87,22 +91,42 @@ class SubtaskTest {
 
     @Test
     void testEquals1() { // same object
-        assertEquals(subtask1, subtask1);
+        assertTrue(subtask1.equals(subtask1));
     }
 
     @Test
     void testEquals2() { // same values, different object
-        assertEquals(subtask1, subtask2);
+        assertTrue(subtask1.equals(subtask2));
     }
 
     @Test
     void testEquals3() { // different values
-        assertNotEquals(subtask1, subtask3);
+        assertFalse(subtask1.equals(subtask3));
     }
 
     @Test
     void testHashCode() {
         assertEquals(subtask1.hashCode(), subtask2.hashCode());
     }
+
+    @Test
+    void testToString() {
+        // how to test this?
+    }
+
+    @Test
+    void testSwitchState() {
+        subtaskCompleted.setCompleted(1);
+        subtaskCompleted.switchState();
+        assertEquals(0, subtaskCompleted.isCompleted());
+    }
+
+    @Test
+    void testSetCompleted() { // also tests isCompleted
+        Integer completed2 = 2;
+        subtaskCompleted.setCompleted(completed2);
+        assertEquals(completed2, subtaskCompleted.isCompleted());
+    }
+
 
 }

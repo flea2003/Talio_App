@@ -1,6 +1,7 @@
 package client.scenes.services;
 
 import client.scenes.TaskEditCtrl;
+import client.scenes.TaskEditCtrl;
 import commons.Card;
 
 import java.util.ArrayList;
@@ -8,16 +9,13 @@ import java.util.List;
 
 public  class taskEdits {
     private static taskEdits INSTANCE;
-    private List<TaskEditCtrl> controllers = new ArrayList<>();
 
-    /**
-     * Private constructor to prevent instantiation
-     */
     private taskEdits() {
     }
 
     /**
-     * @return the instance of the singleton
+     * gets an instance
+     * @return the instance
      */
     public synchronized static taskEdits getInstance() {
         if (INSTANCE == null) {
@@ -26,25 +24,29 @@ public  class taskEdits {
         return INSTANCE;
     }
 
+    private List<TaskEditCtrl> controllers = new ArrayList<>();
+
     /**
-     * @return the list of controllers
-     * @param controller the controller to add
+     * adds a controller
+     * @param controller the controller
      */
     public void add(TaskEditCtrl controller) {
         controllers.add(controller);
     }
 
     /**
-     * @return the list of controllers
-     * @param controller the controller to remove
+     * removes a controller
+     * @param controller
      */
     public void remove(TaskEditCtrl controller) {
         controllers.remove(controller);
     }
+//    public List<TaskEditCtrl> (){return taskViewControllers;}
 
     /**
-     * @param card the card to check
-     * @return true if the card is already opened
+     * checks if a card is open
+     * @param card the card
+     * @return a boolean
      */
     public boolean isOpened(Card card) {
         for (TaskEditCtrl controller : controllers) {
@@ -57,21 +59,20 @@ public  class taskEdits {
     }
 
     /**
-     * Close all the opened windows
+     * closes all controllers
      */
     public void closeAll() {
-        for(TaskEditCtrl controller: controllers) {
+        for (TaskEditCtrl controller: controllers) {
             if (controller.getStage() != null) {
                 controller.getStage().close();
             }
         }
         controllers = new ArrayList<>();
-
     }
 
     /**
-     * Close all the opened windows
-     * @param lists the lists to check
+     * checks if a controller is closed
+     * @param lists a list of lists
      */
     public void checkClosed(List<commons.List> lists) {
         for(var controller: controllers) {
@@ -83,7 +84,7 @@ public  class taskEdits {
                     }
                 }
             }
-            if(wasDeleted) {
+            if (wasDeleted) {
                 controller.getStage().close();
             }
         }
@@ -91,7 +92,8 @@ public  class taskEdits {
     }
 
     /**
-     * @return returns all of the controllers
+     * getter for controllers
+     * @return controllers
      */
     public List<TaskEditCtrl> getControllers() {
         return controllers;

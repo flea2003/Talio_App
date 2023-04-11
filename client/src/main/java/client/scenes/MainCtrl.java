@@ -129,7 +129,7 @@ public class MainCtrl {
     }
 
     /**
-     * switches the scene to the create a board
+     * switches the scene to create a board
      */
     public void switchCreateBoard() {
         primaryStage.setTitle("Create a Board");
@@ -180,13 +180,13 @@ public class MainCtrl {
     }
 
     /**
-     * sets the scene to dashboard with deleted as the user
-     * @param q the card that was deleted
-     * @param boardCurr the board the card was in
-     * @param stage the stage to be closed
+     * switches the task view
+     * @param q a Card
+     * @param boardCurr a Board
+     * @param stage a Stage
      */
     public void reallySwitchTaskView(Card q, Board boardCurr, Stage stage) {
-        if(taskViews.getInstance().isOpened(q)) {
+        if (taskViews.getInstance().isOpened(q)) {
             return;
         }
 
@@ -197,8 +197,7 @@ public class MainCtrl {
     }
 
     /**
-     * closes all of the stages that were instantiated as our TaskView and TaskEdit controllers are not singletons
-     * and we need to close them when the user logs out
+     * method to end the program
      */
     public void closeStages() {
         taskCreations.getInstance().closeAll();

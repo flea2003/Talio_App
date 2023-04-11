@@ -57,10 +57,10 @@ public class TaskCreationCtrl  {
     }
 
     /**
-     * initializes the data for the controller
-     * @param stage the stage that the controller will have
-     * @param taskCreation the scene that the controller will have
-     * @param boardId the id of the board
+     * a setter for some data
+     * @param stage a Stage
+     * @param taskCreation a scene
+     * @param boardId a long for a board's id
      * @param listCurr the current list
      */
     public void sendData(Stage stage, Scene taskCreation, long boardId, List listCurr){
@@ -122,17 +122,17 @@ public class TaskCreationCtrl  {
     }
 
     /**
-     * extracts the value from the text field
-     * @param curr the text field
-     * @return the value of the text field
+     * retrieves the value written in a TextField
+     * @param curr TextField
+     * @return
      */
     private String extractValue(TextField curr){
         return curr.getText();
     }
 
     /**
-     * sets the error message
-     * @param err the error message
+     * sets the display text of the error message
+     * @param err error
      */
     private void setError(String err){
         error.setText(err);
@@ -154,11 +154,18 @@ public class TaskCreationCtrl  {
         this.boardId = boardId;
     }
 
-
+    /**
+     * get card method
+     * @return null
+     */
     public Card getCard() {
         return null;
     }
 
+    /**
+     * get the stage
+     * @return null
+     */
     public Stage getStage() {
         return null;
     }

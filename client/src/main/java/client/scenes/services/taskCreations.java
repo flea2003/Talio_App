@@ -13,7 +13,8 @@ public class taskCreations {
     }
 
     /**
-     * @return the instance of the singleton
+     * gets an instance
+     * @return the instance
      */
     public synchronized static taskCreations getInstance() {
         if (INSTANCE == null) {
@@ -22,28 +23,29 @@ public class taskCreations {
         return INSTANCE;
     }
 
-
     private final List<TaskCreationCtrl> controllers = new ArrayList<>();
 
     /**
-     * @return the list of controllers
-     * @param controller the controller to add
+     * adds a controller
+     * @param controller the controller
      */
     public void add(TaskCreationCtrl controller) {
         controllers.add(controller);
     }
 
     /**
-     * @return the list of controllers
-     * @param controller the controller to remove
+     * removes a controller
+     * @param controller the controller
      */
     public void remove(TaskCreationCtrl controller) {
         controllers.remove(controller);
     }
+//    public List<TaskCreationCtrl> (){return taskViewControllers;}
 
     /**
-     * @param card the card to check
-     * @return true if the card is already opened
+     * checks if a card is open
+     * @param card the card
+     * @return a boolean
      */
     public boolean isOpened(Card card) {
         for (TaskCreationCtrl controller : controllers) {
@@ -56,17 +58,17 @@ public class taskCreations {
     }
 
     /**
-     * Close all the opened windows
+     * closes all controllers
      */
     public void closeAll() {
-        for(TaskCreationCtrl controller: controllers) {
+        for (TaskCreationCtrl controller: controllers) {
             controller.getStage().close();
         }
-
     }
 
     /**
-     * @return the list of controllers
+     * gets a controller
+     * @return the controller
      */
     public List<TaskCreationCtrl> getArray(){
         return controllers;
