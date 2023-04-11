@@ -607,6 +607,32 @@ public class ServerUtils {
     }
 
     /**
+     * sends a get request to check if the entered passsword is correct
+     * @return the a boolean value representing if the password is correct or not
+     */
+    public boolean checkPassword(String server, String password) {
+//        String endpoint = "/api/boards/password";
+        String endpoint = String.format("/api/admin/password/%s", password);
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(server).path(endpoint)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .get(new GenericType<Boolean>() {
+                    });
+        }catch (Error e){
+            return false;
+        }
+//        String endpoint = "/api/boards/password";
+//        ExampleService service = ClientBuilder.newBuilder()
+//                .baseUrl(url)
+//                .build(ExampleService.class);
+//
+//        String requestBody = "Hello, World!";
+//        Entity<String> entity = Entity.entity(requestBody, MediaType.TEXT_PLAIN_TYPE);
+
+    }
+    /**
      * sends a get request to trigger the respective method in tagController
      * gets all the tags from the database
      * @return the tags

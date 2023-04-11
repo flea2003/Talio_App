@@ -55,7 +55,17 @@ public class BoardController {
         return ResponseEntity.ok(board);
 
     }
-
+//    String endpoint = String.format("api/boards/%d", id);
+//    var res = ClientBuilder.newClient(new ClientConfig())
+//            .target(server).path(endpoint)
+//            .request(APPLICATION_JSON)
+//            .accept(APPLICATION_JSON)
+//            .get(new GenericType<commons.Board>() {});
+//        Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+//        for(commons.List list : res.getLists()){
+//        Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+//    }
+//        return res;
     /**
      * adds a board
      * @param board the board to be added

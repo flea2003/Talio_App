@@ -8,9 +8,11 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import server.database.BoardRepository;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class BoardService {
