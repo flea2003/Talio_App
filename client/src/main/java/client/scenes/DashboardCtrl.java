@@ -1060,6 +1060,7 @@ public class DashboardCtrl implements Initializable {
         mainCtrl.closeStages();
         if(adminAccess){
             serverBoards = previousStateServerBoards;
+            adminAccess = false;
         }
         main.start(new Stage());
     }
