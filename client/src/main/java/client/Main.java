@@ -82,9 +82,12 @@ public class Main extends Application {
         Button connectButton2 = (Button) serverConnect.getValue().lookup("#connectButton2");
         connectButton2.setOnAction(e -> {
             if (serverConnectCtrl.checkPassword(e) && serverConnectCtrl.connectToTheServer(e)) {
-                var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
-                var board = FXML.load(CreateBoardCtrl.class, "client", "scenes", "CreateBoard.fxml");
-                var taskCreation = FXML.load(TaskCreationCtrl.class, "client", "scenes", "TaskCreation.fxml");
+                var dashboard = FXML.load(DashboardCtrl.class,
+                        "client", "scenes", "Dashboard.fxml");
+                var board = FXML.load(CreateBoardCtrl.class,
+                        "client", "scenes", "CreateBoard.fxml");
+                var taskCreation = FXML.load(TaskCreationCtrl.class,
+                        "client", "scenes", "TaskCreation.fxml");
                 var taskView = FXML.load(TaskViewCtrl.class, "client", "scenes", "TaskView.fxml");
                 var taskEdit = FXML.load(TaskEditCtrl.class, "client", "scenes", "TaskEdit.fxml");
                 var mainCtrl = INJECTOR.getInstance(MainCtrl.class);

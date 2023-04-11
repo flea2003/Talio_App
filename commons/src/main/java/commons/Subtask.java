@@ -32,6 +32,10 @@ public class Subtask {
 
     public int completed;
 
+    /**
+     * constructor used for testing
+     */
+    @SuppressWarnings("unused")
     public Subtask() {}
 
     /**
@@ -51,6 +55,14 @@ public class Subtask {
         this.completed = 0;
     }
 
+    /**
+     * a constructor for Subtask, with the addition of completed
+     * @param name the task's string name
+     * @param description its string description
+     * @param numberInTheCard its order in the card
+     * @param card the card it is linked to
+     * @param completed an int that shows whether a subtask has been completed
+     */
     public Subtask(String name, String description, int numberInTheCard, Card card, int completed) {
         this.name = name;
         this.numberInTheCard = numberInTheCard;
@@ -177,10 +189,17 @@ public class Subtask {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 
+    /**
+     * changes the value of th int completed
+     */
     public void switchState(){
         completed = 1 - completed;
     }
 
+    /**
+     * getter for completed
+     * @return the int completed
+     */
     public int isCompleted() {
         return completed;
     }

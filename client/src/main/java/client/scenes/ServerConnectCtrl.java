@@ -245,8 +245,9 @@ public class ServerConnectCtrl implements Initializable {
         serverAddress.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(event.getCode() == KeyCode.ENTER)
+                if(event.getCode() == KeyCode.ENTER) {
                     connectButton.fire();
+                }
             }
         });
     }

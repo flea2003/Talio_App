@@ -26,6 +26,7 @@ public class TagController {
 
     /**
      * gets all the tags for a given card in the database
+     * @param id an id
      * @return a list of the tags for a given card
      */
     @PostMapping(path = { "/card" })
@@ -35,6 +36,7 @@ public class TagController {
 
     /**
      * gets all the tags for a given board in the database
+     * @param id an id
      * @return a list of the tags for a given board
      */
     @GetMapping(path = { "/board/{id}" })

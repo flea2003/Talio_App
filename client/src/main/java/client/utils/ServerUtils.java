@@ -38,9 +38,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -261,9 +259,11 @@ public class ServerUtils {
                     .request(APPLICATION_JSON)
                     .accept(APPLICATION_JSON)
                     .get(new GenericType<commons.Board>() {});
-            Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+            Collections.sort(res.getLists(),
+                    Comparator.comparingInt(commons.List::getNumberInTheBoard));
             for(commons.List list : res.getLists()){
-                Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+                Collections.sort(list.getCards(),
+                        Comparator.comparingInt(Card::getNumberInTheList));
             }
             return res;
         }
@@ -412,8 +412,8 @@ public class ServerUtils {
      * @return a StompSession to send and receive messages between the client and the server
      */
     private StompSession connect(String url){
-        var client=new StandardWebSocketClient();
-        var stomp=new WebSocketStompClient(client);
+        var client = new StandardWebSocketClient();
+        var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
         try {
             return stomp.connect(url, new StompSessionHandlerAdapter() {}).get();
@@ -636,6 +636,14 @@ public class ServerUtils {
                 .get(new GenericType<List<Tag>>() {});
     }
 
+    /**
+     * using this method instead of web sockets
+     * sends a request to the server
+     * if something changes to the server, it sends back the changes
+     * @param EXEC used to create a new thread
+     * @param consumer consumes the card
+     * @param card1 a card
+     */
     public void longPolling(ExecutorService EXEC, Consumer<Card> consumer, Card card1){
         EXEC.submit(()->{
             while(!EXEC.isShutdown()){
@@ -656,6 +664,11 @@ public class ServerUtils {
         });
 
     }
+
+    /**
+     * stops the thread
+     * @param EXEC
+     */
     public void stopThread(ExecutorService EXEC){
         EXEC.shutdown();
     }
