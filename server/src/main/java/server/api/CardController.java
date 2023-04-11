@@ -12,13 +12,10 @@ import org.springframework.web.context.request.async.DeferredResult;
 import server.services.CardService;
 import server.services.Pair;
 
-<<<<<<< server/src/main/java/server/api/CardController.java
-import java.util.List;
-=======
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
->>>>>>> server/src/main/java/server/api/CardController.java
 
 @RestController
 @RequestMapping("/api/cards")
@@ -43,9 +40,7 @@ public class CardController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Card> getById (@PathVariable long id){
-<<<<<<< server/src/main/java/server/api/CardController.java
-        Card card = cardService.getCardById(id);
-=======
+
         Card card = null;
         try {
             card = cardService.getCardById(id);
@@ -53,7 +48,7 @@ public class CardController {
         catch (Exception e){
             ResponseEntity.badRequest().build();
         }
->>>>>>> server/src/main/java/server/api/CardController.java
+
         if(id < 0 || card == null) {
             return ResponseEntity.badRequest().build();
         }
