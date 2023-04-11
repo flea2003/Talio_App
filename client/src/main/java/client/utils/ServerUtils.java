@@ -38,9 +38,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -261,9 +259,11 @@ public class ServerUtils {
                     .request(APPLICATION_JSON)
                     .accept(APPLICATION_JSON)
                     .get(new GenericType<commons.Board>() {});
-            Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+            Collections.sort(res.getLists(),
+                    Comparator.comparingInt(commons.List::getNumberInTheBoard));
             for(commons.List list : res.getLists()){
-                Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
+                Collections.sort(list.getCards(),
+                        Comparator.comparingInt(Card::getNumberInTheList));
             }
             return res;
         }

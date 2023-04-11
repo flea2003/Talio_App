@@ -1,8 +1,5 @@
 package server.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import commons.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,6 +56,7 @@ public class CardController {
 
     /**
      * Long Polling Method
+     * @param card the Card object
      * @return res
      */
     @PostMapping("/longPoll")
@@ -77,10 +75,14 @@ public class CardController {
         return res;
     }
 
+    /**
+     * activates the listeners for a card
+     * @param card the Card object
+     */
     public void activateListeners(Card card){
         listeners.forEach((k, l) -> {
             if(k.getB().id == card.id) {
-                  l.accept(card);
+                l.accept(card);
             }
         });
     }

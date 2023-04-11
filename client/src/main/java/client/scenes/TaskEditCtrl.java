@@ -156,13 +156,18 @@ public class TaskEditCtrl extends Application implements CardControllerState {
     }
 
 
+    /**
+     * starts a primary stage
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     */
     @Override
     public void start(Stage primaryStage)  {
         this.stage = primaryStage;
         primaryStage.setTitle("Edit Task");
         primaryStage.setScene(scene);
-
     }
-
 
 }

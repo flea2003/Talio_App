@@ -55,6 +55,9 @@ public class Tag {
     /**
      * constructs a tag
      * @param name the string name
+     * @param green int value for Color
+     * @param blue int value for Color
+     * @param red int value for Color
      * @param board the board it connects to
      * @param cards the cards of the tag
      */
@@ -70,6 +73,9 @@ public class Tag {
     /**
      * constructs a tag
      * @param name the string name
+     * @param green int value for Color
+     * @param blue int value for Color
+     * @param red int value for Color
      */
     public Tag(String name, int green, int blue, int red) {
         this.name = name;
@@ -118,17 +124,30 @@ public class Tag {
         this.name = name;
     }
 
+    /**
+     * getter for green
+     * @return the green int in RGB
+     */
     public int getGreen(){
         return green;
     }
 
+    /**
+     * getter for blue
+     * @return the blue int in RGB
+     */
     public int getBlue(){
         return blue;
     }
 
+    /**
+     * getter for red
+     * @return the red int in RGB
+     */
     public int getRed(){
         return red;
     }
+
     /**
      * getter for the task's Board
      * @return the Board
@@ -180,14 +199,26 @@ public class Tag {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
+    /**
+     * setter for green
+     * @param green an int for Color
+     */
     public void setGreen(int green) {
         this.green = green;
     }
 
+    /**
+     * setter for blue
+     * @param blue an int for Color
+     */
     public void setBlue(int blue) {
         this.blue = blue;
     }
 
+    /**
+     * setter for red
+     * @param red an int for Color
+     */
     public void setRed(int red) {
         this.red = red;
     }

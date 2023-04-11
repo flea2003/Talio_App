@@ -12,7 +12,8 @@ public class SubtaskService {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public SubtaskService(SubtaskRepository subtaskRepository, SimpMessagingTemplate messagingTemplate) {
+    public SubtaskService(SubtaskRepository subtaskRepository,
+                          SimpMessagingTemplate messagingTemplate) {
         this.subtaskRepository = subtaskRepository;
         this.messagingTemplate = messagingTemplate;
     }

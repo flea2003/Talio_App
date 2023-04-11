@@ -5,8 +5,6 @@ import client.scenes.services.ButtonTalio;
 import client.scenes.services.taskEdits;
 import client.scenes.services.taskViews;
 import client.utils.ServerUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.List;
 import commons.*;
@@ -36,15 +34,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.http.HttpMethod;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 
 
 public class DashboardCtrl implements Initializable {
@@ -703,7 +695,8 @@ public class DashboardCtrl implements Initializable {
                     textField.setText(label.getText());
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setHeaderText("Empty list name");
-                    alert.setContentText("Can not have a list without a name. Please enter a valid name.");
+                    alert.setContentText("Can not have a list without a name." +
+                            " Please enter a valid name.");
                     alert.showAndWait();
                 } else {
                     newList.setName(txt);
@@ -860,10 +853,12 @@ public class DashboardCtrl implements Initializable {
                     double listViewY = this.localToScene(0, 0).getY();
                     if (mouseY - listViewY >= 50) {
                         sus = false;
-                        this.setStyle("-fx-border-color: transparent transparent #e5e3f1 transparent; -fx-border-width: 0 0 4 0;");
+                        this.setStyle("-fx-border-color: transparent" +
+                                " transparent #e5e3f1 transparent; -fx-border-width: 0 0 4 0;");
                     } else {
                         sus = true;
-                        this.setStyle("-fx-border-color: #e5e3f1 transparent transparent transparent; -fx-border-width: 4 0 0 0;");
+                        this.setStyle("-fx-border-color: #e5e3f1 transparent" +
+                                " transparent transparent; -fx-border-width: 4 0 0 0;");
                     }
 
                     double y = event.getY() + this.localToScene(0, 0).getY();
@@ -1191,15 +1186,18 @@ public class DashboardCtrl implements Initializable {
 
         int[] clickCount = {0};
         label.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue)
+            if (!newValue) {
                 contextMenu.hide();
+            }
         });
 
         button.setOnMouseClicked(event -> {
             Point2D absoluteCoordinates = button.localToScreen(button.getLayoutX(),
                                                                button.getLayoutY());
-            if (event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX() - 21, absoluteCoordinates.getY() + button.getHeight() - 33);
+            if (event.getButton() == MouseButton.PRIMARY) {
+                contextMenu.show(pane, absoluteCoordinates.getX() - 21,
+                        absoluteCoordinates.getY() + button.getHeight() - 33);
+            }
         });
 
         return contextMenu;
@@ -1272,8 +1270,10 @@ public class DashboardCtrl implements Initializable {
             Point2D absoluteCoordinates = addBoardButton.
                     localToScreen(boardsVBox.getBoundsInLocal().getMinX() + 150,
                             addBoardLabel.getBoundsInLocal().getMaxY() - 68);
-            if(event.getButton() == MouseButton.PRIMARY)
-                contextMenu.show(pane, absoluteCoordinates.getX(), absoluteCoordinates.getY() + addBoardButton.getHeight());
+            if(event.getButton() == MouseButton.PRIMARY) {
+                contextMenu.show(pane, absoluteCoordinates.getX(),
+                        absoluteCoordinates.getY() + addBoardButton.getHeight());
+            }
 
         });
 
@@ -1481,7 +1481,8 @@ public class DashboardCtrl implements Initializable {
                         textField.setText(title.getText());
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setHeaderText("Empty tag name");
-                        alert.setContentText("Can not have a tag without a name. Please enter a valid name.");
+                        alert.setContentText("Can not have a tag without a name." +
+                                " Please enter a valid name.");
                         alert.showAndWait();
                     } else {
                         title.setText(textField.getText());
