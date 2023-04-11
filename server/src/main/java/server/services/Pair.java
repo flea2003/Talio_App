@@ -24,11 +24,11 @@ public class Pair <A, B>{
         if (this == o) return true;
         if (!(o instanceof Pair)) return false;
         Pair<?, ?> pair = (Pair<?, ?>) o;
-        return Objects.equals(getA(), pair.getA());
+        return a.equals(pair.a) && b.equals(pair.b);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getA());
+        return Objects.hash(a, b);
     }
 }
