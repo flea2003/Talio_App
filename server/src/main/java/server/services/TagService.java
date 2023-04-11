@@ -34,14 +34,6 @@ public class TagService {
         return tagRepository.findAll();
     }
 
-    public java.util.List<Tag> getAllTagsForCard(long id){
-        return tagRepository.findByCardsTagsId(id);
-    }
-
-    public java.util.List<Tag>getAllTagsForBoard(long id){
-        return tagRepository.findAllByBoardId(id).orElse(null);
-    }
-
     public Tag getSubtaskById(long id) {
         return tagRepository.findById(id).get();
     }

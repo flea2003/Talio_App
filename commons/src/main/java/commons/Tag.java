@@ -52,6 +52,17 @@ public class Tag {
         this.board = board;
     }
 
+
+    /**
+     * constructs a tag used for testing
+     * @param id the long id
+     * @param name the string name
+     */
+    public Tag(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     /**
      * constructs a tag
      * @param name the string name
