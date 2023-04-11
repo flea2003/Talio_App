@@ -112,7 +112,6 @@ public class DashboardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String currentServer = server.getServer();
-        System.out.println(adminAccess);
 
         if (serverBoards == null) {
             serverBoards = new HashMap<>();
@@ -1582,7 +1581,6 @@ public class DashboardCtrl implements Initializable {
                 error.setStyle("-fx-text-fill: rgb(178,34,34)");
             } else {
                 Board board = server.getBoard(boardId);
-                System.out.println(colorPicker.getValue().getBlue());
                 Tag tag = new Tag(name.getText(), (int) (colorPicker.getValue().getGreen()*255),
                         (int) (colorPicker.getValue().getBlue()*255),
                         (int) (colorPicker.getValue().getRed()*255), board, new ArrayList<>());
@@ -1590,7 +1588,6 @@ public class DashboardCtrl implements Initializable {
                 tag.setBoard(board);
                 board.getTags().add(tag);
                 server.addTag(tag);
-                System.out.println(board);
                 server.updateBoard(board);
                 stage.close();
             }

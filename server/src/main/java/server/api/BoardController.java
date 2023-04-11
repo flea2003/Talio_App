@@ -61,7 +61,8 @@ public class BoardController {
 //            .request(APPLICATION_JSON)
 //            .accept(APPLICATION_JSON)
 //            .get(new GenericType<commons.Board>() {});
-//        Collections.sort(res.getLists(), Comparator.comparingInt(commons.List::getNumberInTheBoard));
+//        Collections.sort(res.getLists(), Comparator.
+//        comparingInt(commons.List::getNumberInTheBoard));
 //        for(commons.List list : res.getLists()){
 //        Collections.sort(list.getCards(), Comparator.comparingInt(Card::getNumberInTheList));
 //    }

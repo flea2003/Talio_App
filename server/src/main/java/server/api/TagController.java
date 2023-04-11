@@ -23,10 +23,7 @@ public class TagController {
     public java.util.List<Tag> getAll() {
         return tagService.getAll();
     }
-
     /**
-<<<<<<< server/src/main/java/server/api/TagController.java
-=======
      * gets all the tags for a given card in the database
      * @param id an id
      * @return a list of the tags for a given card
@@ -47,7 +44,6 @@ public class TagController {
     }
 
     /**
->>>>>>> server/src/main/java/server/api/TagController.java
      * adds a tag
      * @param tag the tag to be added
      * @return a response (bad request or ok)

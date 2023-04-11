@@ -25,10 +25,12 @@ public class AdminService {
 
                 String generatedString = random.ints(leftLimit, rightLimit + 1)
                         .limit(targetStringLength)
-                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                        .collect(StringBuilder::new, StringBuilder::appendCodePoint
+                                , StringBuilder::append)
                         .toString();
                 serverPassword = generatedString;
-                System.out.println(promptStart + "Server password: " + serverPassword + "\n" + promptStart);
+                System.out.println(promptStart + "Server password: "
+                                    + serverPassword + "\n" + promptStart);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -42,9 +44,9 @@ public class AdminService {
      * @return true if the password is correct
      */
     public boolean checkPassword(String password) {
-        System.out.println(serverPassword.equals(password));
-        if(serverPassword.equals(password))
+        if(serverPassword.equals(password)) {
             return true;
+        }
         return false;
     }
 }

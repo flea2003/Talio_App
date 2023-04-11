@@ -48,9 +48,6 @@ public class TagService {
         return tagRepository.findAll();
     }
 
-<<<<<<< server/src/main/java/server/services/TagService.java
-=======
-
     /**
      * gets all cards' tags
      * @param id the id used to get the tags
@@ -74,7 +71,6 @@ public class TagService {
      * @param id its id
      * @return the Tag
      */
->>>>>>> server/src/main/java/server/services/TagService.java
     public Tag getSubtaskById(long id) {
         return tagRepository.findById(id).get();
     }

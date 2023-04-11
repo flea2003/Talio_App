@@ -65,7 +65,6 @@ public class CardController {
         var res = new DeferredResult<ResponseEntity<Card>>(3000L, noContent);
 
         var key = new Object();
-        System.out.println(listeners.size());
         listeners.put(new Pair<>(key, card), q -> {
             res.setResult(ResponseEntity.ok(q));
         });
