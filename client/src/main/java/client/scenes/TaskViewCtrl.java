@@ -151,7 +151,9 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         addEditFunctionality((Pane)taskName.getParent(), taskName, taskName, e -> {
             TextField textField = new TextField(taskName.getText());
             if(taskName.getParent() != null) {
-                ((Pane) taskName.getParent()).getChildren().set(((Pane) taskName.getParent()).getChildren().indexOf(taskName), textField);
+                ((Pane) taskName.getParent()).getChildren()
+                        .set(((Pane) taskName.getParent())
+                                .getChildren().indexOf(taskName), textField);
                 textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                     } else {
@@ -160,12 +162,14 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                             currCard.name = data;
                             server.updateBoard(currCard.getList().getBoard());
                             if ((Pane) textField.getParent() != null) {
-                                int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                                int indx = ((Pane) textField
+                                        .getParent()).getChildren().indexOf(textField);
                                 ((Pane) textField.getParent()).getChildren().set(indx, taskName);
                             }
                         } else {
                             if ((Pane) textField.getParent() != null) {
-                                int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
+                                int indx = ((Pane) textField.getParent())
+                                        .getChildren().indexOf(textField);
                                 ((Pane) textField.getParent()).getChildren().set(indx, taskName);
                             }
                         }
@@ -175,7 +179,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 textField.setOnKeyPressed(event -> {
                     if (event.getCode() == KeyCode.ENTER) {
                         int indx = ((Pane) textField.getParent()).getChildren().indexOf(textField);
-                        ((Pane) textField.getParent()).getChildren().set(indx, taskName);                  }
+                        ((Pane) textField.getParent()).getChildren().set(indx, taskName);
+                    }
                 });
 
                 textField.requestFocus();
@@ -185,7 +190,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
         addEditFunctionality((Pane)description.getParent(), description, taskDescription, e -> {
             TextField textField = new TextField(taskDescription.getText());
-            int index = descriptionPane.getParent().getChildrenUnmodifiable().indexOf(descriptionPane);
+            int index = descriptionPane.getParent().getChildrenUnmodifiable()
+                    .indexOf(descriptionPane);
             VBox vBox = (VBox) descriptionPane.getParent();
             vBox.getChildren().set(index, textField);
             textField.requestFocus();
@@ -258,7 +264,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             public Pane addButton() {
                 this.setPadding(new Insets(0, 0, 10, 0));
                 if(!(taskListHBox.getChildren().size() >= 1 && taskListHBox.
-                        getChildren().get(taskListHBox.getChildren().size() - 1) instanceof ButtonTalio)){
+                        getChildren().get(taskListHBox.getChildren()
+                                .size() - 1) instanceof ButtonTalio)){
                     taskListHBox.getChildren().add(this);
                 }
                 return actualSubtasks;
@@ -715,8 +722,10 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
     /**
      * get the Stage
-     * @return
+     * @return a stage
      */
-    public Stage getStage(){return newStage;}
+    public Stage getStage() {
+        return newStage;
+    }
 }
 
