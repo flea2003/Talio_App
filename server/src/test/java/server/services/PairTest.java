@@ -54,6 +54,6 @@ public class PairTest {
         Pair pair3 = new Pair(a, new Board("b"));
 
         assertEquals(pair1.hashCode(), pair2.hashCode());
-        assertNotEquals(pair1.hashCode(), pair2.hashCode());
+        assertNotEquals(pair1.hashCode(), pair3.hashCode());
     }
 }
