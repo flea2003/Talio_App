@@ -1018,63 +1018,7 @@ public class DashboardCtrl implements Initializable {
         // (assuming each item is 24 pixels high)
         listView.setPrefHeight(Math.min(screenHeight - screenHeight/4,
                 listView.getItems().size() * 100));
-        // initiate the long-polling request to get updates
-//        Thread thread = new Thread(() -> {
-//            while (true) {
-//                try {
-//                    java.util.List<Card> updatedCards = getCardUpdates();
-//                    Platform.runLater(() -> {
-//                        // update the UI with the new data
-//                        observableList.setAll(updatedCards);
-//                        listView.setPrefHeight(Math.min(screenHeight - screenHeight / 4,
-//                                listView.getItems().size() * 100));
-//                    });
-//                } catch (Exception e) {
-//                    // handle the exception
-//                }
-//            }
-//        });
-//        thread.start();
     }
-
-//    private java.util.List<Card> getCardUpdates() throws Exception {
-//        // create a new HTTP client and send a long-polling request
-//        HttpClient httpClient = new HttpClient();
-//        httpClient.start();
-//
-//        String url = "http://your.server.com/CardController/getAll?Poll=true"; // API endpoint
-//        Request request = httpClient.newRequest(url)
-//                .method(HttpMethod.GET)
-//                .header("Connection", "keep-alive");
-//
-//        try {
-//            ContentResponse response = request.send();
-//            String responseBody = response.getContentAsString();
-//            // parse the response body to get the updated cards
-//            java.util.List<Card> updatedCards = parseResponse(responseBody);
-//            return updatedCards;
-//        } catch (InterruptedException | TimeoutException e) {
-//            // handle the timeout or other exceptions
-//            return Collections.emptyList();
-//        } finally {
-//            // close the HTTP client
-//            try { httpClient.stop();
-//            } catch (Exception e) {
-//                // handle the exception
-//            }
-//        }
-//    }
-//    private java.util.List<Card> parseResponse(String responseBody) {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        try {
-//            // parse the JSON array into a list of Card objects
-//            java.util.List<Card> updatedCards = objectMapper.readValue(responseBody,
-//                    new TypeReference<java.util.List<Card>>() {});
-//            return updatedCards;
-//        } catch (IOException e) {
-//            return Collections.emptyList();
-//        }
-//    }
 
     /**
      * disconnects from the server
@@ -1343,6 +1287,10 @@ public class DashboardCtrl implements Initializable {
 
     }
 
+    /**
+     * opens a tag scene
+     * @param boardId the tag's board
+     */
     public void openTags(long boardId) {
         ContextMenu contextMenu = new ContextMenu();
         contextMenu.setStyle("-fx-background-color: #a29cf4");

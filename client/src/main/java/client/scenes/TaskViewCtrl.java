@@ -93,7 +93,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
 
     private taskViews viewTasks;
 
-    private ExecutorService EXEC;
+    private ExecutorService exec;
 
     @FXML
     private VBox actualSubtasks;
@@ -133,9 +133,11 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      */
     @Override
     public void start(javafx.stage.Stage primaryStage)  {
-        if(primaryStage != null)
+        if (primaryStage != null) {
             newStage = primaryStage;
-        else newStage = new Stage();
+        } else {
+            newStage = new Stage();
+        }
         newStage.setTitle("Task View");
         newStage.setScene(taskView);
         renderInfo(currCard);
@@ -144,7 +146,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
             public void handle(WindowEvent event) {
                 taskViews.getInstance().remove(TaskViewCtrl.this);
                 newStage.hide();
-                server.stopThread(EXEC);
+                server.stopThread(exec);
             }
         });
         newStage.show();
@@ -294,8 +296,8 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                 }
             }
         }
-        EXEC = Executors.newSingleThreadExecutor();
-        server.longPolling(EXEC, q -> {
+        exec = Executors.newSingleThreadExecutor();
+        server.longPolling(exec, q -> {
             var exists = server.getCardById(q.id);
             if(exists == null){
                 Platform.runLater(() -> {
@@ -307,7 +309,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
                     }
                 });
             }else{
-                server.stopThread(EXEC);
+                server.stopThread(exec);
                 renderInfo(exists);
             }
         }, currCard);
@@ -423,7 +425,7 @@ public class TaskViewCtrl extends Application implements CardControllerState {
     @FXML
     public void setDone(){
         taskViews.getInstance().remove(TaskViewCtrl.this);
-        server.stopThread(EXEC);
+        server.stopThread(exec);
         newStage.close();
     }
 
@@ -451,10 +453,18 @@ public class TaskViewCtrl extends Application implements CardControllerState {
         this.boardCurr = boardCurr;
     }
 
+    /**
+     * gets a card
+     * @return the current card
+     */
     @Override
     public Card getCard() {
         return currCard;
     }
+
+    /**
+     * adds a subtask
+     */
     @FXML
     public void addSubtask(){
         if(hasTextField){
@@ -496,7 +506,6 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      * @param subtask the new subtask
      */
     public void createSubtask(Subtask subtask){
-
         HBox hbox = new HBox();
         CheckBox checkBox = new CheckBox(subtask.getName());
         checkBox.getStylesheets().add("CSS/button.css");
