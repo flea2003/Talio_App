@@ -257,6 +257,7 @@ public class DashboardCtrl implements Initializable {
      * @param id the id of the boards of which its lists will be used
      */
     public void refreshSpecificBoard(long id) {
+        pane.getStylesheets().add("CSS/button.css");
         openTags(id);
         shareBoard.setVisible(true);
         viewTags.setVisible(true);
@@ -323,6 +324,9 @@ public class DashboardCtrl implements Initializable {
                 return vboxEnd;
             }
         };
+
+        addListButton.getStyleClass().add("connectButton");
+        addListButton.setStyle("-fx-text-fill: white");
 
         var lists = server.getBoard(id).lists;
         taskViews.getInstance().checkClosed(lists);

@@ -29,7 +29,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import javax.inject.Inject;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -637,25 +636,63 @@ public class TaskViewCtrl extends Application implements CardControllerState {
      * @param subtask the subtasks the user wants to delete
      */
     private void deleteSubtask(Subtask subtask) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete Subtask '" + subtask.getName() + "'?");
-        alert.setContentText("Are you sure you want to delete subtask '" + subtask.getName() +
-                "'?\nThis will permanently delete the subtask from the server.");
+        //create a new stage
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Delete Subtask '" + subtask.getName() + "'?");
 
-        ButtonType delete = new ButtonType("Delete");
-        ButtonType cancel = new ButtonType("Cancel");
-        alert.getButtonTypes().setAll(delete, cancel);
+        //create a vbox to add the fields in
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setStyle("-fx-background-color: #a29cf4");
+        vbox.getStylesheets().add("CSS/button.css");
 
-        Optional<ButtonType> result = alert.showAndWait();
+        //create the buttons
+        Button delete = new Button("Delete");
+        Button cancel = new Button("Cancel");
+        HBox buttons = new HBox(delete, cancel);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
 
-        if (result.get() == delete) {
-            //currCard.subtasks.remove(subtask);
+        //set colour for the buttons and create hovering effect
+        delete.getStyleClass().add("connectButton");
+        delete.setStyle("-fx-text-fill: rgb(250,240,230)");
+        cancel.getStyleClass().add("connectButton");
+        cancel.setStyle("-fx-text-fill: rgb(250,240,230)");
+
+        cancel.setOnAction(e -> {
+            stage.close();
+        });
+
+        delete.setOnAction(e -> {
             ObjectMapper objectMapper = new ObjectMapper();
             currCard.subtasks.remove(subtask);
             subtask.setCard(null);
             server.deleteSubtask(subtask);
             server.updateBoard(currCard.getList().board);
-        }
+            stage.close();
+        });
+
+        ImageView deletion = new ImageView(new Image("/pictures/deletion.png"));
+        deletion.maxHeight(30);
+        deletion.maxWidth(30);
+
+        VBox message = new VBox();
+        Label sure = new Label("Are you sure you want to delete subtask '" +
+                subtask.getName() + "'?");
+        sure.setStyle("-fx-font-size: 16px");
+        message.getChildren().addAll(sure,
+                new Label("This will permanently delete the subtask from the server.")
+        );
+        message.setAlignment(Pos.CENTER);
+        message.setSpacing(10);
+
+        //add all the fields in the vbox and show the scene
+        vbox.getChildren().addAll(deletion, message, buttons);
+
+        Scene scene = new Scene(vbox, 395, 250);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
     /**
