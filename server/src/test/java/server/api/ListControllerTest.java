@@ -3,6 +3,7 @@ package server.api;
 import commons.Board;
 import commons.Card;
 import commons.List;
+import commons.Subtask;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,9 @@ public class ListControllerTest {
 
     @Mock
     ListService listService;
+
+    @Mock
+    CardController cardController;
 
     @InjectMocks
     ListController listController;
@@ -91,7 +95,26 @@ public class ListControllerTest {
 
     @Test
     public void deleteTest(){
-        List list1 = new List(1, new ArrayList<Card>(), "List 1", new Board());
+        java.util.List<Subtask> subtasks = new ArrayList<>();
+        Subtask subtask1 = new Subtask(1, 2);
+        Subtask subtask2 = new Subtask(2, 1);
+        subtasks.add(subtask1);
+        subtasks.add((subtask2));
+
+        java.util.List<Card> cards = new ArrayList<>();
+
+        Card card1 = new Card();
+        card1.setNumberInTheList(2);
+        card1.setSubtasks(subtasks);
+
+        Card card2 = new Card();
+        card2.setNumberInTheList(1);
+        card2.setSubtasks(new ArrayList<>());
+
+        cards.add(card1);
+        cards.add(card2);
+
+        List list1 = new List(1, (ArrayList<Card>) cards, "List 1", new Board());
 
         when(listService.getListById(1)).thenReturn(list1);
 
@@ -100,6 +123,7 @@ public class ListControllerTest {
         ResponseEntity<Void> responseBad2 = listController.delete(-1);
 
         verify(listService, times(1)).deleteList(list1);
+        verify(cardController, times(1)).activateListeners(card1);
 
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(HttpStatus.BAD_REQUEST, responseBad1.getStatusCode());
@@ -108,11 +132,31 @@ public class ListControllerTest {
 
     @Test
     public void updateListTest(){
-        List list = new List(1, new ArrayList<Card>(), "List 1", new Board());
+        java.util.List<Subtask> subtasks = new ArrayList<>();
+        Subtask subtask1 = new Subtask(1, 2);
+        Subtask subtask2 = new Subtask(2, 1);
+        subtasks.add(subtask1);
+        subtasks.add((subtask2));
+
+        java.util.List<Card> cards = new ArrayList<>();
+
+        Card card1 = new Card();
+        card1.setNumberInTheList(2);
+        card1.setSubtasks(subtasks);
+
+        Card card2 = new Card();
+        card2.setNumberInTheList(1);
+        card2.setSubtasks(new ArrayList<>());
+
+        cards.add(card1);
+        cards.add(card2);
+
+        List list = new List(1, (ArrayList<Card>) cards, "List 1", new Board());
 
         ResponseEntity<List> response = listController.updateList(list);
 
         verify(listService, times(1)).saveList(list);
+        verify(cardController, times(1)).activateListeners(card1);
 
         assertEquals(list, response.getBody());
     }

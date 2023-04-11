@@ -46,7 +46,7 @@ public class Pair <A, B>{
             return false;
         }
         Pair<?, ?> pair = (Pair<?, ?>) o;
-        return Objects.equals(getA(), pair.getA());
+        return a.equals(pair.a) && b.equals(pair.b);
     }
 
     /**
@@ -55,6 +55,6 @@ public class Pair <A, B>{
      */
     @Override
     public int hashCode() {
-        return Objects.hash(getA());
+        return Objects.hash(a, b);
     }
 }
